@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voter - MyPulse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <?php require 'header.php'; ?>
+
+    <!-- Section de vote -->
+    <section class="py-5" style="margin-top: 80px;">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <span class="section-subtitle">Votez maintenant</span>
+                <h2 class="section-title">Votez pour vos contenus préférés</h2>
+                <p class="section-description">Choisissez votre catégorie et votez pour vos musiques, artistes ou groupes favoris</p>
+            </div>
+
+            <!-- Onglets de catégories -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-8">
+                    <ul class="nav nav-pills justify-content-center" id="voteTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="musics-tab" data-bs-toggle="pill" data-bs-target="#musics-vote" type="button" role="tab">Musiques</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="artists-tab" data-bs-toggle="pill" data-bs-target="#artists-vote" type="button" role="tab">Artistes</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="groups-tab" data-bs-toggle="pill" data-bs-target="#groups-vote" type="button" role="tab">Groupes</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Contenu des onglets -->
+            <div class="tab-content" id="voteTabsContent">
+                <!-- Musiques -->
+                <div class="tab-pane fade show active" id="musics-vote" role="tabpanel">
+                    <div class="row g-4" id="musics-vote-grid">
+                        <!-- Les cartes de musique seront générées par JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Artistes -->
+                <div class="tab-pane fade" id="artists-vote" role="tabpanel">
+                    <div class="row g-4" id="artists-vote-grid">
+                        <!-- Les cartes d'artistes seront générées par JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Groupes -->
+                <div class="tab-pane fade" id="groups-vote" role="tabpanel">
+                    <div class="row g-4" id="groups-vote-grid">
+                        <!-- Les cartes de groupes seront générées par JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <?php require 'footer.php'; ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Initialisation des grilles de vote (sera remplacé par les données de la BDD)
+        document.getElementById("musics-vote-grid").innerHTML = musicsData.map(createMusicCard).join('');
+        document.getElementById("artists-vote-grid").innerHTML = artistsData.map(createArtistCard).join('');
+        document.getElementById("groups-vote-grid").innerHTML = groupsData.map(createGroupCard).join('');
+    </script>
+</body>
+</html>
