@@ -68,8 +68,19 @@
                                 <div class="tab-pane fade" id="register" role="tabpanel">
                                     <form id="registerForm">
                                         <div class="mb-3">
-                                            <label for="registerName" class="form-label">Nom complet</label>
-                                            <input type="text" class="form-control" id="registerName" required>
+                                            <label for="registerPseudo" class="form-label">Pseudo</label>
+                                            <input type="text" class="form-control" id="registerPseudo" required>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label for="registerFirstName" class="form-label">Prénom</label>
+                                                <input type="text" class="form-control" id="registerFirstName" required>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label for="registerLastName" class="form-label">Nom</label>
+                                                <input type="text" class="form-control" id="registerLastName" required>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
@@ -109,7 +120,7 @@
                                         <i class="bi bi-google me-2"></i>Google
                                     </button>
                                     <button class="btn btn-outline-secondary flex-fill">
-                                        <i class="bi bi-facebook me-2"></i>Facebook
+                                        <i class="bi bi-instagram me-2"></i>Instagram
                                     </button>
                                 </div>
                             </div>
