@@ -71,6 +71,20 @@ body {
     color: var(--dark-color) !important;
 }
 
+.nav-pills .nav-link.active,
+.nav-pills .nav-link.active:focus,
+.nav-pills .nav-link.active:hover {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+    box-shadow: none !important;
+}
+
+.nav-pills .nav-link:hover {
+    background-color: rgba(250, 133, 50, 0.1);
+    color: var(--primary-color) !important;
+}
+
 .navbar.scrolled .nav-link {
     color: white !important;
 }
@@ -346,6 +360,34 @@ body {
     background-color: var(--primary-color);
     color: white;
     transform: translateY(-3px);
+}
+
+/* Override Bootstrap colors to match charter */
+.btn-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-color) !important;
+    border-color: var(--accent-color) !important;
+    color: white !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+.text-primary {
+    color: var(--primary-color) !important;
 }
 
 /* Responsive */
