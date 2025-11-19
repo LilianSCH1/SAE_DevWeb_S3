@@ -21,6 +21,8 @@
                 <p class="section-description">Choisissez votre catégorie et votez pour vos musiques, artistes ou groupes favoris</p>
             </div>
 
+            
+
             <!-- Onglets de catégories -->
             <div class="row justify-content-center mb-4">
                 <div class="col-md-8">
