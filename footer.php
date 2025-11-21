@@ -23,27 +23,30 @@
                     <div class="col-md-4">
                         <h5>Navigation</h5>
                         <ul style="list-style: none; padding: 0;">
+                            <li><a href="index.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Accueil</a></li>
                             <li><a href="voter.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Voter</a></li>
                             <li><a href="classement.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Classement</a></li>
-                            <li><a href="index.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Accueil</a></li>
                         </ul>
                     </div>
+                    
                     <div class="col-md-4">
-                        <h5>Catégories</h5>
-                        <ul style="list-style: none; padding: 0;">
-                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Pop</a></li>
-                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Rock</a></li>
-                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Hip-Hop</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-md-4">
-                        <h5>Autres</h5>
+                        <h5>Entreprise</h5>
                         <ul style="list-style: none; padding: 0;">
                             <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">À propos</a></li>
                             <li><a href="contact.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Contact</a></li>
-                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Mentions</a></li>
+                            <li><a href="connexion.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Connexion</a></li>
                         </ul>
                     </div>
+
+                    <div class="col-md-4">
+                        <h5>Légal</h5>
+                        <ul style="list-style: none; padding: 0;">
+                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Conditions d'utilisation</a></li>
+                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de confidentialité</a></li>
+                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de cookie</a></li>
+                        </ul>
+                    </div>
+
                 </div>
             </div>
         </div>
