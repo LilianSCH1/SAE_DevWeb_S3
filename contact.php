@@ -109,33 +109,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
-    <script>
-        // Gestion du formulaire de contact
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // Simulation d'envoi (sera remplacé par l'envoi réel)
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Envoi en cours...';
-            submitBtn.disabled = true;
-
-            setTimeout(() => {
-                submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Message envoyé !';
-                submitBtn.classList.remove('btn-primary');
-                submitBtn.classList.add('btn-success');
-
-                // Réinitialisation du formulaire
-                setTimeout(() => {
-                    this.reset();
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.classList.remove('btn-success');
-                    submitBtn.classList.add('btn-primary');
-                    submitBtn.disabled = false;
-                }, 3000);
-            }, 2000);
-        });
-    </script>
+    
 </body>
 </html>
