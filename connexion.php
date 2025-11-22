@@ -135,64 +135,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
-    <script>
-        // Gestion du formulaire de connexion
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Connexion...';
-            submitBtn.disabled = true;
-
-            setTimeout(() => {
-                // Simulation de connexion réussie
-                submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Connecté !';
-                submitBtn.classList.remove('btn-primary');
-                submitBtn.classList.add('btn-success');
-
-                setTimeout(() => {
-                    window.location.href = 'index.php';
-                }, 1000);
-            }, 2000);
-        });
-
-        // Gestion du formulaire d'inscription
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
-
-            if (password !== confirmPassword) {
-                alert('Les mots de passe ne correspondent pas.');
-                return;
-            }
-
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-
-            submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Inscription...';
-            submitBtn.disabled = true;
-
-            setTimeout(() => {
-                submitBtn.innerHTML = '<i class="bi bi-check-circle me-2"></i>Inscrit !';
-                submitBtn.classList.remove('btn-primary');
-                submitBtn.classList.add('btn-success');
-
-                setTimeout(() => {
-                    // Basculer vers l'onglet connexion
-                    const loginTab = document.getElementById('login-tab');
-                    loginTab.click();
-                    this.reset();
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.classList.remove('btn-success');
-                    submitBtn.classList.add('btn-primary');
-                    submitBtn.disabled = false;
-                }, 2000);
-            }, 2000);
-        });
-    </script>
+    
 </body>
 </html>

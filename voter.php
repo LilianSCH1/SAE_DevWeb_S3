@@ -52,21 +52,21 @@
                 <!-- Musiques -->
                 <div class="tab-pane fade show active" id="musics-vote" role="tabpanel">
                     <div class="row g-4" id="musics-vote-grid">
-                        <!-- Les cartes de musique seront générées par JavaScript -->
+                        <!-- Les cartes de musique seront générées par HTML, CSS -->
                     </div>
                 </div>
 
                 <!-- Artistes -->
                 <div class="tab-pane fade" id="artists-vote" role="tabpanel">
                     <div class="row g-4" id="artists-vote-grid">
-                        <!-- Les cartes d'artistes seront générées par JavaScript -->
+                        <!-- Les cartes d'artistes seront générées par HTML, CSS -->
                     </div>
                 </div>
 
                 <!-- Groupes -->
                 <div class="tab-pane fade" id="groups-vote" role="tabpanel">
                     <div class="row g-4" id="groups-vote-grid">
-                        <!-- Les cartes de groupes seront générées par JavaScript -->
+                        <!-- Les cartes de groupes seront générées par HTML, CSS -->
                     </div>
                 </div>
             </div>
@@ -77,11 +77,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
-    <script>
-        // Initialisation des grilles de vote (sera remplacé par les données de la BDD)
-        document.getElementById("musics-vote-grid").innerHTML = musicsData.map(createMusicCard).join('');
-        document.getElementById("artists-vote-grid").innerHTML = artistsData.map(createArtistCard).join('');
-        document.getElementById("groups-vote-grid").innerHTML = groupsData.map(createGroupCard).join('');
-    </script>
+
 </body>
 </html>
