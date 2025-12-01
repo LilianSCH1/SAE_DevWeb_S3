@@ -23,9 +23,9 @@
                     <div class="col-md-4">
                         <h5>Navigation</h5>
                         <ul style="list-style: none; padding: 0;">
-                            <li><a href="index.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Accueil</a></li>
-                            <li><a href="voter.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Voter</a></li>
-                            <li><a href="classement.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Classement</a></li>
+                            <li><a href="../index/index.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Accueil</a></li>
+                            <li><a href="../vote/voter.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Voter</a></li>
+                            <li><a href="../vote/classement.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Classement</a></li>
                         </ul>
                     </div>
                     
@@ -33,8 +33,8 @@
                         <h5>Entreprise</h5>
                         <ul style="list-style: none; padding: 0;">
                             <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">À propos</a></li>
-                            <li><a href="contact.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Contact</a></li>
-                            <li><a href="connexion.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Connexion</a></li>
+                            <li><a href="../index/contact.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Contact</a></li>
+                            <li><a href="../login/connexion.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Connexion</a></li>
                         </ul>
                     </div>
 
