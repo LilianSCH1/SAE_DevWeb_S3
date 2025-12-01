@@ -7,7 +7,7 @@
                 <p class="lead my-4">Découvrez et votez pour vos musiques, chanteurs, groupes et musiciens préférés. La communauté décide !</p>
                 <div>
                     <a href="../vote/voter.php" class="btn btn-primary btn-lg me-2">Voter maintenant</a>
-                    <a href="../vote.classement.php" class="btn btn-outline-primary btn-lg">Voir le classement</a>
+                    <a href="../vote/classement.php" class="btn btn-outline-primary btn-lg">Voir le classement</a>
                 </div>
             </div>
             <div class="col-lg-6">
