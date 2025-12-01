@@ -1,5 +1,91 @@
+<?php
+session_start();
+require_once 'dbconnect.php';
+
+$pdo = dbconnect();
+$errors = [];
+
+// Debug erreurs PHP
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+file_put_contents('debug_post.txt', print_r($_POST, true));
+
+
+// TRAITEMENT INSCRIPTION
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['action'])
+    && $_POST['action'] === 'register'
+) {
+
+    $pseudo    = trim($_POST['registerPseudo'] ?? '');
+    $prenom    = trim($_POST['registerFirstName'] ?? '');
+    $nom       = trim($_POST['registerLastName'] ?? '');
+    $email     = trim($_POST['registerEmail'] ?? '');
+    $password  = $_POST['registerPassword'] ?? '';
+    $password2 = $_POST['registerConfirmPassword'] ?? '';
+
+    if ($password !== $password2) {
+        $errors[] = "Les mots de passe ne correspondent pas.";
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Email invalide.";
+    }
+
+    if (empty($errors)) {
+        // Vérifier que l'email n'existe pas déjà
+        $stmt = $pdo->prepare("SELECT UserID FROM utilisateur WHERE UserMail = ?");
+        $stmt->execute([$email]);
+        if ($stmt->fetch()) {
+            $errors[] = "Un compte existe déjà avec cet email.";
+        } else {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+
+            // INSERT : laisser UserID et DateInscription en auto
+            $stmt = $pdo->prepare("
+                INSERT INTO utilisateur (UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role)
+                VALUES (?, ?, ?, ?, ?, 'invite')
+            ");
+            $stmt->execute([$pseudo, $prenom, $nom, $email, $hash]);
+
+            $_SESSION['user_id'] = $pdo->lastInsertId();
+            $_SESSION['user_email'] = $email;
+
+            header('Location: index.php');
+            exit;
+        }
+    }
+}
+
+// TRAITEMENT CONNEXION
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST'
+    && isset($_POST['action'])
+    && $_POST['action'] === 'login'
+) {
+
+    $email    = trim($_POST['loginEmail'] ?? '');
+    $password = $_POST['loginPassword'] ?? '';
+
+    $stmt = $pdo->prepare("SELECT UserID, UserPassword FROM utilisateur WHERE UserMail = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user && password_verify($password, $user['UserPassword'])) {
+        $_SESSION['user_id'] = $user['UserID'];
+        $_SESSION['user_email'] = $email;
+        header('Location: index.php');
+        exit;
+    } else {
+        $errors[] = "Email ou mot de passe incorrect.";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +95,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <?php require 'header.php'; ?>
 
-    <!-- Section de connexion -->
     <section class="py-5" style="margin-top: 80px;">
         <div class="container">
             <div class="row justify-content-center">
@@ -25,28 +111,41 @@
                                 <p class="text-muted">Connectez-vous pour voter et participer</p>
                             </div>
 
-                            <!-- Onglets Connexion/Inscription -->
+                            <?php if (!empty($errors)): ?>
+                                <div class="alert alert-danger">
+                                    <?php foreach ($errors as $e): ?>
+                                        <div><?php echo htmlspecialchars($e); ?></div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+
                             <ul class="nav nav-tabs justify-content-center mb-4" id="authTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">Connexion</button>
+                                    <button class="nav-link active" id="login-tab" data-bs-toggle="tab"
+                                        data-bs-target="#login" type="button" role="tab">Connexion</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab">Inscription</button>
+                                    <button class="nav-link" id="register-tab" data-bs-toggle="tab"
+                                        data-bs-target="#register" type="button" role="tab">Inscription</button>
                                 </li>
                             </ul>
 
                             <div class="tab-content">
-                                <!-- Formulaire de connexion -->
+                                <!-- Connexion -->
                                 <div class="tab-pane fade show active" id="login" role="tabpanel">
-                                    <form id="loginForm">
+                                    <form id="loginForm" method="POST">
+                                        <input type="hidden" name="action" value="login">
+
                                         <div class="mb-3">
                                             <label for="loginEmail" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="loginEmail" required>
+                                            <input type="email" class="form-control"
+                                                id="loginEmail" name="loginEmail" required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="loginPassword" class="form-label">Mot de passe</label>
-                                            <input type="password" class="form-control" id="loginPassword" required>
+                                            <input type="password" class="form-control"
+                                                id="loginPassword" name="loginPassword" required>
                                         </div>
 
                                         <div class="mb-3 form-check">
@@ -64,38 +163,46 @@
                                     </form>
                                 </div>
 
-                                <!-- Formulaire d'inscription -->
+                                <!-- Inscription -->
                                 <div class="tab-pane fade" id="register" role="tabpanel">
-                                    <form id="registerForm">
+                                    <form id="registerForm" method="POST">
+                                        <input type="hidden" name="action" value="register">
+
                                         <div class="mb-3">
                                             <label for="registerPseudo" class="form-label">Pseudo</label>
-                                            <input type="text" class="form-control" id="registerPseudo" required>
+                                            <input type="text" class="form-control"
+                                                id="registerPseudo" name="registerPseudo" required>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label for="registerFirstName" class="form-label">Prénom</label>
-                                                <input type="text" class="form-control" id="registerFirstName" required>
+                                                <input type="text" class="form-control"
+                                                    id="registerFirstName" name="registerFirstName" required>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label for="registerLastName" class="form-label">Nom</label>
-                                                <input type="text" class="form-control" id="registerLastName" required>
+                                                <input type="text" class="form-control"
+                                                    id="registerLastName" name="registerLastName" required>
                                             </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="registerEmail" class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="registerEmail" required>
+                                            <input type="email" class="form-control"
+                                                id="registerEmail" name="registerEmail" required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="registerPassword" class="form-label">Mot de passe</label>
-                                            <input type="password" class="form-control" id="registerPassword" required>
+                                            <input type="password" class="form-control"
+                                                id="registerPassword" name="registerPassword" required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="registerConfirmPassword" class="form-label">Confirmer le mot de passe</label>
-                                            <input type="password" class="form-control" id="registerConfirmPassword" required>
+                                            <input type="password" class="form-control"
+                                                id="registerConfirmPassword" name="registerConfirmPassword" required>
                                         </div>
 
                                         <div class="mb-3 form-check">
@@ -112,7 +219,6 @@
                                 </div>
                             </div>
 
-                            <!-- Connexion sociale -->
                             <div class="text-center mt-4">
                                 <p class="text-muted mb-3">Ou continuer avec</p>
                                 <div class="d-flex gap-2 justify-content-center">
@@ -124,6 +230,7 @@
                                     </button>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -135,6 +242,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
-    
 </body>
+
 </html>
