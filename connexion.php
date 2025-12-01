@@ -46,7 +46,7 @@ if (
             // INSERT : laisser UserID et DateInscription en auto
             $stmt = $pdo->prepare("
                 INSERT INTO utilisateur (UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role)
-                VALUES (?, ?, ?, ?, ?, 'invite')
+                VALUES (?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([$pseudo, $prenom, $nom, $email, $hash]);
 
