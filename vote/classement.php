@@ -7,10 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style/style.css">
 </head>
 <body>
-    <?php require 'header.php'; ?>
+    <?php require '../index/header.php'; ?>
 
     <!-- Section des classements -->
     <section class="py-5" style="margin-top: 80px;">
@@ -76,10 +76,10 @@
         </div>
     </section>
 
-    <?php require 'footer.php'; ?>
+    <?php require '../index/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="../script/script.js"></script>
     
 </body>
 </html>

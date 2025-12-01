@@ -6,13 +6,13 @@
                 <h1 class="display-4 fw-bold">Votez pour vos musiques préférées</h1>
                 <p class="lead my-4">Découvrez et votez pour vos musiques, chanteurs, groupes et musiciens préférés. La communauté décide !</p>
                 <div>
-                    <a href="voter.php" class="btn btn-primary btn-lg me-2">Voter maintenant</a>
-                    <a href="classement.php" class="btn btn-outline-primary btn-lg">Voir le classement</a>
+                    <a href="../vote/voter.php" class="btn btn-primary btn-lg me-2">Voter maintenant</a>
+                    <a href="../vote.classement.php" class="btn btn-outline-primary btn-lg">Voir le classement</a>
                 </div>
             </div>
             <div class="col-lg-6">
                 <!-- Logo principal de l'application -->
-                <img src="icons/logos/MyPulse_Black-removebg-preview.png" alt="MyPulse Logo" class="img-fluid rounded-4">
+                <img src="../icons/logos/MyPulse_Black-removebg-preview.png" alt="MyPulse Logo" class="img-fluid rounded-4">
             </div>
         </div>
     </div>

@@ -18,7 +18,7 @@ window.addEventListener("scroll", () => {
         navbar.classList.remove("scrolled");
         navbarBrand.classList.remove("scrolled");
         if (navbarLogo) {
-            navbarLogo.src = "icons/logos/MyPulse-removebg-preview.png";
+            navbarLogo.src = "../icons/logos/MyPulse-removebg-preview.png";
         }
     }
 });

@@ -1,9 +1,9 @@
 <?php
 session_start();
-require_once 'dbconnect.php';
+require_once '../database/dbconnect.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header('Location: connexion.php');
+    header('Location: ../login/connexion.php');
     exit;
 }
 
@@ -24,7 +24,7 @@ $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
     // Au cas où le compte aurait été supprimé
-    header('Location: logout.php');
+    header('Location: ../login/logout.php');
     exit;
 }
 ?>
@@ -37,11 +37,11 @@ if (!$user) {
     <meta charset="UTF-8">
     <title>Mon compte - MyPulse</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style/style.css">
 </head>
 
 <body>
-    <?php require 'header.php'; ?>
+    <?php require '../index/header.php'; ?>
 
     <section class="py-5">
         <div class="container">
@@ -145,12 +145,12 @@ if (!$user) {
             </div>
 
             <div class="mt-3">
-                <a href="index.php" class="btn btn-secondary">Retour à l’accueil</a>
+                <a href="../index/index.php" class="btn btn-secondary">Retour à l’accueil</a>
             </div>
         </div>
     </section>
 
-    <?php require 'footer.php'; ?>
+    <?php require '../index/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

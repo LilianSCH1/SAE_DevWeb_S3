@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'dbconnect.php';
+require_once '../database/dbconnect.php';
 
 $pdo = dbconnect();
 $errors = [];
@@ -9,7 +9,7 @@ $errors = [];
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-file_put_contents('debug_post.txt', print_r($_POST, true));
+file_put_contents('../database/debug_post.txt', print_r($_POST, true));
 
 
 // TRAITEMENT INSCRIPTION
@@ -54,7 +54,7 @@ if (
             $_SESSION['user_id'] = $pdo->lastInsertId();
             $_SESSION['user_email'] = $email;
 
-            header('Location: index.php');
+            header('Location: ../index/index.php');
             exit;
         }
     }
@@ -77,7 +77,7 @@ if (
     if ($user && password_verify($password, $user['UserPassword'])) {
         $_SESSION['user_id'] = $user['UserID'];
         $_SESSION['user_email'] = $email;
-        header('Location: index.php');
+        header('Location: ../index/index.php');
         exit;
     } else {
         $errors[] = "Email ou mot de passe incorrect.";
@@ -85,7 +85,7 @@ if (
 }
 
 if (isset($_SESSION['user_id'])) {
-    header('Location: mon_compte.php');
+    header('Location: ../login/mon_compte.php');
     exit;
 }
 
@@ -100,11 +100,11 @@ if (isset($_SESSION['user_id'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../style/style.css">
 </head>
 
 <body>
-    <?php require 'header.php'; ?>
+    <?php require '../index/header.php'; ?>
 
     <section class="py-5" style="margin-top: 80px;">
         <div class="container">
@@ -245,10 +245,10 @@ if (isset($_SESSION['user_id'])) {
         </div>
     </section>
 
-    <?php require 'footer.php'; ?>
+    <?php require '../index/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
+    <script src="../script/script.js"></script>
 </body>
 
 </html>

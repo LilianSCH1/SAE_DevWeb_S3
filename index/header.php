@@ -9,22 +9,22 @@ if (session_status() === PHP_SESSION_NONE) {
         <!-- ... autres liens ... -->
         <ul class="navbar-nav ms-auto">
             <li class="nav-item">
-                <a class="nav-link active" href="index.php">Accueil</a>
+                <a class="nav-link active" href="../index/index.php">Accueil</a>
             </li>
-            <li class="nav-item"><a class="nav-link" href="voter.php">Voter</a></li>
-            <li class="nav-item"><a class="nav-link" href="classement.php">Classement</a></li>
-            <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="../vote/voter.php">Voter</a></li>
+            <li class="nav-item"><a class="nav-link" href="../vote/classement.php">Classement</a></li>
+            <li class="nav-item"><a class="nav-link" href="../index/contact.php">Contact</a></li>
 
             <?php if (isset($_SESSION['user_id'])): ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="mon_compte.php">Mon compte</a>
+                    <a class="nav-link" href="../login/mon_compte.php">Mon compte</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="logout.php">Déconnexion</a>
+                    <a class="nav-link" href="../login/logout.php">Déconnexion</a>
                 </li>
             <?php else: ?>
                 <li class="nav-item">
-                    <a class="nav-link" href="connexion.php">Connexion</a>
+                    <a class="nav-link" href="../login/connexion.php">Connexion</a>
                 </li>
             <?php endif; ?>
         </ul>
