@@ -113,7 +113,7 @@ if (isset($_SESSION['user_id'])) {
                     <div class="card shadow">
                         <div class="card-body p-5">
                             <div class="text-center mb-4">
-                                <img src="icons/logos/MyPulse_Black-removebg-preview.png" alt="MyPulse" height="60" class="mb-3">
+                                <img src="../icons/logos/MyPulse_Black-removebg-preview.png" alt="MyPulse" height="60" class="mb-3">
                                 <h3 class="card-title">Connexion à MyPulse</h3>
                                 <p class="text-muted">Connectez-vous pour voter et participer</p>
                             </div>
