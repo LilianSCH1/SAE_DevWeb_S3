@@ -12,7 +12,7 @@
             </div>
             <div class="col-lg-6">
                 <!-- Logo principal de l'application -->
-                <img src="icons/logos/MyPulse_Black-removebg-preview.png" alt="MyPulse Logo" class="img-fluid rounded-4">
+                <img src="../icons/logos/MyPulse_Black-removebg-preview.png" alt="MyPulse Logo" class="img-fluid rounded-4">
             </div>
         </div>
     </div>
