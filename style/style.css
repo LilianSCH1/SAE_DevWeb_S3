@@ -115,8 +115,8 @@ body {
     width: 80%;
 }
 
-/* Hero Section */
-.hero {
+/* Header Section */
+.header {
     background: linear-gradient(135deg, rgba(250, 133, 50, 0.2), rgba(251, 59, 59, 0.2)),
     url("https://via.placeholder.com/1920x1080") center / cover no-repeat;
     color: var(--dark-color);
@@ -125,17 +125,17 @@ body {
     overflow: hidden;
 }
 
-.hero-image {
+.header-image {
     box-shadow: var(--box-shadow);
     transform: perspective(1000px) rotateY(-10deg);
     transition: var(--transition);
 }
 
-.hero-image:hover {
+.header-image:hover {
     transform: perspective(1000px) rotateY(0);
 }
 
-.hero-shape {
+.header-shape {
     position: absolute;
     bottom: -10px;
     left: 0;
@@ -145,7 +145,7 @@ body {
     clip-path: polygon(0 100%, 100% 100%, 100% 0);
 }
 
-.hero h1 {
+.header h1 {
     color: var(--dark-color);
     font-weight: 700;
 }
