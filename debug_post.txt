@@ -1,6 +1,16 @@
 Array
 (
+<<<<<<< HEAD
     [action] => login
     [loginEmail] => hoja.valentin@gmail.com
     [loginPassword] => 1234
+=======
+    [action] => register
+    [registerPseudo] => LilianSCH
+    [registerFirstName] => Lilian
+    [registerLastName] => Schmitt
+    [registerEmail] => lilian.schmitt1@etu.univ-lorraine.fr
+    [registerPassword] => valentinlebg
+    [registerConfirmPassword] => valentinlebg
+>>>>>>> 2574a750bfe5610dc8df09fe163fec3097fe3abb
 )
