@@ -6,6 +6,11 @@ if (session_status() === PHP_SESSION_NONE) {
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container">
+        <!-- Logo et nom du site -->
+        <a class="navbar-brand d-flex align-items-center" href="../index/index.php">
+            <img id="logo" src="../icons/logos/MyPulse-removebg-preview.png" alt="My Pulse Logo" height="40" class="me-2">
+            <span class="fw-bold">My Pulse</span>
+        </a>
         <!-- ... autres liens ... -->
         <ul class="navbar-nav ms-auto">
             <li class="nav-item">

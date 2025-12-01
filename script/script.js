@@ -12,7 +12,7 @@ window.addEventListener("scroll", () => {
         navbar.classList.add("scrolled");
         navbarBrand.classList.add("scrolled");
         if (navbarLogo) {
-            navbarLogo.src = "icons/logos/MyPulse_White-removebg-preview.png";
+            navbarLogo.src = "../icons/logos/MyPulse_White-removebg-preview.png";
         }
     } else {
         navbar.classList.remove("scrolled");
