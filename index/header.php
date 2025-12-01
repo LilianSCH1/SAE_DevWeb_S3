@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
         <!-- Logo et nom du site -->
         <a class="navbar-brand d-flex align-items-center" href="../index/index.php">
             <img id="logo" src="../icons/logos/MyPulse-removebg-preview.png" alt="My Pulse Logo" height="40" class="me-2">
-            <span class="fw-bold">My Pulse</span>
+            <span class="fw-bold">MyPulse</span>
         </a>
         <!-- ... autres liens ... -->
         <ul class="navbar-nav ms-auto">
