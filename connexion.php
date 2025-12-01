@@ -82,6 +82,12 @@ if (
         $errors[] = "Email ou mot de passe incorrect.";
     }
 }
+
+if (isset($_SESSION['user_id'])) {
+    header('Location: mon_compte.php');
+    exit;
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
