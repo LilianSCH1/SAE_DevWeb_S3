@@ -1,10 +1,10 @@
 Array
 (
     [action] => register
-    [registerPseudo] => Valou
-    [registerFirstName] => Valentin
-    [registerLastName] => Hoja
-    [registerEmail] => hoja.valentin@gmail.com
-    [registerPassword] => 1234
-    [registerConfirmPassword] => 1234
+    [registerPseudo] => LilianSCH
+    [registerFirstName] => Lilian
+    [registerLastName] => Schmitt
+    [registerEmail] => lilian.schmitt1@etu.univ-lorraine.fr
+    [registerPassword] => valentinlebg
+    [registerConfirmPassword] => valentinlebg
 )
