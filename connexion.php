@@ -46,9 +46,10 @@ if (
             // INSERT : laisser UserID et DateInscription en auto
             $stmt = $pdo->prepare("
                 INSERT INTO utilisateur (UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role)
-                VALUES (?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, 'basique')
             ");
             $stmt->execute([$pseudo, $prenom, $nom, $email, $hash]);
+
 
             $_SESSION['user_id'] = $pdo->lastInsertId();
             $_SESSION['user_email'] = $email;

@@ -1,6 +1,10 @@
 Array
 (
-    [action] => login
-    [loginEmail] => hoja.valentin@gmail.com
-    [loginPassword] => 1234
+    [action] => register
+    [registerPseudo] => Valou
+    [registerFirstName] => Valentin
+    [registerLastName] => Hoja
+    [registerEmail] => hoja.valentin@gmail.com
+    [registerPassword] => 1234
+    [registerConfirmPassword] => 1234
 )

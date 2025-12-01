@@ -11,66 +11,9 @@ $pdo = dbconnect();
 $errors = [];
 $success = [];
 
-// Mise à jour des infos
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'update_info') {
-    $pseudo = trim($_POST['UserPseudo'] ?? '');
-    $prenom = trim($_POST['UserName'] ?? '');
-    $nom    = trim($_POST['UserSurname'] ?? '');
-    $email  = trim($_POST['UserMail'] ?? '');
+/* ... traitements update_info / update_password / delete_account ... */
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Email invalide.";
-    }
-
-    if (empty($errors)) {
-        $stmt = $pdo->prepare("
-            UPDATE utilisateur
-            SET UserPseudo = ?, UserName = ?, UserSurname = ?, UserMail = ?
-            WHERE UserID = ?
-        ");
-        $stmt->execute([$pseudo, $prenom, $nom, $email, $_SESSION['user_id']]);
-        $success[] = "Informations mises à jour.";
-        $_SESSION['user_email'] = $email;
-    }
-}
-
-// Changement de mot de passe
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'update_password') {
-    $current = $_POST['currentPassword'] ?? '';
-    $new1    = $_POST['newPassword'] ?? '';
-    $new2    = $_POST['confirmNewPassword'] ?? '';
-
-    if ($new1 !== $new2) {
-        $errors[] = "Les nouveaux mots de passe ne correspondent pas.";
-    }
-
-    if (empty($errors)) {
-        $stmt = $pdo->prepare("SELECT UserPassword FROM utilisateur WHERE UserID = ?");
-        $stmt->execute([$_SESSION['user_id']]);
-        $userPwd = $stmt->fetchColumn();
-
-        if (!$userPwd || !password_verify($current, $userPwd)) {
-            $errors[] = "Mot de passe actuel incorrect.";
-        } else {
-            $hash = password_hash($new1, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("UPDATE utilisateur SET UserPassword = ? WHERE UserID = ?");
-            $stmt->execute([$hash, $_SESSION['user_id']]);
-            $success[] = "Mot de passe mis à jour.";
-        }
-    }
-}
-
-// Suppression du compte
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete_account') {
-    $stmt = $pdo->prepare("DELETE FROM utilisateur WHERE UserID = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    session_unset();
-    session_destroy();
-    header('Location: index.php');
-    exit;
-}
-
-// Récupération des infos
+// Récupération des infos APRES les traitements
 $stmt = $pdo->prepare("
     SELECT UserPseudo, UserName, UserSurname, UserMail, Role, DateInscription
     FROM utilisateur
@@ -80,10 +23,13 @@ $stmt->execute([$_SESSION['user_id']]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
+    // Au cas où le compte aurait été supprimé
     header('Location: logout.php');
     exit;
 }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="fr">
 
