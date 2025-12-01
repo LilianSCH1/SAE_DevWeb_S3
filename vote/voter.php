@@ -17,7 +17,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
 <body>
-    <?php require 'header.php'; ?>
+    <?php require '../index/header.php'; ?>
 
     <!-- Section de vote -->
     <section class="py-5" style="margin-top: 80px;">
@@ -73,7 +73,7 @@
         </div>
     </section>
 
-    <?php require 'footer.php'; ?>
+    <?php require '../index/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script/script.js"></script>
