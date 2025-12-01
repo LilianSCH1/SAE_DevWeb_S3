@@ -390,6 +390,54 @@ body {
     color: var(--primary-color) !important;
 }
 
+/* Page Mon compte */
+
+.account-section {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.account-card {
+    box-shadow: var(--box-shadow);
+    border-radius: var(--border-radius);
+    border: none;
+}
+
+.account-card h4 {
+    color: var(--dark-color);
+    font-weight: 600;
+}
+
+/* Boutons orange (déjà cohérents avec le thème) */
+.account-btn-primary,
+.account-btn-primary:focus {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #fff;
+    transition: var(--transition);
+}
+
+.account-btn-primary:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+}
+
+.account-btn-danger,
+.account-btn-danger:focus {
+    border-color: var(--secondary-color);
+    color: var(--secondary-color);
+    background-color: transparent;
+    transition: var(--transition);
+}
+
+.account-btn-danger:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+    color: #fff;
+}
+
+
 /* Responsive */
 @media (max-width: 768px) {
     .section-title {

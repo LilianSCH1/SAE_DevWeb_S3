@@ -1,0 +1,6 @@
+Array
+(
+    [action] => login
+    [loginEmail] => hoja.valentin@gmail.com
+    [loginPassword] => 1234
+)
