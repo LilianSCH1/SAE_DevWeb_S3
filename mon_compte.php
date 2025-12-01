@@ -193,7 +193,7 @@ if (!$user) {
                     </p>
                     <form method="post" onsubmit="return confirm('Supprimer définitivement votre compte ?');">
                         <input type="hidden" name="action" value="delete_account">
-                        <button type="submit" class="btn btn-outline-danger">Supprimer mon compte</button>
+                        <button type="submit" class="btn account-btn-danger">Supprimer mon compte</button>
                     </form>
                 </div>
             </div>
