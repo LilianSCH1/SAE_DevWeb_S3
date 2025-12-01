@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `archive`;
 CREATE TABLE IF NOT EXISTS `archive` (
   `ArchiveID` int NOT NULL AUTO_INCREMENT,
-  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
+  `TypeContenu` enum('musique','artiste','groupe') NOT NULL,
   `ContenuID` int NOT NULL,
   `DateArchivage` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ArchiveID`),
@@ -65,24 +65,23 @@ INSERT INTO `categorie` (`CategorieID`, `NomCategorie`, `Description`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structure de la table `chanteur`
+-- Structure de la table `artiste`
 --
 
-DROP TABLE IF EXISTS `chanteur`;
-CREATE TABLE IF NOT EXISTS `chanteur` (
-  `ChanteurID` int NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `artiste`;
+CREATE TABLE IF NOT EXISTS `artiste` (
+  `ArtisteID` int NOT NULL AUTO_INCREMENT,
   `NomArtiste` varchar(150) NOT NULL,
   `NomReel` varchar(150) DEFAULT NULL,
   `BiographieCourte` text,
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageProfil` varchar(500) NOT NULL,
-  `DureeMorceau` int DEFAULT NULL,
-  `StatusChanteur` enum('en_attente','valide','refusee') NOT NULL DEFAULT 'en_attente',
+  `StatusArtiste` enum('en_attente','valide','refusee') NOT NULL DEFAULT 'en_attente',
   `UserID` int NOT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ChanteurID`),
+  PRIMARY KEY (`ArtisteID`),
   KEY `UserID` (`UserID`),
-  KEY `idx_status` (`StatusChanteur`)
+  KEY `idx_status` (`StatusArtiste`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -141,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `musique` (
 DROP TABLE IF EXISTS `resultat`;
 CREATE TABLE IF NOT EXISTS `resultat` (
   `ResultatID` int NOT NULL AUTO_INCREMENT,
-  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
+  `TypeContenu` enum('musique','artiste','groupe') NOT NULL,
   `ContenuID` int NOT NULL,
   `TotalVotes` int NOT NULL DEFAULT '0',
   `MoyenneVotes` decimal(3,2) DEFAULT NULL,
@@ -183,7 +182,7 @@ DROP TABLE IF EXISTS `vote`;
 CREATE TABLE IF NOT EXISTS `vote` (
   `VoteID` int NOT NULL AUTO_INCREMENT,
   `UserID` int NOT NULL,
-  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
+  `TypeContenu` enum('musique','artiste','groupe') NOT NULL,
   `ContenuID` int NOT NULL COMMENT 'ID dans la table correspondante',
   `DateVote` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ValeurVote` int NOT NULL,
@@ -198,10 +197,10 @@ CREATE TABLE IF NOT EXISTS `vote` (
 --
 
 --
--- Contraintes pour la table `chanteur`
+-- Contraintes pour la table `artiste`
 --
-ALTER TABLE `chanteur`
-  ADD CONSTRAINT `chanteur_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
+ALTER TABLE `artiste`
+  ADD CONSTRAINT `artiste_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `groupe`
