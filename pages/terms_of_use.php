@@ -6,9 +6,9 @@ L'accès à MyPulse implique acceptation pleine de ces conditions par l'entrepri
 <h1> Droits et Obligations des Utilisateurs </h1>
 <p>
 - Votants : Un vote unique par contenu/catégorie ; interdiction de multiples comptes.
-
+<br>
 - Membres certifiés : Soumettre contenus originaux (média valide) ; statut vérifié par admins.
-
+<br>
 - Admins : Valident contenus, gèrent catégories ; responsabilité accrue.
   Contenus illicites (piratage, haine) entraînent refus et sanctions.​
 </p>
