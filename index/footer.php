@@ -32,7 +32,7 @@
                     <div class="col-md-4">
                         <h5>Entreprise</h5>
                         <ul style="list-style: none; padding: 0;">
-                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">À propos</a></li>
+                            <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/about.php', 'À propos')" style="color: rgba(255,255,255,0.7); text-decoration: none;">À propos</a></li>
                             <li><a href="../index/contact.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Contact</a></li>
                             <li><a href="../login/connexion.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Connexion</a></li>
                         </ul>
@@ -41,9 +41,9 @@
                     <div class="col-md-4">
                         <h5>Légal</h5>
                         <ul style="list-style: none; padding: 0;">
-                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Conditions d'utilisation</a></li>
-                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de confidentialité</a></li>
-                            <li><a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de cookie</a></li>
+                            <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/terms_of_use.php', 'Conditions d\'utilisation')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Conditions d'utilisation</a></li>
+                            <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/privacy_policy.php', 'Politique de confidentialité')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de confidentialité</a></li>
+                            <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/cookies_policy.php', 'Politique de cookie')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de cookie</a></li>
                         </ul>
                     </div>
 
