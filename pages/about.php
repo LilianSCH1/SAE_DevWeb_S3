@@ -22,3 +22,9 @@ L'entreprise MyPulse s'engage pour la transparence, la sécurité et l'innovatio
     <p>
 Fondée par des passionnés de musique et de technologie, MyPulse repose sur une structure solide incluant administrateurs, membres certifiés et votants. Le projet intègre des fonctionnalités comme les classements en temps réel et les connexions sociales pour une expérience immersive. L'entreprise continue d'évoluer avec des mises à jour régulières pour enrichir les interactions.
     </p>
+    <h3> CONTACTEZ-NOUS </h3>
+    <p>
+Pour toute question, suggestion ou assistance, contactez notre support à l'adresse email : `contact@mypulse.com`. Nous sommes à l'écoute de notre communauté pour améliorer continuellement MyPulse.
+    </p>
+</body>
+</html>
