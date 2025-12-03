@@ -1,5 +1,5 @@
 <!-- Section d'accueil avec présentation -->
-<header class="hero" id="home" style="margin-top: 60px;">
+<header class="header" id="home" style="margin-top: 60px;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6 text-center text-lg-start mb-5 mb-lg-0">
