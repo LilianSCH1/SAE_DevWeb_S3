@@ -35,7 +35,7 @@
                                     </div>
                                     <div>
                                         <h6 class="mb-0">Email</h6>
-                                        <p class="mb-0 text-muted">contact@mypulse.com</p>
+                                        <p class="mb-0 text-muted">mypulse.company@gmail.com</p>
                                     </div>
                                 </div>
 
@@ -65,7 +65,7 @@
                         <div class="col-md-6">
                             <div class="contact-form">
                                 <h4 class="mb-4">Envoyez-nous un message</h4>
-                                <form id="contactForm">
+                                <form id="contactForm" action="send_email.php" method="POST">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Nom complet</label>
                                         <input type="text" class="form-control" id="name" required>
