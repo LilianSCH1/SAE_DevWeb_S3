@@ -31,7 +31,7 @@ function openPageModal(url, title) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(content, 'text/html');
             const mainContent = doc.querySelector('.container') || doc.querySelector('body');
-            modalBody.innerHTML = mainContent ? mainContent.innerHTML : content;
+            modalBody.innerHTML = '<style>body { font-family: "Raleway", sans-serif; }</style>' + (mainContent ? mainContent.innerHTML : content);
         })
         .catch(error => {
             modalBody.innerHTML = '<p>Erreur de chargement</p>';
