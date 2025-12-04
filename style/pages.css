@@ -1,16 +1,2 @@
 /* Import Raleway font from Google Fonts */
-@import 
-
-h3 {
-    font-size: 1.5em;
-    margin-bottom: 0.5em;
-    color: var(--primary-color);
-}
-
-p {
-    font-size: 1rem;
-    font-family: 'Raleway', sans-serif;
-    line-height: 1.6;
-    color: var(--text-color);
-    margin-bottom: 1rem;
-}
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700&display=swap');

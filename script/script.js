@@ -1,4 +1,3 @@
-// Fonction pour ouvrir un modal de page
 function openPageModal(url, title) {
     // Créer le modal s'il n'existe pas
     if (!document.getElementById('pageModal')) {
@@ -7,8 +6,8 @@ function openPageModal(url, title) {
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="pageModalLabel">${title}</h5>
-                            <button type="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            <h2 class="modal-title" id="pageModalLabel"></h2>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body" id="pageModalBody"></div>
                     </div>
@@ -18,10 +17,14 @@ function openPageModal(url, title) {
         document.body.insertAdjacentHTML('beforeend', modalHTML);
     }
 
-    const modal = new bootstrap.Modal(document.getElementById('pageModal'));
+    const modalElement = document.getElementById('pageModal');
+    const modal = new bootstrap.Modal(modalElement);
     const modalBody = document.getElementById('pageModalBody');
+    const modalTitle = document.getElementById('pageModalLabel');
 
-    // Ouvrir le modal
+    // Mettre le titre en MAJUSCULES
+    modalTitle.textContent = title.toUpperCase();
+
     modal.show();
 
     // Charger le contenu
@@ -31,7 +34,9 @@ function openPageModal(url, title) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(content, 'text/html');
             const mainContent = doc.querySelector('.container') || doc.querySelector('body');
-            modalBody.innerHTML = mainContent ? mainContent.innerHTML : content;
+            modalBody.innerHTML =
+                '<style>body { font-family: "Raleway", sans-serif; }</style>' +
+                (mainContent ? mainContent.innerHTML : content);
         })
         .catch(error => {
             modalBody.innerHTML = '<p>Erreur de chargement</p>';
