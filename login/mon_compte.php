@@ -1,33 +1,51 @@
 <?php
 session_start();
-require_once '../database/dbconnect.php';
+
+require_once __DIR__ . '/../class/Database.php';
+require_once __DIR__ . '/../class/User.php';
+require_once __DIR__ . '/../controllers/UserController.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login/connexion.php');
     exit;
 }
 
-$pdo = dbconnect();
-$errors = [];
-$success = [];
-
-/* ... traitements update_info / update_password / delete_account ... */
-
-// Récupération des infos APRES les traitements
-$stmt = $pdo->prepare("
-    SELECT UserPseudo, UserName, UserSurname, UserMail, Role, DateInscription
-    FROM utilisateur
-    WHERE UserID = ?
-");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$user) {
-    // Au cas où le compte aurait été supprimé
+// créer le contrôleur AVANT de l'utiliser
+$controller  = new UserController();
+$currentUser = User::findById((int)$_SESSION['user_id']);
+if (!$currentUser) {
     header('Location: ../login/logout.php');
     exit;
 }
+
+$errors  = [];
+$success = [];
+
+// Traitement des formulaires
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'update_info') {
+        $errors = $controller->updateProfile($currentUser, $_POST);
+
+        if (empty($errors)) {
+            $success[] = "Informations mises à jour.";
+            $currentUser = User::findById((int)$_SESSION['user_id']);
+        }
+    } elseif ($action === 'update_password') {
+        $errors = $controller->updatePassword($currentUser, $_POST);
+
+        if (empty($errors)) {
+            $success[] = "Mot de passe mis à jour.";
+        }
+    } elseif ($action === 'delete_account') {
+        $controller->deleteAccount($currentUser);
+        header('Location: ../index/index.php');
+        exit;
+    }
+}
 ?>
+
 
 
 <!DOCTYPE html>
