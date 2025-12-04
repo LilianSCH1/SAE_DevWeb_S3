@@ -10,7 +10,6 @@
     --box-shadow: 0 10px 30px rgba(250, 133, 50, 0.1);
     --transition: all 0.3s ease;
 }
-
 body {
     font-family: "Poppins", sans-serif;
     color: var(--dark-color);
