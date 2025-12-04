@@ -44,6 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
+
+function roleLabel(string $role): string {
+    switch ($role) {
+        case 'admin':    return 'Administrateur';
+        case 'certifie': return 'Utilisateur certifié';
+        case 'basique':  return 'Utilisateur';
+        case 'invite':   return 'Invité';
+        default:         return $role;
+    }
+}
 ?>
 
 
@@ -91,30 +101,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="mb-3">
                             <label class="form-label">Pseudo</label>
                             <input type="text" name="UserPseudo" class="form-control"
-                                value="<?php echo htmlspecialchars($user['UserPseudo']); ?>" required>
+                                value="<?php echo htmlspecialchars($currentUser->pseudo); ?>" required>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Prénom</label>
                                 <input type="text" name="UserName" class="form-control"
-                                    value="<?php echo htmlspecialchars($user['UserName']); ?>" required>
+                                    value="<?php echo htmlspecialchars($currentUser->firstName); ?>" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nom</label>
                                 <input type="text" name="UserSurname" class="form-control"
-                                    value="<?php echo htmlspecialchars($user['UserSurname']); ?>" required>
+                                    value="<?php echo htmlspecialchars($currentUser->lastName); ?>" required>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" name="UserMail" class="form-control"
-                                value="<?php echo htmlspecialchars($user['UserMail']); ?>" required>
+                                value="<?php echo htmlspecialchars($currentUser->email); ?>" required>
                         </div>
 
-                        <p><strong>Rôle :</strong> <?php echo htmlspecialchars($user['Role']); ?></p>
-                        <p><strong>Date d’inscription :</strong> <?php echo htmlspecialchars($user['DateInscription']); ?></p>
+                        <p><strong>Rôle :</strong> <?php echo htmlspecialchars(roleLabel($currentUser->role)); ?></p>
+                        <?php if ($currentUser->dateInscription): ?>
+                            <p><strong>Date d’inscription :</strong>
+                                <?php echo htmlspecialchars($currentUser->dateInscription); ?>
+                            </p>
+                        <?php endif; ?>
 
                         <button type="submit" class="btn account-btn-primary">Enregistrer les modifications</button>
                     </form>
