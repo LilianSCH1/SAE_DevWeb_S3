@@ -80,6 +80,7 @@ if (
     if ($user && password_verify($password, $user['UserPassword'])) {
         $_SESSION['user_id'] = $user['UserID'];
         $_SESSION['user_email'] = $email;
+        $_SESSION['role'] = $user['Role'];
         header('Location: ../index/index.php');
         exit;
     } else {
