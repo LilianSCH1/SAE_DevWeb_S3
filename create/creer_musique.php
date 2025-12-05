@@ -27,29 +27,33 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titre = $_POST['titre'] ?? '';
     $artiste = $_POST['artiste'] ?? '';
-    $dureeMorceau = $_POST['dureeMorceau'] ?? null;
 
-    $uploadDir = 'uploads/musiques/';
-    if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+    // Dossiers organisés
+    $sonsDir = 'uploads/musiques/sons/';
+    $couverturesDir = 'uploads/musiques/couvertures/';
+    if (!file_exists($sonsDir)) mkdir($sonsDir, 0777, true);
+    if (!file_exists($couverturesDir)) mkdir($couverturesDir, 0777, true);
+
+    $titreClean = str_replace(' ', '_', $titre);
 
     $musicPath = '';
     if (isset($_FILES['cheminFichierMP3']) && $_FILES['cheminFichierMP3']['error'] === UPLOAD_ERR_OK) {
         $musicExt = pathinfo($_FILES['cheminFichierMP3']['name'], PATHINFO_EXTENSION);
-        $musicPath = $uploadDir . time() . '_musique.' . strtolower($musicExt);
+        $musicPath = $sonsDir . $titreClean . '_' . time() . '_musique.' . strtolower($musicExt);
         move_uploaded_file($_FILES['cheminFichierMP3']['tmp_name'], $musicPath);
     }
 
     $imagePath = '';
     if (isset($_FILES['imageCouverture']) && $_FILES['imageCouverture']['error'] === UPLOAD_ERR_OK) {
         $imageExt = pathinfo($_FILES['imageCouverture']['name'], PATHINFO_EXTENSION);
-        $imagePath = $uploadDir . time() . '_couverture.' . strtolower($imageExt);
+        $imagePath = $couverturesDir . $titreClean . '_' . time() . '_couverture.' . strtolower($imageExt);
         move_uploaded_file($_FILES['imageCouverture']['tmp_name'], $imagePath);
     }
 
     if ($titre && $artiste && $musicPath && $imagePath) {
         $tailleFichier = filesize($musicPath);
-        $stmt = $pdo->prepare("INSERT INTO musique (Titre, Artiste, CheminFichierMP3, ImageCouverture, DureeMorceau, TailleFichier, StatusMusique, UserID) VALUES (?, ?, ?, ?, ?, ?, 'en_attente', ?)");
-        $stmt->execute([$titre, $artiste, $musicPath, $imagePath, $dureeMorceau, $tailleFichier, $userId]);
+        $stmt = $pdo->prepare("INSERT INTO musique (Titre, Artiste, CheminFichierMP3, ImageCouverture, TailleFichier, StatusMusique, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
+        $stmt->execute([$titre, $artiste, $musicPath, $imagePath, $tailleFichier, $userId]);
 
         if ($stmt->rowCount() > 0) {
             $message = 'Musique ajoutée avec succès !';
@@ -104,11 +108,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <label for="artiste" class="form-label">Artiste <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="artiste" name="artiste" required>
                                 </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="dureeMorceau" class="form-label">Durée du morceau (en secondes)</label>
-                                <input type="number" class="form-control" id="dureeMorceau" name="dureeMorceau">
                             </div>
 
                             <div class="row">

@@ -28,28 +28,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nomGroupe = $_POST['nomGroupe'] ?? '';
     $anneeFormation = $_POST['anneeFormation'] ?? null;
     $biographieCourte = $_POST['biographieCourte'] ?? '';
-    $dureeMorceau = $_POST['dureeMorceau'] ?? null;
 
-    $uploadDir = 'uploads/groupes/';
-    if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+    // Dossiers organisés
+    $profilDir = 'uploads/groupes/profil/';
+    $sonsDir = 'uploads/groupes/sons/';
+    if (!file_exists($profilDir)) mkdir($profilDir, 0777, true);
+    if (!file_exists($sonsDir)) mkdir($sonsDir, 0777, true);
 
-    $musicPath = '';
-    if (isset($_FILES['cheminFichierMP3']) && $_FILES['cheminFichierMP3']['error'] === UPLOAD_ERR_OK) {
-        $musicExt = pathinfo($_FILES['cheminFichierMP3']['name'], PATHINFO_EXTENSION);
-        $musicPath = $uploadDir . time() . '_musique.' . strtolower($musicExt);
-        move_uploaded_file($_FILES['cheminFichierMP3']['tmp_name'], $musicPath);
-    }
+    $nomGroupeClean = str_replace(' ', '_', $nomGroupe);
 
     $imagePath = '';
     if (isset($_FILES['imageGroupe']) && $_FILES['imageGroupe']['error'] === UPLOAD_ERR_OK) {
         $imageExt = pathinfo($_FILES['imageGroupe']['name'], PATHINFO_EXTENSION);
-        $imagePath = $uploadDir . time() . '_groupe.' . strtolower($imageExt);
+        $imagePath = $profilDir . $nomGroupeClean . '_profil.' . strtolower($imageExt);
         move_uploaded_file($_FILES['imageGroupe']['tmp_name'], $imagePath);
     }
 
-    if ($nomGroupe && $musicPath && $imagePath) {
-        $stmt = $pdo->prepare("INSERT INTO groupe (NomGroupe, AnneeFormation, BiographieCourte, CheminFichierMP3, ImageGroupe, DureeMorceau, StatusGroupe, UserID) VALUES (?, ?, ?, ?, ?, ?, 'en_attente', ?)");
-        $stmt->execute([$nomGroupe, $anneeFormation, $biographieCourte, $musicPath, $imagePath, $dureeMorceau, $userId]);
+    $soundPath = '';
+    if (isset($_FILES['cheminFichierMP3']) && $_FILES['cheminFichierMP3']['error'] === UPLOAD_ERR_OK) {
+        $soundExt = pathinfo($_FILES['cheminFichierMP3']['name'], PATHINFO_EXTENSION);
+        $soundPath = $sonsDir . $nomGroupeClean . '_son.' . strtolower($soundExt);
+        move_uploaded_file($_FILES['cheminFichierMP3']['tmp_name'], $soundPath);
+    }
+
+    if ($nomGroupe && $soundPath && $imagePath) {
+        $stmt = $pdo->prepare("INSERT INTO groupe (NomGroupe, AnneeFormation, BiographieCourte, CheminFichierMP3, ImageGroupe, StatusGroupe, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
+        $stmt->execute([$nomGroupe, $anneeFormation, $biographieCourte, $soundPath, $imagePath, $userId]);
 
         if ($stmt->rowCount() > 0) {
             $message = 'Groupe ajouté avec succès !';
@@ -87,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-8">
                 <div class="card shadow">
                     <div class="card-header btn btn-primary btn-lg">
-                        <h3 class="card-title mb-0"><i class="bi bi-people-fill me-2" ></i>Créer un nouveau groupe</h3>
+                        <h3 class="card-title mb-0"><i class="bi bi-people-fill me-2"></i>Créer un nouveau groupe</h3>
                     </div>
                     <div class="card-body">
                         <?php if ($message): ?>
@@ -113,18 +117,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="dureeMorceau" class="form-label">Durée du morceau (en secondes)</label>
-                                    <input type="number" class="form-control" id="dureeMorceau" name="dureeMorceau">
-                                </div>
-                                <div class="col-md-6 mb-3">
                                     <label for="cheminFichierMP3" class="form-label">Fichier audio <span class="text-danger">*</span></label>
                                     <input type="file" class="form-control" id="cheminFichierMP3" name="cheminFichierMP3" accept="audio/*" required>
                                 </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="imageGroupe" class="form-label">Image du groupe <span class="text-danger">*</span></label>
-                                <input type="file" class="form-control" id="imageGroupe" name="imageGroupe" accept="image/*" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="imageGroupe" class="form-label">Image de profil <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control" id="imageGroupe" name="imageGroupe" accept="image/*" required>
+                                </div>
                             </div>
 
                             <div class="d-grid">
