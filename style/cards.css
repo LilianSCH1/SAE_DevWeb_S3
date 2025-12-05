@@ -1,0 +1,166 @@
+/* Grille des cartes : 4 colonnes */
+.card-list {
+    max-width: 1200px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+/* Carte portrait, hauteur automatique */
+.content-card {
+    background: #dfe1ea;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    color: #212431;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    display: flex;
+    flex-direction: column;
+    /* plus de height fixe -> la carte grandit avec le contenu */
+}
+
+/* Header arrondi */
+.content-card-header {
+    background: #212431;
+    color: #ea5c1f;
+    padding: 10px 14px 22px;
+    border-bottom-right-radius: 48px;
+    position: relative;
+}
+
+.content-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.content-card-type {
+    display: inline-block;
+    background: #ea5c1f;
+    color: #212431;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.content-card-date {
+    position: absolute;
+    left: 0;
+    bottom: -16px;
+    padding: 3px 20px 5px;
+    background: #212431;
+    color: #fff;
+    border-bottom-right-radius: 16px;
+    font-size: 0.75rem;
+}
+
+/* Bouton + / - dans le header */
+.toggle-desc-btn {
+    position: absolute;
+    right: 12px;
+    bottom: -14px;
+    width: 26px;
+    height: 26px;
+    border-radius: 999px;
+    border: 2px solid #ea5c1f;
+    background: #212431;
+    color: #ea5c1f;
+    font-size: 16px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.toggle-desc-btn:hover {
+    background: #ea5c1f;
+    color: #212431;
+}
+
+/* Image responsive au-dessus de la description */
+.content-card-image {
+    width: 100%;
+    padding-top: 45%;            /* ratio vertical, responsive */
+    margin-top: 18px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 8px;
+}
+
+/* Corps : pas de hauteur fixe */
+.content-card-body {
+    padding: 18px 14px 6px;
+}
+
+/* Séparateur */
+.content-card-separator {
+    height: 2px;
+    background: #ea5c1f;
+    margin: 8px 0 8px;
+    border-radius: 999px;
+}
+
+/* Sous-titre (ex: artiste d'une musique) */
+.content-card-subtitle {
+    font-size: 0.8rem;
+    line-height: 1.3;
+    color: #333;
+}
+
+/* Description masquée par défaut, affichée via JS */
+.content-card-description {
+    font-size: 0.8rem;
+    line-height: 1.3;
+    color: #333;
+    margin: 0;
+    display: none;
+}
+.content-card-description.show {
+    display: block;
+}
+
+/* Bas de carte */
+.content-card-footer {
+    display: flex;
+    gap: 8px;
+    padding: 6px 10px 12px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* Boutons */
+.btn-outline-orange,
+.btn-orange {
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    border: 2px solid #ea5c1f;
+    background: transparent;
+    color: #ea5c1f;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-orange:hover {
+    background: #ea5c1f;
+    color: #212431;
+}
+
+.btn-orange {
+    background: #ea5c1f;
+    color: #212431;
+}
+
+.btn-orange:hover {
+    background: #f46c29;
+    border-color: #f46c29;
+}

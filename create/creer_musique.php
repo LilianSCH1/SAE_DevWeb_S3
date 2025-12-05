@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-// Vérifier que l'utilisateur est connecté
+// Vérifier que l'utilisateur existe
 $stmt = $pdo->prepare("SELECT UserID FROM utilisateur WHERE UserID = ?");
 $stmt->execute([$userId]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -35,26 +35,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!file_exists($sonsDir)) mkdir($sonsDir, 0777, true);
     if (!file_exists($couverturesDir)) mkdir($couverturesDir, 0777, true);
 
+    // Nettoyage du titre pour les noms de fichiers
     $titreClean = str_replace(' ', '_', $titre);
+    $titreClean = preg_replace('/[^A-Za-z0-9_-]/', '', $titreClean);
 
     $musicPath = '';
     if (isset($_FILES['cheminFichierMP3']) && $_FILES['cheminFichierMP3']['error'] === UPLOAD_ERR_OK) {
-        $musicExt = pathinfo($_FILES['cheminFichierMP3']['name'], PATHINFO_EXTENSION);
+        $musicExt  = pathinfo($_FILES['cheminFichierMP3']['name'], PATHINFO_EXTENSION);
         $musicPath = $sonsDir . $titreClean . '_' . time() . '_musique.' . strtolower($musicExt);
         move_uploaded_file($_FILES['cheminFichierMP3']['tmp_name'], $musicPath);
     }
 
     $imagePath = '';
     if (isset($_FILES['imageCouverture']) && $_FILES['imageCouverture']['error'] === UPLOAD_ERR_OK) {
-        $imageExt = pathinfo($_FILES['imageCouverture']['name'], PATHINFO_EXTENSION);
+        $imageExt  = pathinfo($_FILES['imageCouverture']['name'], PATHINFO_EXTENSION);
         $imagePath = $couverturesDir . $titreClean . '_' . time() . '_couverture.' . strtolower($imageExt);
         move_uploaded_file($_FILES['imageCouverture']['tmp_name'], $imagePath);
     }
 
     if ($titre && $artiste && $musicPath && $imagePath) {
-        $tailleFichier = filesize($musicPath);
-        $stmt = $pdo->prepare("INSERT INTO musique (Titre, Artiste, AnneePublication, CheminFichierMP3, ImageCouverture, TailleFichier, StatusMusique, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
-        $stmt->execute([$titre, $artiste, $anneePublication, $musicPath, $imagePath, $tailleFichier, $userId]);
+        $stmt = $pdo->prepare("
+            INSERT INTO musique (
+                Titre,
+                Artiste,
+                AnneePublication,
+                CheminFichierMP3,
+                ImageCouverture,
+                StatusMusique,
+                UserID,
+                DateProposition
+            ) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())
+        ");
+        $stmt->execute([$titre, $artiste, $anneePublication, $musicPath, $imagePath, $userId]);
 
         if ($stmt->rowCount() > 0) {
             $message = 'Musique ajoutée avec succès !';
@@ -92,7 +104,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-8">
                 <div class="card shadow">
                     <div class="card-header btn btn-primary btn-lg">
-                        <h3 class="card-title mb-0"><i class="bi bi-music-note-beamed me-2"></i>Créer une nouvelle musique</h3>
+                        <h3 class="card-title mb-0">
+                            <i class="bi bi-music-note-beamed me-2"></i>
+                            Créer une nouvelle musique
+                        </h3>
                     </div>
                     <div class="card-body">
                         <?php if ($message): ?>
@@ -102,26 +117,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <form method="POST" enctype="multipart/form-data">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="titre" class="form-label">Titre de la musique <span class="text-danger">*</span></label>
+                                    <label for="titre" class="form-label">
+                                        Titre de la musique <span class="text-danger">*</span>
+                                    </label>
                                     <input type="text" class="form-control" id="titre" name="titre" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="artiste" class="form-label">Artiste <span class="text-danger">*</span></label>
+                                    <label for="artiste" class="form-label">
+                                        Artiste <span class="text-danger">*</span>
+                                    </label>
                                     <input type="text" class="form-control" id="artiste" name="artiste" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="anneePublication" class="form-label">Année de publication</label>
-                                    <input type="number" class="form-control" id="anneePublication" name="anneePublication" min="1900" max="<?php echo date('Y'); ?>">
+                                    <input type="number"
+                                           class="form-control"
+                                           id="anneePublication"
+                                           name="anneePublication"
+                                           min="1900"
+                                           max="<?php echo date('Y'); ?>">
+                                </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="cheminFichierMP3" class="form-label">Fichier audio <span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control" id="cheminFichierMP3" name="cheminFichierMP3" accept="audio/*" required>
+                                    <label for="cheminFichierMP3" class="form-label">
+                                        Fichier audio <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="file"
+                                           class="form-control"
+                                           id="cheminFichierMP3"
+                                           name="cheminFichierMP3"
+                                           accept="audio/*"
+                                           required>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="imageCouverture" class="form-label">Image de couverture <span class="text-danger">*</span></label>
-                                    <input type="file" class="form-control" id="imageCouverture" name="imageCouverture" accept="image/*" required>
+                                    <label for="imageCouverture" class="form-label">
+                                        Image de couverture <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="file"
+                                           class="form-control"
+                                           id="imageCouverture"
+                                           name="imageCouverture"
+                                           accept="image/*"
+                                           required>
                                 </div>
                             </div>
 
