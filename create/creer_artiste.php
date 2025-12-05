@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header btn btn-primary btn-lg">
                         <h3 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Créer un nouvel artiste</h3>
                     </div>
                     <div class="card-body">

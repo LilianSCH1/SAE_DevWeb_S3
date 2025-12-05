@@ -86,8 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="card-title mb-0"><i class="bi bi-people-fill me-2"></i>Créer un nouveau groupe</h3>
+                    <div class="card-header btn btn-primary btn-lg">
+                        <h3 class="card-title mb-0"><i class="bi bi-people-fill me-2" ></i>Créer un nouveau groupe</h3>
                     </div>
                     <div class="card-body">
                         <?php if ($message): ?>
