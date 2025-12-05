@@ -27,6 +27,7 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titre = $_POST['titre'] ?? '';
     $artiste = $_POST['artiste'] ?? '';
+    $anneePublication = $_POST['anneePublication'] ?? '';
 
     // Dossiers organisés
     $sonsDir = 'uploads/musiques/sons/';
@@ -52,8 +53,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($titre && $artiste && $musicPath && $imagePath) {
         $tailleFichier = filesize($musicPath);
-        $stmt = $pdo->prepare("INSERT INTO musique (Titre, Artiste, CheminFichierMP3, ImageCouverture, TailleFichier, StatusMusique, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
-        $stmt->execute([$titre, $artiste, $musicPath, $imagePath, $tailleFichier, $userId]);
+        $stmt = $pdo->prepare("INSERT INTO musique (Titre, Artiste, AnneePublication, CheminFichierMP3, ImageCouverture, TailleFichier, StatusMusique, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
+        $stmt->execute([$titre, $artiste, $anneePublication, $musicPath, $imagePath, $tailleFichier, $userId]);
 
         if ($stmt->rowCount() > 0) {
             $message = 'Musique ajoutée avec succès !';
@@ -108,6 +109,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <label for="artiste" class="form-label">Artiste <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="artiste" name="artiste" required>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="anneePublication" class="form-label">Année de publication</label>
+                                    <input type="number" class="form-control" id="anneePublication" name="anneePublication" min="1900" max="<?php echo date('Y'); ?>">
                             </div>
 
                             <div class="row">

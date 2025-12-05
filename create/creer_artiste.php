@@ -24,10 +24,11 @@
 
     $message = '';
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $nomArtiste = $_POST['nomArtiste'] ?? '';
-        $nomReel = $_POST['nomReel'] ?? '';
-        $bio = $_POST['biographieCourte'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nomArtiste = $_POST['nomArtiste'] ?? '';
+    $nomReel = $_POST['nomReel'] ?? '';
+    $bio = $_POST['biographieCourte'] ?? '';
+    $anneeNaissance = $_POST['anneeNaissance'] ?? '';
 
         $nomArtisteClean = str_replace(' ', '_', $nomArtiste);
 
@@ -53,8 +54,8 @@
         }
 
         if ($nomArtiste && $soundPath && $imagePath) {
-            $stmt = $pdo->prepare("INSERT INTO artiste (NomArtiste, NomReel, BiographieCourte, CheminFichierMP3, ImageProfil, StatusArtiste, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
-            $stmt->execute([$nomArtiste, $nomReel, $bio, $soundPath, $imagePath, $userId]);
+            $stmt = $pdo->prepare("INSERT INTO artiste (NomArtiste, NomReel, BiographieCourte, AnneeNaissance, CheminFichierMP3, ImageProfil, StatusArtiste, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
+            $stmt->execute([$nomArtiste, $nomReel, $bio, $anneeNaissance, $soundPath, $imagePath, $userId]);
 
             if ($stmt->rowCount() > 0) {
                 $message = 'Artiste ajouté avec succès !';
@@ -116,6 +117,11 @@
                                     <div class="mb-3">
                                         <label for="biographieCourte" class="form-label">Biographie courte</label>
                                         <textarea class="form-control" id="biographieCourte" name="biographieCourte" rows="3"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="anneeNaissance" class="form-label">Année de naissance</label>
+                                        <input type="number" class="form-control" id="anneeNaissance" name="anneeNaissance" min="1900" max="2023">
                                     </div>
 
                                     <div class="row">

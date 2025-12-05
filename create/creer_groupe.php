@@ -1,4 +1,4 @@
-<?php
+pesu<?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -110,10 +110,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="biographieCourte" class="form-label">Biographie courte</label>
-                                <textarea class="form-control" id="biographieCourte" name="biographieCourte" rows="3"></textarea>
-                            </div>
+                                    <div class="mb-3">
+                                        <label for="biographieCourte" class="form-label">Biographie courte</label>
+                                        <textarea class="form-control" id="biographieCourte" name="biographieCourte" rows="3"></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="anneeGroupe" class="form-label">Année de formation du groupe</label>
+                                        <input type="number" class="form-control" id="anneeGroupe" name="anneeGroupe" min="1900" max="2023">
+                                    </div>
 
                             <div class="row">
                                 <div class="col-md-6 mb-3">
