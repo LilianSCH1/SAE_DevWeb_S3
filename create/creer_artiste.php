@@ -1,0 +1,142 @@
+    <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require '../database/dbconnect.php';
+$pdo = dbconnect();
+
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../login/connexion.php');
+    exit;
+}
+
+$userId = $_SESSION['user_id'];
+
+// Vérifier que l'utilisateur est connecté
+$stmt = $pdo->prepare("SELECT UserID FROM utilisateur WHERE UserID = ?");
+$stmt->execute([$userId]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$user) {
+    header('Location: ../login/connexion.php');
+    exit;
+}
+
+$message = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $nomArtiste = $_POST['nomArtiste'] ?? '';
+    $nomReel = $_POST['nomReel'] ?? '';
+    $bio = $_POST['biographieCourte'] ?? '';
+
+    $uploadDir = 'uploads/artistes/';
+    if (!file_exists($uploadDir)) mkdir($uploadDir, 0777, true);
+
+    $imagePath = '';
+    if (isset($_FILES['imageProfil']) && $_FILES['imageProfil']['error'] === UPLOAD_ERR_OK) {
+        $imageExt = pathinfo($_FILES['imageProfil']['name'], PATHINFO_EXTENSION);
+        $imagePath = $uploadDir . time() . '_profil.' . strtolower($imageExt);
+        move_uploaded_file($_FILES['imageProfil']['tmp_name'], $imagePath);
+    }
+
+    // Fichier son obligatoire
+    $soundPath = '';
+    if (isset($_FILES['cheminFichierMP3']) && $_FILES['cheminFichierMP3']['error'] === UPLOAD_ERR_OK) {
+        $soundExt = pathinfo($_FILES['cheminFichierMP3']['name'], PATHINFO_EXTENSION);
+        $soundPath = $uploadDir . time() . '_son.' . strtolower($soundExt);
+        move_uploaded_file($_FILES['cheminFichierMP3']['tmp_name'], $soundPath);
+    }
+
+    if ($nomArtiste && $soundPath && $imagePath) {
+        $stmt = $pdo->prepare("INSERT INTO artiste (NomArtiste, NomReel, BiographieCourte, CheminFichierMP3, ImageProfil, StatusArtiste, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
+        $stmt->execute([$nomArtiste, $nomReel, $bio, $soundPath, $imagePath, $userId]);
+
+        if ($stmt->rowCount() > 0) {
+            $message = 'Artiste ajouté avec succès !';
+        } else {
+            $message = 'Erreur lors de l\'ajout de l\'artiste.';
+        }
+    } else {
+        $message = 'Veuillez remplir tous les champs obligatoires.';
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Créer un artiste - MyPulse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../style/style.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../icons/logos/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/svg+xml" href="../icons/logos/favicon.svg">
+    <link rel="shortcut icon" href="../icons/logos/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="../icons/logos/apple-touch-icon.png">
+    <link rel="manifest" href="../icons/logos/site.webmanifest">
+</head>
+<body>
+<?php require '../index/header.php'; ?>
+
+<section class="py-5" style="margin-top: 80px;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0"><i class="bi bi-person-fill me-2"></i>Créer un nouvel artiste</h3>
+                    </div>
+                    <div class="card-body">
+                        <?php if ($message): ?>
+                            <div class="alert alert-info"><?php echo htmlspecialchars($message); ?></div>
+                        <?php endif; ?>
+
+                        <form method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="nomArtiste" class="form-label">Nom de l'artiste <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="nomArtiste" name="nomArtiste" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nomReel" class="form-label">Nom réel</label>
+                                    <input type="text" class="form-control" id="nomReel" name="nomReel">
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="biographieCourte" class="form-label">Biographie courte</label>
+                                <textarea class="form-control" id="biographieCourte" name="biographieCourte" rows="3"></textarea>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="cheminFichierMP3" class="form-label">Fichier audio <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control" id="cheminFichierMP3" name="cheminFichierMP3" accept="audio/*" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="imageProfil" class="form-label">Image de profil <span class="text-danger">*</span></label>
+                                    <input type="file" class="form-control" id="imageProfil" name="imageProfil" accept="image/*" required>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-plus-circle me-2"></i>Ajouter l'artiste
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<?php require '../index/footer.php'; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
