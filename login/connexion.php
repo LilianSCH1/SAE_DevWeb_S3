@@ -1,16 +1,19 @@
 <?php
 session_start();
-require_once '../database/dbconnect.php';
 
-$pdo = dbconnect();
+require_once __DIR__ . '/../class/Database.php';
+require_once __DIR__ . '/../class/User.php';
+require_once __DIR__ . '/../controllers/UserController.php';
+
+
+$controller = new UserController();
+$pdo = Database::getConnection();
 $errors = [];
 
 // Debug erreurs PHP
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
-file_put_contents('../database/debug_post.txt', print_r($_POST, true));
-
 
 // TRAITEMENT INSCRIPTION
 if (

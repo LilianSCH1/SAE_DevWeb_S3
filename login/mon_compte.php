@@ -1,33 +1,61 @@
 <?php
 session_start();
-require_once '../database/dbconnect.php';
+
+require_once __DIR__ . '/../class/Database.php';
+require_once __DIR__ . '/../class/User.php';
+require_once __DIR__ . '/../controllers/UserController.php';
 
 if (!isset($_SESSION['user_id'])) {
     header('Location: ../login/connexion.php');
     exit;
 }
 
-$pdo = dbconnect();
-$errors = [];
-$success = [];
-
-/* ... traitements update_info / update_password / delete_account ... */
-
-// Récupération des infos APRES les traitements
-$stmt = $pdo->prepare("
-    SELECT UserPseudo, UserName, UserSurname, UserMail, Role, DateInscription
-    FROM utilisateur
-    WHERE UserID = ?
-");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$user) {
-    // Au cas où le compte aurait été supprimé
+// créer le contrôleur AVANT de l'utiliser
+$controller  = new UserController();
+$currentUser = User::findById((int)$_SESSION['user_id']);
+if (!$currentUser) {
     header('Location: ../login/logout.php');
     exit;
 }
+
+$errors  = [];
+$success = [];
+
+// Traitement des formulaires
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'update_info') {
+        $errors = $controller->updateProfile($currentUser, $_POST);
+
+        if (empty($errors)) {
+            $success[] = "Informations mises à jour.";
+            $currentUser = User::findById((int)$_SESSION['user_id']);
+        }
+    } elseif ($action === 'update_password') {
+        $errors = $controller->updatePassword($currentUser, $_POST);
+
+        if (empty($errors)) {
+            $success[] = "Mot de passe mis à jour.";
+        }
+    } elseif ($action === 'delete_account') {
+        $controller->deleteAccount($currentUser);
+        header('Location: ../index/index.php');
+        exit;
+    }
+}
+
+function roleLabel(string $role): string {
+    switch ($role) {
+        case 'admin':    return 'Administrateur';
+        case 'certifie': return 'Utilisateur certifié';
+        case 'basique':  return 'Utilisateur';
+        case 'invite':   return 'Invité';
+        default:         return $role;
+    }
+}
 ?>
+
 
 
 <!DOCTYPE html>
@@ -73,30 +101,34 @@ if (!$user) {
                         <div class="mb-3">
                             <label class="form-label">Pseudo</label>
                             <input type="text" name="UserPseudo" class="form-control"
-                                value="<?php echo htmlspecialchars($user['UserPseudo']); ?>" required>
+                                value="<?php echo htmlspecialchars($currentUser->pseudo); ?>" required>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Prénom</label>
                                 <input type="text" name="UserName" class="form-control"
-                                    value="<?php echo htmlspecialchars($user['UserName']); ?>" required>
+                                    value="<?php echo htmlspecialchars($currentUser->firstName); ?>" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Nom</label>
                                 <input type="text" name="UserSurname" class="form-control"
-                                    value="<?php echo htmlspecialchars($user['UserSurname']); ?>" required>
+                                    value="<?php echo htmlspecialchars($currentUser->lastName); ?>" required>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" name="UserMail" class="form-control"
-                                value="<?php echo htmlspecialchars($user['UserMail']); ?>" required>
+                                value="<?php echo htmlspecialchars($currentUser->email); ?>" required>
                         </div>
 
-                        <p><strong>Rôle :</strong> <?php echo htmlspecialchars($user['Role']); ?></p>
-                        <p><strong>Date d’inscription :</strong> <?php echo htmlspecialchars($user['DateInscription']); ?></p>
+                        <p><strong>Rôle :</strong> <?php echo htmlspecialchars(roleLabel($currentUser->role)); ?></p>
+                        <?php if ($currentUser->dateInscription): ?>
+                            <p><strong>Date d’inscription :</strong>
+                                <?php echo htmlspecialchars($currentUser->dateInscription); ?>
+                            </p>
+                        <?php endif; ?>
 
                         <button type="submit" class="btn account-btn-primary">Enregistrer les modifications</button>
                     </form>
