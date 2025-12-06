@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 20 nov. 2025 à 07:29
+-- Généré le : sam. 06 déc. 2025 à 13:10
 -- Version du serveur : 8.3.0
 -- Version de PHP : 8.2.18
 
@@ -30,12 +30,35 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `archive`;
 CREATE TABLE IF NOT EXISTS `archive` (
   `ArchiveID` int NOT NULL AUTO_INCREMENT,
-  `TypeContenu` enum('musique','artiste','groupe') NOT NULL,
+  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
   `ContenuID` int NOT NULL,
   `DateArchivage` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ArchiveID`),
   UNIQUE KEY `uniquearchive` (`TypeContenu`,`ContenuID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `artiste`
+--
+
+DROP TABLE IF EXISTS `artiste`;
+CREATE TABLE IF NOT EXISTS `artiste` (
+  `ArtisteID` int NOT NULL AUTO_INCREMENT,
+  `NomArtiste` varchar(150) NOT NULL,
+  `NomReel` varchar(150) DEFAULT NULL,
+  `BiographieCourte` text,
+  `CheminFichierMP3` varchar(500) NOT NULL,
+  `ImageProfil` varchar(500) NOT NULL,
+  `StatusArtiste` int DEFAULT NULL,
+  `UserID` int NOT NULL,
+  `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `AnneeNaissance` int DEFAULT NULL,
+  PRIMARY KEY (`ArtisteID`),
+  KEY `UserID` (`UserID`),
+  KEY `idx_status` (`StatusArtiste`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -65,28 +88,6 @@ INSERT INTO `categorie` (`CategorieID`, `NomCategorie`, `Description`) VALUES
 -- --------------------------------------------------------
 
 --
--- Structure de la table `artiste`
---
-
-DROP TABLE IF EXISTS `artiste`;
-CREATE TABLE IF NOT EXISTS `artiste` (
-  `ArtisteID` int NOT NULL AUTO_INCREMENT,
-  `NomArtiste` varchar(150) NOT NULL,
-  `NomReel` varchar(150) DEFAULT NULL,
-  `BiographieCourte` text,
-  `CheminFichierMP3` varchar(500) NOT NULL,
-  `ImageProfil` varchar(500) NOT NULL,
-  `StatusArtiste` enum('en_attente','valide','refusee') NOT NULL DEFAULT 'en_attente',
-  `UserID` int NOT NULL,
-  `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`ArtisteID`),
-  KEY `UserID` (`UserID`),
-  KEY `idx_status` (`StatusArtiste`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
 -- Structure de la table `groupe`
 --
 
@@ -98,14 +99,20 @@ CREATE TABLE IF NOT EXISTS `groupe` (
   `BiographieCourte` text,
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageGroupe` varchar(500) NOT NULL,
-  `DureeMorceau` int DEFAULT NULL,
   `StatusGroupe` enum('en_attente','valide','refusee') NOT NULL DEFAULT 'en_attente',
   `UserID` int NOT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`GroupeID`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusGroupe`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `groupe`
+--
+
+INSERT INTO `groupe` (`GroupeID`, `NomGroupe`, `AnneeFormation`, `BiographieCourte`, `CheminFichierMP3`, `ImageGroupe`, `StatusGroupe`, `UserID`, `DateProposition`) VALUES
+(4, 'L\'Artiste', '1987', 'AAIl\'\'a\"\"djcjaze\'', 'uploads/groupes/sons/LArtiste_son.mp3', 'uploads/groupes/profil/LArtiste_profil.jpg', 'valide', 5, '2025-12-06 10:33:09');
 
 -- --------------------------------------------------------
 
@@ -120,16 +127,22 @@ CREATE TABLE IF NOT EXISTS `musique` (
   `Artiste` varchar(150) NOT NULL,
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageCouverture` varchar(500) NOT NULL,
-  `DureeMorceau` int DEFAULT NULL,
-  `TailleFichier` int DEFAULT NULL,
   `StatusMusique` enum('en_attente','valide','refusee') NOT NULL DEFAULT 'en_attente',
   `UserID` int NOT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `AnneePublication` int DEFAULT NULL,
   PRIMARY KEY (`MusiqueID`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusMusique`),
   KEY `idx_artiste` (`Artiste`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `musique`
+--
+
+INSERT INTO `musique` (`MusiqueID`, `Titre`, `Artiste`, `CheminFichierMP3`, `ImageCouverture`, `StatusMusique`, `UserID`, `DateProposition`, `AnneePublication`) VALUES
+(14, 'L\'Héritier', 'L\'Artiste', 'uploads/musiques/sons/LHritier_1765013263_musique.mp3', 'uploads/musiques/couvertures/LHritier_1765013263_couverture.jpg', 'en_attente', 5, '2025-12-06 10:27:43', 1902);
 
 -- --------------------------------------------------------
 
@@ -140,7 +153,7 @@ CREATE TABLE IF NOT EXISTS `musique` (
 DROP TABLE IF EXISTS `resultat`;
 CREATE TABLE IF NOT EXISTS `resultat` (
   `ResultatID` int NOT NULL AUTO_INCREMENT,
-  `TypeContenu` enum('musique','artiste','groupe') NOT NULL,
+  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
   `ContenuID` int NOT NULL,
   `TotalVotes` int NOT NULL DEFAULT '0',
   `MoyenneVotes` decimal(3,2) DEFAULT NULL,
@@ -170,7 +183,16 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   UNIQUE KEY `UserMail` (`UserMail`),
   KEY `idx_role` (`Role`),
   KEY `idx_mail` (`UserMail`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `utilisateur`
+--
+
+INSERT INTO `utilisateur` (`UserID`, `UserPseudo`, `UserName`, `UserSurname`, `UserMail`, `UserPassword`, `Role`, `DateInscription`) VALUES
+(4, 'LilianSCH', 'Lilian', 'Schmitt', 'lilian.schmitt1@etu.univ-lorraine.fr', '$2y$10$MPZaMIrSXZLnY45.0xg49OMQNrOa2X7pkmzsDxPzGjuMer1douuQm', 'basique', '2025-12-01'),
+(5, 'LilianSCH2', 'Lilian', 'Schmitt', 'lilians10120@gmail.com', '$2y$10$ILXSdg4l9vAFF7/ZxzFgU.xIT6BIP6HQibg5wiFvBZw9Oc9fmfdAi', 'certifie', '2025-12-05'),
+(6, 'test', 'testeur', 'sch', 'schmittlilian10@gmail.com', '$2y$10$yV1NGfdQqYIxjX3aaXqAs.rb5gTtxl/qAHRI/PqXyfmEPbR0IvstK', 'admin', '2025-12-06');
 
 -- --------------------------------------------------------
 
@@ -182,7 +204,7 @@ DROP TABLE IF EXISTS `vote`;
 CREATE TABLE IF NOT EXISTS `vote` (
   `VoteID` int NOT NULL AUTO_INCREMENT,
   `UserID` int NOT NULL,
-  `TypeContenu` enum('musique','artiste','groupe') NOT NULL,
+  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
   `ContenuID` int NOT NULL COMMENT 'ID dans la table correspondante',
   `DateVote` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `ValeurVote` int NOT NULL,
