@@ -81,14 +81,13 @@
     color: #212431;
 }
 
-/* Image responsive au-dessus de la description */
+/* Image responsive au-dessus de la description - VERSION DASHBOARD */
 .content-card-image {
     width: 100%;
-    padding-top: 45%;            /* ratio vertical, responsive */
+    height: 200px;               /* hauteur fixe plus raisonnable */
+    object-fit: cover;           /* maintient les proportions */
+    object-position: center;
     margin-top: 18px;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     border-radius: 8px;
 }
 

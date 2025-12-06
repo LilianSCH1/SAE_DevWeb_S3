@@ -2,6 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+require_once __DIR__ . '/../class/User.php';
+$currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
 ?>
 
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
@@ -21,6 +24,11 @@ if (session_status() === PHP_SESSION_NONE) {
             <li class="nav-item"><a class="nav-link" href="../index/contact.php">Contact</a></li>
 
             <?php if (isset($_SESSION['user_id'])): ?>
+                <?php if ($currentUser && $currentUser->role === 'admin'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../login/dashboard.php">Dashboard</a>
+                    </li>
+                <?php endif; ?>
                 <li class="nav-item">
                     <a class="nav-link" href="../login/mon_compte.php">Mon compte</a>
                 </li>

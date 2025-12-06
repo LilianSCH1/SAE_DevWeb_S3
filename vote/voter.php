@@ -4,7 +4,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 require '../database/dbconnect.php';
+require_once __DIR__ . '/../class/User.php';
 $pdo = dbconnect();
+
+// Vérifier le rôle de l'utilisateur
+$currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+$userCanCreate = $currentUser && in_array($currentUser->role, ['certifie', 'admin']);
 
 // Affichage des données de cartes d'artistes
 $artistes = $pdo->query("
@@ -89,7 +94,7 @@ $groupes = $pdo->query("
 
             <!-- MUSIQUES -->
             <div class="tab-pane fade show active" id="pane-musique" role="tabpanel" aria-labelledby="tab-musique">
-                <?php if (isset($_SESSION['user_id'])): ?>
+                <?php if ($userCanCreate): ?>
                     <div class="text-center mb-4">
                         <a href="../create/creer_musique.php" class="btn btn-primary">
                             <i class="bi bi-plus-circle me-2"></i>Proposer une musique
@@ -104,7 +109,7 @@ $groupes = $pdo->query("
 
             <!-- ARTISTES -->
             <div class="tab-pane fade" id="pane-artiste" role="tabpanel" aria-labelledby="tab-artiste">
-                <?php if (isset($_SESSION['user_id'])): ?>
+                <?php if ($userCanCreate): ?>
                     <div class="text-center mb-4">
                         <a href="../create/creer_artiste.php" class="btn btn-primary">
                             <i class="bi bi-plus-circle me-2"></i>Proposer un artiste
@@ -119,7 +124,7 @@ $groupes = $pdo->query("
 
             <!-- GROUPES -->
             <div class="tab-pane fade" id="pane-groupe" role="tabpanel" aria-labelledby="tab-groupe">
-                <?php if (isset($_SESSION['user_id'])): ?>
+                <?php if ($userCanCreate): ?>
                     <div class="text-center mb-4">
                         <a href="../create/creer_groupe.php" class="btn btn-primary">
                             <i class="bi bi-plus-circle me-2"></i>Proposer un groupe
