@@ -49,6 +49,7 @@ $groupes = $pdo->query("
     <title>Voter - MyPulse</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../style/style.css">
     <link rel="stylesheet" href="../style/cards.css">
 
@@ -199,6 +200,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
 </script>
+<script src="../script/modals.js"></script>
+<script src="../script/script.js"></script>
 </body>
 </html>
+
