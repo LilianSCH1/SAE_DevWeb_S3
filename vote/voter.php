@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) {
 require '../database/dbconnect.php';
 $pdo = dbconnect();
 
-// ARTISTES : on récupère la date de naissance si elle existe, sinon uniquement DateProposition
+// Affichage des données de cartes d'artistes
 $artistes = $pdo->query("
     SELECT NomArtiste,
            BiographieCourte,
@@ -14,11 +14,11 @@ $artistes = $pdo->query("
            CheminFichierMP3,
            AnneeNaissance as DateAffichee
     FROM artiste
-    WHERE StatusArtiste IN ('en_attente', 'approuve')
+    WHERE StatusArtiste IN ('valide')
     ORDER BY DateAffichee DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// MUSIQUES : on récupère une éventuelle DateParution, sinon DateProposition
+// Affichage des données de cartes de musiques
 $musiques = $pdo->query("
     SELECT Titre,
            Artiste,
@@ -26,11 +26,11 @@ $musiques = $pdo->query("
            CheminFichierMP3,
            AnneePublication as DateAffichee
     FROM musique
-    WHERE StatusMusique IN ('en_attente', 'approuve')
+    WHERE StatusMusique IN ('valide')
     ORDER BY DateAffichee DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
-// GROUPES : on récupère AnneeFormation si elle existe, sinon DateProposition
+// Affichage des données de cartes de groupes
 $groupes = $pdo->query("
     SELECT NomGroupe,
            BiographieCourte,
@@ -38,7 +38,7 @@ $groupes = $pdo->query("
            CheminFichierMP3,
            AnneeFormation as DateAffichee
     FROM groupe
-    WHERE StatusGroupe IN ('en_attente', 'approuve')
+    WHERE StatusGroupe IN ('valide')
     ORDER BY DateAffichee DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
