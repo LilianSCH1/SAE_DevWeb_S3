@@ -72,9 +72,9 @@ function roleLabel(string $role): string {
 <body>
     <?php require '../index/header.php'; ?>
 
-    <section class="py-5">
-        <div class="container">
-            <h2 class="mb-4">Mon compte</h2>
+    <section class="py-5" style="margin-top: 60px;">
+        <div class="container" >
+            <h2 class="mb-4" >Mon compte</h2>
 
             <?php if (!empty($errors)): ?>
                 <div class="alert alert-danger">
