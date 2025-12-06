@@ -24,13 +24,11 @@
 
     $message = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nomArtiste = $_POST['nomArtiste'] ?? '';
-    $nomReel = $_POST['nomReel'] ?? '';
-    $bio = $_POST['biographieCourte'] ?? '';
-    $anneeNaissance = $_POST['anneeNaissance'] ?? '';
-
-        $nomArtisteClean = str_replace(' ', '_', $nomArtiste);
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nomArtiste = $_POST['nomArtiste'] ?? '';
+        $nomReel = $_POST['nomReel'] ?? '';
+        $bio = $_POST['biographieCourte'] ?? '';
+        $anneeNaissance = $_POST['anneeNaissance'] ?? '';
 
         $profilDir = 'uploads/artistes/profil/';
         $sonsDir = 'uploads/artistes/sons/';
@@ -38,6 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!file_exists($sonsDir)) mkdir($sonsDir, 0777, true);
 
         $nomArtisteClean = str_replace(' ', '_', $nomArtiste);
+        $nomArtisteClean = preg_replace('/[^A-Za-z0-9_-]/', '', $nomArtisteClean);
 
         $imagePath = '';
         if (isset($_FILES['imageProfil']) && $_FILES['imageProfil']['error'] === UPLOAD_ERR_OK) {
