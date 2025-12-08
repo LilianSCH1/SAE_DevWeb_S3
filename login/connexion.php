@@ -164,7 +164,7 @@ if (isset($_SESSION['user_id'])) {
                                         </button>
 
                                         <div class="text-center">
-                                            <a href="#" class="text-decoration-none">Mot de passe oublié ?</a>
+                                            <a href="../login/reset_password.php" class="text-decoration-none">Mot de passe oublié ?</a>
                                         </div>
                                     </form>
                                 </div>
