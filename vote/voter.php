@@ -204,6 +204,16 @@ document.addEventListener('DOMContentLoaded', function () {
             btn.textContent = isShown ? '−' : '+';
         });
     });
+
+    // Gestion des onglets via URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const tab = urlParams.get('tab');
+    if (tab) {
+        const tabElement = document.getElementById('tab-' + tab);
+        if (tabElement) {
+            tabElement.click();
+        }
+    }
 });
 
 </script>

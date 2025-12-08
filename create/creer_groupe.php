@@ -129,11 +129,18 @@ pesu<?php
                                     </div>
                                 </div>
 
-                                <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-lg">
-                                        <i class="bi bi-plus-circle me-2"></i>Ajouter le groupe
-                                    </button>
-                                </div>
+                                <div class="row mt-4">
+                                        <div class="col text-end">
+                                            <button type="submit" class="btn btn-primary btn-lg">
+                                                <i class="bi bi-plus-circle me-2"></i>Ajouter le groupe
+                                            </button>
+                                        </div>
+                                        <div class="col">
+                                            <a href="../vote/voter.php?tab=groupe" class="btn btn-secondary btn-lg">
+                                                <i class="bi bi-arrow-left-circle me-2"></i>Retour au vote
+                                            </a>
+                                        </div>
+                                    </div>
                             </form>
                         </div>
                     </div>
