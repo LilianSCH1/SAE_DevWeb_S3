@@ -134,11 +134,18 @@
                                         </div>
                                     </div>
 
-                                    <div class="d-grid">
+                                     <div class="row mt-4">
+                                    <div class="col text-end">
                                         <button type="submit" class="btn btn-primary btn-lg">
                                             <i class="bi bi-plus-circle me-2"></i>Ajouter l'artiste
                                         </button>
                                     </div>
+                                    <div class="col">
+                                        <a href="../vote/voter.php?tab=artiste" class="btn btn-secondary btn-lg">
+                                            <i class="bi bi-arrow-left-circle me-2"></i>Retour au vote
+                                        </a>
+                                    </div>
+                                </div>
                                 </form>
                             </div>
                         </div>
