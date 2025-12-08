@@ -5,7 +5,6 @@ require_once __DIR__ . '/../class/Database.php';
 require_once __DIR__ . '/../class/User.php';
 require_once __DIR__ . '/../controllers/UserController.php';
 
-
 $controller = new UserController();
 $pdo = Database::getConnection();
 $errors = [];
@@ -48,7 +47,6 @@ if (
             ");
             $stmt->execute([$pseudo, $prenom, $nom, $email, $hash]);
 
-
             $_SESSION['user_id'] = $pdo->lastInsertId();
             $_SESSION['user_email'] = $email;
 
@@ -68,14 +66,14 @@ if (
     $email    = trim($_POST['loginEmail'] ?? '');
     $password = $_POST['loginPassword'] ?? '';
 
-    $stmt = $pdo->prepare("SELECT UserID, UserPassword FROM utilisateur WHERE UserMail = ?");
+    $stmt = $pdo->prepare("SELECT UserID, UserPassword, Role FROM utilisateur WHERE UserMail = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['UserPassword'])) {
-        $_SESSION['user_id'] = $user['UserID'];
+        $_SESSION['user_id']    = $user['UserID'];
         $_SESSION['user_email'] = $email;
-        $_SESSION['role'] = $user['Role'];
+        $_SESSION['role']       = $user['Role'];
         header('Location: ../index/index.php');
         exit;
     } else {
@@ -83,6 +81,7 @@ if (
     }
 }
 
+// Si déjà connecté, redirection vers mon_compte
 if (isset($_SESSION['user_id'])) {
     header('Location: ../login/mon_compte.php');
     exit;
@@ -117,6 +116,14 @@ if (isset($_SESSION['user_id'])) {
                                 <p class="text-muted">Connectez-vous pour voter et participer</p>
                             </div>
 
+                            <!-- Message passé en GET (redir_vote.php) -->
+                            <?php if (isset($_GET['message']) && $_GET['message'] !== ''): ?>
+                                <div class="alert alert-warning">
+                                    <?php echo htmlspecialchars($_GET['message']); ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <!-- Erreurs de formulaire -->
                             <?php if (!empty($errors)): ?>
                                 <div class="alert alert-danger">
                                     <?php foreach ($errors as $e): ?>
@@ -128,11 +135,11 @@ if (isset($_SESSION['user_id'])) {
                             <ul class="nav nav-tabs justify-content-center mb-4" id="authTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link active" id="login-tab" data-bs-toggle="tab"
-                                        data-bs-target="#login" type="button" role="tab">Connexion</button>
+                                            data-bs-target="#login" type="button" role="tab">Connexion</button>
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="nav-link" id="register-tab" data-bs-toggle="tab"
-                                        data-bs-target="#register" type="button" role="tab">Inscription</button>
+                                            data-bs-target="#register" type="button" role="tab">Inscription</button>
                                 </li>
                             </ul>
 
@@ -145,13 +152,13 @@ if (isset($_SESSION['user_id'])) {
                                         <div class="mb-3">
                                             <label for="loginEmail" class="form-label">Email</label>
                                             <input type="email" class="form-control"
-                                                id="loginEmail" name="loginEmail" required>
+                                                   id="loginEmail" name="loginEmail" required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="loginPassword" class="form-label">Mot de passe</label>
                                             <input type="password" class="form-control"
-                                                id="loginPassword" name="loginPassword" required>
+                                                   id="loginPassword" name="loginPassword" required>
                                         </div>
 
                                         <div class="mb-3 form-check">
@@ -177,38 +184,38 @@ if (isset($_SESSION['user_id'])) {
                                         <div class="mb-3">
                                             <label for="registerPseudo" class="form-label">Pseudo</label>
                                             <input type="text" class="form-control"
-                                                id="registerPseudo" name="registerPseudo" required>
+                                                   id="registerPseudo" name="registerPseudo" required>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-6 mb-3">
                                                 <label for="registerFirstName" class="form-label">Prénom</label>
                                                 <input type="text" class="form-control"
-                                                    id="registerFirstName" name="registerFirstName" required>
+                                                       id="registerFirstName" name="registerFirstName" required>
                                             </div>
                                             <div class="col-md-6 mb-3">
                                                 <label for="registerLastName" class="form-label">Nom</label>
                                                 <input type="text" class="form-control"
-                                                    id="registerLastName" name="registerLastName" required>
+                                                       id="registerLastName" name="registerLastName" required>
                                             </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="registerEmail" class="form-label">Email</label>
                                             <input type="email" class="form-control"
-                                                id="registerEmail" name="registerEmail" required>
+                                                   id="registerEmail" name="registerEmail" required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="registerPassword" class="form-label">Mot de passe</label>
                                             <input type="password" class="form-control"
-                                                id="registerPassword" name="registerPassword" required>
+                                                   id="registerPassword" name="registerPassword" required>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="registerConfirmPassword" class="form-label">Confirmer le mot de passe</label>
                                             <input type="password" class="form-control"
-                                                id="registerConfirmPassword" name="registerConfirmPassword" required>
+                                                   id="registerConfirmPassword" name="registerConfirmPassword" required>
                                         </div>
 
                                         <div class="mb-3 form-check">

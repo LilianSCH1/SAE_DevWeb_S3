@@ -1,3 +1,13 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../class/User.php';
+$currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+$userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
+?>
+
 <!-- Pied de page du site -->
 <footer class="footer py-5">
     <div class="container">
@@ -24,7 +34,8 @@
                         <h5>Navigation</h5>
                         <ul style="list-style: none; padding: 0;">
                             <li><a href="../index/index.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Accueil</a></li>
-                            <li><a href="../vote/voter.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Voter</a></li>
+                            <!-- Même logique que le bouton "Voter maintenant" : redirection via redir_vote.php -->
+                            <li><a href="../login/redir_vote.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Voter</a></li>
                             <li><a href="../vote/classement.php" style="color: rgba(255,255,255,0.7); text-decoration: none;">Classement</a></li>
                         </ul>
                     </div>
@@ -40,7 +51,7 @@
 
                     <div class="col-md-4">
                         <h5>Légal</h5>
-                        <ul style="list-style: none; padding: 0;">
+                        <ul style="list-style: none; padding: 0%;">
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/terms_of_use.php', 'Conditions d\'utilisation')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Conditions d'utilisation</a></li>
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/privacy_policy.php', 'Politique de confidentialité')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de confidentialité</a></li>
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/cookies_policy.php', 'Politique de cookie')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de cookie</a></li>
