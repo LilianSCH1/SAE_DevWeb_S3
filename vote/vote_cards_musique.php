@@ -20,12 +20,11 @@
                         <?php echo htmlspecialchars($musique['DateAffichee']); ?>
                     <?php endif; ?>
                 </div>
-                <button type="button" class="toggle-desc-btn">+</button>
             </div>
 
             <div class="content-card-body">
                 <div class="content-card-image"
-                     style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
+                    style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
                 </div>
 
                 <div class="content-card-separator"></div>
@@ -41,7 +40,7 @@
 
             <div class="content-card-footer">
                 <button class="btn-outline-orange btn-play-audio"
-                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                    data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                     ▶ Écouter
                 </button>
                 <button class="btn-orange">
