@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Pour éviter le repost en cas de F5
-        header('Location: ../login/dashboard_admin.php');
+        header('Location: dashboard.php');
         exit;
     }
 }
@@ -50,21 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $artistes = $pdo->query("
     SELECT ArtisteID, NomArtiste, NomReel, BiographieCourte, ImageProfil, CheminFichierMP3, DateProposition, AnneeNaissance
     FROM artiste
-    WHERE StatusArtiste IS NULL OR StatusArtiste = 'enattente'
+    WHERE StatusArtiste IS NULL OR StatusArtiste = 'en_attente'
     ORDER BY DateProposition DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 $musiques = $pdo->query("
     SELECT MusiqueID, Titre, Artiste, ImageCouverture, CheminFichierMP3, DateProposition, AnneePublication
     FROM musique
-    WHERE StatusMusique = 'enattente'
+    WHERE StatusMusique = 'en_attente'
     ORDER BY DateProposition DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 $groupes = $pdo->query("
     SELECT GroupeID, NomGroupe, AnneeFormation, BiographieCourte, ImageGroupe, CheminFichierMP3, DateProposition
     FROM groupe
-    WHERE StatusGroupe = 'enattente'
+    WHERE StatusGroupe = 'en_attente'
     ORDER BY DateProposition DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
