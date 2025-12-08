@@ -50,7 +50,6 @@ function roleLabel(string $role): string {
         case 'admin':    return 'Administrateur';
         case 'certifie': return 'Utilisateur certifié';
         case 'basique':  return 'Utilisateur';
-        case 'invite':   return 'Invité';
         default:         return $role;
     }
 }
