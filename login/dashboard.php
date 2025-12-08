@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Pour éviter le repost en cas de F5
-        header('Location: dashboard_admin.php');
+        header('Location: dashboard.php');
         exit;
     }
 }
