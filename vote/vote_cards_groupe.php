@@ -1,5 +1,5 @@
 <?php if (empty($groupes)): ?>
-    <p>Aucun groupe pour le moment.</p>
+    <p class="text-muted text-nowrap">Aucun groupe pour le moment.</p>
 <?php else: ?>
     <?php foreach ($groupes as $groupe): ?>
         <?php

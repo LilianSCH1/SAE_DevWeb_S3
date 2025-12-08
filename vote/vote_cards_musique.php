@@ -1,5 +1,5 @@
 <?php if (empty($musiques)): ?>
-    <p>Aucune musique pour le moment.</p>
+    <p class="text-muted text-nowrap">Aucune musique pour le moment.</p>
 <?php else: ?>
     <?php foreach ($musiques as $musique): ?>
         <?php

@@ -1,5 +1,5 @@
 <?php if (empty($artistes)): ?>
-    <p>Aucun artiste pour le moment.</p>
+    <p class="text-muted text-nowrap">Aucun artiste pour le moment.</p>
 <?php else: ?>
     <?php foreach ($artistes as $artiste): ?>
         <?php
