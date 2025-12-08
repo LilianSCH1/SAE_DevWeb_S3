@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : sam. 06 déc. 2025 à 13:10
+-- Généré le : lun. 08 déc. 2025 à 13:42
 -- Version du serveur : 8.3.0
 -- Version de PHP : 8.2.18
 
@@ -51,14 +51,21 @@ CREATE TABLE IF NOT EXISTS `artiste` (
   `BiographieCourte` text,
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageProfil` varchar(500) NOT NULL,
-  `StatusArtiste` int DEFAULT NULL,
+  `StatusArtiste` enum('en_attente','valide','refusee','classement','archive') NOT NULL DEFAULT 'en_attente',
   `UserID` int NOT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `AnneeNaissance` int DEFAULT NULL,
   PRIMARY KEY (`ArtisteID`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusArtiste`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `artiste`
+--
+
+INSERT INTO `artiste` (`ArtisteID`, `NomArtiste`, `NomReel`, `BiographieCourte`, `CheminFichierMP3`, `ImageProfil`, `StatusArtiste`, `UserID`, `DateProposition`, `AnneeNaissance`) VALUES
+(11, 'Gims', 'Gandhi Djuna', 'Gims, stylisé GIMS, anciennement Maître Gims, né Gandhi Djuna le 6 mai 1986 à Kinshasa au Zaïre, est un chanteur et rappeur congolais. Il grandit en France et vit principalement entre la France et le Maroc. Il est membre du groupe de hip-hop Sexion d\'assaut.', 'uploads/artistes/sons/Gims_son.mp3', 'uploads/artistes/profil/Gims_profil.webp', 'valide', 6, '2025-12-08 14:24:48', 1986);
 
 -- --------------------------------------------------------
 
@@ -99,20 +106,20 @@ CREATE TABLE IF NOT EXISTS `groupe` (
   `BiographieCourte` text,
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageGroupe` varchar(500) NOT NULL,
-  `StatusGroupe` enum('en_attente','valide','refusee') NOT NULL DEFAULT 'en_attente',
+  `StatusGroupe` enum('en_attente','valide','refusee','classement','archive') NOT NULL DEFAULT 'en_attente',
   `UserID` int NOT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`GroupeID`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusGroupe`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `groupe`
 --
 
 INSERT INTO `groupe` (`GroupeID`, `NomGroupe`, `AnneeFormation`, `BiographieCourte`, `CheminFichierMP3`, `ImageGroupe`, `StatusGroupe`, `UserID`, `DateProposition`) VALUES
-(4, 'L\'Artiste', '1987', 'AAIl\'\'a\"\"djcjaze\'', 'uploads/groupes/sons/LArtiste_son.mp3', 'uploads/groupes/profil/LArtiste_profil.jpg', 'valide', 5, '2025-12-06 10:33:09');
+(5, 'Triangle des Bermudes', '2023', 'Le groupe Triangle des bermudes est composé de MC YOSHI, originaire du quartier des Épinettes situé à Évry-Courcouronnes dans l\'Essonne ; Mauvais djo, d\'origine congolaise, lequel a également grandi à Évry-Courcouronnes ; et Kokosvoice, originaire de Draveil, toujours dans l\'Essonne.', 'uploads/groupes/sons/Triangle_des_Bermudes_son.mp3', 'uploads/groupes/profil/Triangle_des_Bermudes_profil.jpg', 'en_attente', 6, '2025-12-08 14:31:17');
 
 -- --------------------------------------------------------
 
@@ -127,7 +134,7 @@ CREATE TABLE IF NOT EXISTS `musique` (
   `Artiste` varchar(150) NOT NULL,
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageCouverture` varchar(500) NOT NULL,
-  `StatusMusique` enum('en_attente','valide','refusee') NOT NULL DEFAULT 'en_attente',
+  `StatusMusique` enum('en_attente','valide','refusee','classement','archive') NOT NULL DEFAULT 'en_attente',
   `UserID` int NOT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `AnneePublication` int DEFAULT NULL,
@@ -135,14 +142,7 @@ CREATE TABLE IF NOT EXISTS `musique` (
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusMusique`),
   KEY `idx_artiste` (`Artiste`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Déchargement des données de la table `musique`
---
-
-INSERT INTO `musique` (`MusiqueID`, `Titre`, `Artiste`, `CheminFichierMP3`, `ImageCouverture`, `StatusMusique`, `UserID`, `DateProposition`, `AnneePublication`) VALUES
-(14, 'L\'Héritier', 'L\'Artiste', 'uploads/musiques/sons/LHritier_1765013263_musique.mp3', 'uploads/musiques/couvertures/LHritier_1765013263_couverture.jpg', 'en_attente', 5, '2025-12-06 10:27:43', 1902);
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -191,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
 
 INSERT INTO `utilisateur` (`UserID`, `UserPseudo`, `UserName`, `UserSurname`, `UserMail`, `UserPassword`, `Role`, `DateInscription`) VALUES
 (4, 'LilianSCH', 'Lilian', 'Schmitt', 'lilian.schmitt1@etu.univ-lorraine.fr', '$2y$10$MPZaMIrSXZLnY45.0xg49OMQNrOa2X7pkmzsDxPzGjuMer1douuQm', 'basique', '2025-12-01'),
-(5, 'LilianSCH2', 'Lilian', 'Schmitt', 'lilians10120@gmail.com', '$2y$10$ILXSdg4l9vAFF7/ZxzFgU.xIT6BIP6HQibg5wiFvBZw9Oc9fmfdAi', 'certifie', '2025-12-05'),
+(5, 'LilianSCH2', 'Lilian', 'Schmitt', 'lilians10120@gmail.com', '$2y$10$ILXSdg4l9vAFF7/ZxzFgU.xIT6BIP6HQibg5wiFvBZw9Oc9fmfdAi', 'basique', '2025-12-05'),
 (6, 'test', 'testeur', 'sch', 'schmittlilian10@gmail.com', '$2y$10$yV1NGfdQqYIxjX3aaXqAs.rb5gTtxl/qAHRI/PqXyfmEPbR0IvstK', 'admin', '2025-12-06');
 
 -- --------------------------------------------------------
