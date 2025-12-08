@@ -189,11 +189,7 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
 -- Déchargement des données de la table `utilisateur`
 --
 
-INSERT INTO `utilisateur` (`UserID`, `UserPseudo`, `UserName`, `UserSurname`, `UserMail`, `UserPassword`, `Role`, `DateInscription`) VALUES
-(4, 'LilianSCH', 'Lilian', 'Schmitt', 'lilian.schmitt1@etu.univ-lorraine.fr', '$2y$10$MPZaMIrSXZLnY45.0xg49OMQNrOa2X7pkmzsDxPzGjuMer1douuQm', 'basique', '2025-12-01'),
-(5, 'LilianSCH2', 'Lilian', 'Schmitt', 'lilians10120@gmail.com', '$2y$10$ILXSdg4l9vAFF7/ZxzFgU.xIT6BIP6HQibg5wiFvBZw9Oc9fmfdAi', 'basique', '2025-12-05'),
-(6, 'test', 'testeur', 'sch', 'schmittlilian10@gmail.com', '$2y$10$yV1NGfdQqYIxjX3aaXqAs.rb5gTtxl/qAHRI/PqXyfmEPbR0IvstK', 'admin', '2025-12-06');
-
+INSERT INTO `utilisateur` (`UserID`, `UserPseudo`, `UserName`, `UserSurname`, `UserMail`, `UserPassword`, `Role`, `DateInscription`);
 -- --------------------------------------------------------
 
 --
