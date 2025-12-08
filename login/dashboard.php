@@ -21,23 +21,28 @@ $pdo = dbconnect();
 // Traitement des actions de validation/refus
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
-    $type = $_POST['type'] ?? '';
-    $id = (int)($_POST['id'] ?? 0);
+    $type   = $_POST['type'] ?? '';
+    $id     = (int)($_POST['id'] ?? 0);
 
-    if ($action === 'valider' || $action === 'refuser') {
-        if ($type === 'artiste' && $id > 0) {
-            $newStatus = $action === 'valider' ? 1 : 2;
-            $pdo->prepare("UPDATE artiste SET StatusArtiste = ? WHERE ArtisteID = ?")
-                ->execute([$newStatus, $id]);
-        } elseif ($type === 'musique' && $id > 0) {
+    if (($action === 'valider' || $action === 'refuser') && $id > 0) {
+        if ($type === 'artiste') {
+            // adapte ici selon ton type de colonne (INT ou ENUM)
             $newStatus = $action === 'valider' ? 'valide' : 'refusee';
-            $pdo->prepare("UPDATE musique SET StatusMusique = ? WHERE MusiqueID = ?")
-                ->execute([$newStatus, $id]);
-        } elseif ($type === 'groupe' && $id > 0) {
+            $stmt = $pdo->prepare("UPDATE artiste SET StatusArtiste = ? WHERE ArtisteID = ?");
+            $stmt->execute([$newStatus, $id]);
+        } elseif ($type === 'musique') {
             $newStatus = $action === 'valider' ? 'valide' : 'refusee';
-            $pdo->prepare("UPDATE groupe SET StatusGroupe = ? WHERE GroupeID = ?")
-                ->execute([$newStatus, $id]);
+            $stmt = $pdo->prepare("UPDATE musique SET StatusMusique = ? WHERE MusiqueID = ?");
+            $stmt->execute([$newStatus, $id]);
+        } elseif ($type === 'groupe') {
+            $newStatus = $action === 'valider' ? 'valide' : 'refusee';
+            $stmt = $pdo->prepare("UPDATE groupe SET StatusGroupe = ? WHERE GroupeID = ?");
+            $stmt->execute([$newStatus, $id]);
         }
+
+        // Pour éviter le repost en cas de F5
+        header('Location: dashboard_admin.php');
+        exit;
     }
 }
 
@@ -45,21 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $artistes = $pdo->query("
     SELECT ArtisteID, NomArtiste, NomReel, BiographieCourte, ImageProfil, CheminFichierMP3, DateProposition, AnneeNaissance
     FROM artiste
-    WHERE StatusArtiste IS NULL OR StatusArtiste = 0
+    WHERE StatusArtiste IS NULL OR StatusArtiste = 'enattente'
     ORDER BY DateProposition DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 $musiques = $pdo->query("
     SELECT MusiqueID, Titre, Artiste, ImageCouverture, CheminFichierMP3, DateProposition, AnneePublication
     FROM musique
-    WHERE StatusMusique = 'en_attente'
+    WHERE StatusMusique = 'enattente'
     ORDER BY DateProposition DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
 $groupes = $pdo->query("
     SELECT GroupeID, NomGroupe, AnneeFormation, BiographieCourte, ImageGroupe, CheminFichierMP3, DateProposition
     FROM groupe
-    WHERE StatusGroupe = 'en_attente'
+    WHERE StatusGroupe = 'enattente'
     ORDER BY DateProposition DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -108,111 +113,129 @@ $groupes = $pdo->query("
             <!-- MUSIQUES -->
             <div class="tab-pane fade show active" id="pane-musique" role="tabpanel" aria-labelledby="tab-musique">
                 <div class="card-list">
-                    <?php foreach ($musiques as $musique): ?>
-                        <div class="content-card">
-                            <div class="content-card-header">
-                                <img src="../create/<?php echo htmlspecialchars($musique['ImageCouverture']); ?>" alt="Couverture" class="content-card-image">
-                                <div class="content-card-info">
-                                    <h3 class="content-card-title"><?php echo htmlspecialchars($musique['Titre']); ?></h3>
-                                    <p class="content-card-artist"><?php echo htmlspecialchars($musique['Artiste']); ?></p>
-                                    <p class="content-card-date">Proposé le: <?php echo htmlspecialchars($musique['DateProposition']); ?></p>
+                    <?php if (empty($musiques)): ?>
+                        <div class="text-center py-5">
+                            <p class="text-muted text-nowrap">Aucune musique en cours de validation</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($musiques as $musique): ?>
+                            <div class="content-card">
+                                <div class="content-card-header">
+                                    <img src="../create/<?php echo htmlspecialchars($musique['ImageCouverture']); ?>" alt="Couverture" class="content-card-image">
+                                    <div class="content-card-info">
+                                        <h3 class="content-card-title"><?php echo htmlspecialchars($musique['Titre']); ?></h3>
+                                        <p class="content-card-artist"><?php echo htmlspecialchars($musique['Artiste']); ?></p>
+                                        <p class="content-card-date">Proposé le: <?php echo htmlspecialchars($musique['DateProposition']); ?></p>
+                                    </div>
+                                </div>
+                                <div class="content-card-body">
+                                    <audio controls class="content-card-audio">
+                                        <source src="../create/<?php echo htmlspecialchars($musique['CheminFichierMP3']); ?>" type="audio/mpeg">
+                                    </audio>
+                                </div>
+                                <div class="content-card-actions">
+                                    <form method="post" style="display: inline;">
+                                        <input type="hidden" name="action" value="valider">
+                                        <input type="hidden" name="type" value="musique">
+                                        <input type="hidden" name="id" value="<?php echo $musique['MusiqueID']; ?>">
+                                        <button type="submit" class="btn btn-success">Valider</button>
+                                    </form>
+                                    <form method="post" style="display: inline;">
+                                        <input type="hidden" name="action" value="refuser">
+                                        <input type="hidden" name="type" value="musique">
+                                        <input type="hidden" name="id" value="<?php echo $musique['MusiqueID']; ?>">
+                                        <button type="submit" class="btn btn-danger">Refuser</button>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="content-card-body">
-                                <audio controls class="content-card-audio">
-                                    <source src="../create/<?php echo htmlspecialchars($musique['CheminFichierMP3']); ?>" type="audio/mpeg">
-                                </audio>
-                            </div>
-                            <div class="content-card-actions">
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="action" value="valider">
-                                    <input type="hidden" name="type" value="musique">
-                                    <input type="hidden" name="id" value="<?php echo $musique['MusiqueID']; ?>">
-                                    <button type="submit" class="btn btn-success">Valider</button>
-                                </form>
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="action" value="refuser">
-                                    <input type="hidden" name="type" value="musique">
-                                    <input type="hidden" name="id" value="<?php echo $musique['MusiqueID']; ?>">
-                                    <button type="submit" class="btn btn-danger">Refuser</button>
-                                </form>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
             <!-- ARTISTES -->
             <div class="tab-pane fade" id="pane-artiste" role="tabpanel" aria-labelledby="tab-artiste">
                 <div class="card-list">
-                    <?php foreach ($artistes as $artiste): ?>
-                        <div class="content-card">
-                            <div class="content-card-header">
-                                <img src="../create/<?php echo htmlspecialchars($artiste['ImageProfil']); ?>" alt="Profil" class="content-card-image">
-                                <div class="content-card-info">
-                                    <h3 class="content-card-title"><?php echo htmlspecialchars($artiste['NomArtiste']); ?></h3>
-                                    <p class="content-card-description"><?php echo htmlspecialchars($artiste['BiographieCourte']); ?></p>
-                                    <p class="content-card-date">Proposé le: <?php echo htmlspecialchars($artiste['DateProposition']); ?></p>
+                    <?php if (empty($artistes)): ?>
+                        <div class="text-center py-5">
+                            <p class="text-muted text-nowrap">Aucun artiste en cours de validation</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($artistes as $artiste): ?>
+                            <div class="content-card">
+                                <div class="content-card-header">
+                                    <img src="../create/<?php echo htmlspecialchars($artiste['ImageProfil']); ?>" alt="Profil" class="content-card-image">
+                                    <div class="content-card-info">
+                                        <h3 class="content-card-title"><?php echo htmlspecialchars($artiste['NomArtiste']); ?></h3>
+                                        <p class="content-card-description"><?php echo htmlspecialchars($artiste['BiographieCourte']); ?></p>
+                                        <p class="content-card-date">Proposé le: <?php echo htmlspecialchars($artiste['DateProposition']); ?></p>
+                                    </div>
+                                </div>
+                                <div class="content-card-body">
+                                    <audio controls class="content-card-audio">
+                                        <source src="../create/<?php echo htmlspecialchars($artiste['CheminFichierMP3']); ?>" type="audio/mpeg">
+                                    </audio>
+                                </div>
+                                <div class="content-card-actions">
+                                    <form method="post" style="display: inline;">
+                                        <input type="hidden" name="action" value="valider">
+                                        <input type="hidden" name="type" value="artiste">
+                                        <input type="hidden" name="id" value="<?php echo $artiste['ArtisteID']; ?>">
+                                        <button type="submit" class="btn btn-success">Valider</button>
+                                    </form>
+                                    <form method="post" style="display: inline;">
+                                        <input type="hidden" name="action" value="refuser">
+                                        <input type="hidden" name="type" value="artiste">
+                                        <input type="hidden" name="id" value="<?php echo $artiste['ArtisteID']; ?>">
+                                        <button type="submit" class="btn btn-danger">Refuser</button>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="content-card-body">
-                                <audio controls class="content-card-audio">
-                                    <source src="../create/<?php echo htmlspecialchars($artiste['CheminFichierMP3']); ?>" type="audio/mpeg">
-                                </audio>
-                            </div>
-                            <div class="content-card-actions">
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="action" value="valider">
-                                    <input type="hidden" name="type" value="artiste">
-                                    <input type="hidden" name="id" value="<?php echo $artiste['ArtisteID']; ?>">
-                                    <button type="submit" class="btn btn-success">Valider</button>
-                                </form>
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="action" value="refuser">
-                                    <input type="hidden" name="type" value="artiste">
-                                    <input type="hidden" name="id" value="<?php echo $artiste['ArtisteID']; ?>">
-                                    <button type="submit" class="btn btn-danger">Refuser</button>
-                                </form>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
             <!-- GROUPES -->
             <div class="tab-pane fade" id="pane-groupe" role="tabpanel" aria-labelledby="tab-groupe">
                 <div class="card-list">
-                    <?php foreach ($groupes as $groupe): ?>
-                        <div class="content-card">
-                            <div class="content-card-header">
-                                <img src="../create/<?php echo htmlspecialchars($groupe['ImageGroupe']); ?>" alt="Groupe" class="content-card-image">
-                                <div class="content-card-info">
-                                    <h3 class="content-card-title"><?php echo htmlspecialchars($groupe['NomGroupe']); ?></h3>
-                                    <p class="content-card-description"><?php echo htmlspecialchars($groupe['BiographieCourte']); ?></p>
-                                    <p class="content-card-date">Proposé le: <?php echo htmlspecialchars($groupe['DateProposition']); ?></p>
+                    <?php if (empty($groupes)): ?>
+                        <div class="text-center py-5">
+                            <p class="text-muted text-nowrap">Aucun groupe en cours de validation</p>
+                        </div>
+                    <?php else: ?>
+                        <?php foreach ($groupes as $groupe): ?>
+                            <div class="content-card">
+                                <div class="content-card-header">
+                                    <img src="../create/<?php echo htmlspecialchars($groupe['ImageGroupe']); ?>" alt="Groupe" class="content-card-image">
+                                    <div class="content-card-info">
+                                        <h3 class="content-card-title"><?php echo htmlspecialchars($groupe['NomGroupe']); ?></h3>
+                                        <p class="content-card-description"><?php echo htmlspecialchars($groupe['BiographieCourte']); ?></p>
+                                        <p class="content-card-date">Proposé le: <?php echo htmlspecialchars($groupe['DateProposition']); ?></p>
+                                    </div>
+                                </div>
+                                <div class="content-card-body">
+                                    <audio controls class="content-card-audio">
+                                        <source src="../create/<?php echo htmlspecialchars($groupe['CheminFichierMP3']); ?>" type="audio/mpeg">
+                                    </audio>
+                                </div>
+                                <div class="content-card-actions">
+                                    <form method="post" style="display: inline;">
+                                        <input type="hidden" name="action" value="valider">
+                                        <input type="hidden" name="type" value="groupe">
+                                        <input type="hidden" name="id" value="<?php echo $groupe['GroupeID']; ?>">
+                                        <button type="submit" class="btn btn-success">Valider</button>
+                                    </form>
+                                    <form method="post" style="display: inline;">
+                                        <input type="hidden" name="action" value="refuser">
+                                        <input type="hidden" name="type" value="groupe">
+                                        <input type="hidden" name="id" value="<?php echo $groupe['GroupeID']; ?>">
+                                        <button type="submit" class="btn btn-danger">Refuser</button>
+                                    </form>
                                 </div>
                             </div>
-                            <div class="content-card-body">
-                                <audio controls class="content-card-audio">
-                                    <source src="../create/<?php echo htmlspecialchars($groupe['CheminFichierMP3']); ?>" type="audio/mpeg">
-                                </audio>
-                            </div>
-                            <div class="content-card-actions">
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="action" value="valider">
-                                    <input type="hidden" name="type" value="groupe">
-                                    <input type="hidden" name="id" value="<?php echo $groupe['GroupeID']; ?>">
-                                    <button type="submit" class="btn btn-success">Valider</button>
-                                </form>
-                                <form method="post" style="display: inline;">
-                                    <input type="hidden" name="action" value="refuser">
-                                    <input type="hidden" name="type" value="groupe">
-                                    <input type="hidden" name="id" value="<?php echo $groupe['GroupeID']; ?>">
-                                    <button type="submit" class="btn btn-danger">Refuser</button>
-                                </form>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
