@@ -1,10 +1,19 @@
-cat > .gitignore << 'EOF'
+# Dependencies
 /vendor/
 node_modules/
-.cache/
+
+# Env & Secrets
+.htaccess
 .env
+*.env.local
+
+# Logs
 *.log
+
+# OS
 .DS_Store
 Thumbs.db
-*.sqlite
-EOF
+
+# IDE
+.vscode/
+.idea/
