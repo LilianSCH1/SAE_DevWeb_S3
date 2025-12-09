@@ -18,7 +18,7 @@ window.addEventListener('scroll', function() {
     const logo = document.getElementById('logo');
     if (window.scrollY > 50) {
         navbar.classList.add('scrolled');
-        logo.src = '../icons/logos/MyPulse_Black-removebg-preview.png';
+        logo.src = '../icons/logos/MyPulse_White-removebg-preview.png';
     } else {
         navbar.classList.remove('scrolled');
         logo.src = '../icons/logos/MyPulse-removebg-preview.png';
