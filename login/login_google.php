@@ -1,11 +1,16 @@
 <?php
+error_reporting(E_ALL & ~E_DEPRECATED);
 session_start();
-require_once 'vendor/autoload.php';
+
+$GOOGLE_CLIENT_ID = $_SERVER['GOOGLE_CLIENT_ID'] ?? '';
+$GOOGLE_CLIENT_SECRET = $_SERVER['GOOGLE_CLIENT_SECRET'] ?? '';
+
+require_once '../vendor/autoload.php';
 
 $client = new Google\Client();
-$client->setClientId($_ENV['GOOGLE_CLIENT_ID']);
-$client->setClientSecret($_ENV['GOOGLE_CLIENT_SECRET']);  // ← ICI CORRIGÉ
-$client->setRedirectUri('http://localhost/login_google.php');
+$client->setClientId($GOOGLE_CLIENT_ID);
+$client->setClientSecret($GOOGLE_CLIENT_SECRET);
+$client->setRedirectUri('http://localhost/SAE_DevWeb_S3/login/login_google.php');
 $client->addScope([
     Google_Service_Oauth2::USERINFO_EMAIL,
     Google_Service_Oauth2::USERINFO_PROFILE
@@ -15,7 +20,6 @@ if (isset($_GET['code'])) {
     $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
     if (!isset($token['error'])) {
         $client->setAccessToken($token);
-        
         $service = new Google_Service_Oauth2($client);
         $userInfo = $service->userinfo->get();
         
@@ -25,19 +29,12 @@ if (isset($_GET['code'])) {
             'name' => $userInfo->name,
             'picture' => $userInfo->picture
         ];
-        header('Location: /dashboard.php');
+        header('Location: ../index/index.php');
         exit;
     }
 }
 
 $authUrl = $client->createAuthUrl();
+header('Location: ' . $authUrl);
+exit;
 ?>
-<!DOCTYPE html>
-<html>
-<head><title>Google Login</title></head>
-<body>
-    <a href="<?= $authUrl ?>" class="btn btn-primary">
-        <i class="bi bi-google"></i> Se connecter avec Google
-    </a>
-</body>
-</html>
