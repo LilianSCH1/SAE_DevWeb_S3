@@ -5,6 +5,15 @@ session_start();
 $GOOGLE_CLIENT_ID = $_SERVER['GOOGLE_CLIENT_ID'] ?? '';
 $GOOGLE_CLIENT_SECRET = $_SERVER['GOOGLE_CLIENT_SECRET'] ?? '';
 
+error_reporting(E_ALL & ~E_DEPRECATED);
+
+// FIX SSL WAMP
+set_time_limit(0);
+ini_set('default_socket_timeout', 300);
+
+// Bypass SSL pour localhost
+putenv('CURL_CA_BUNDLE=');
+
 require_once '../vendor/autoload.php';
 
 $client = new Google\Client();
