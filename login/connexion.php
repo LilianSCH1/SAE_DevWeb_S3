@@ -238,7 +238,7 @@ if (isset($_SESSION['user_id'])) {
                                     <a href="../login/login_google.php" class="btn btn-outline-secondary flex-fill">
                                         <i class="bi bi-google me-2"></i>Google
                                     </a>
-                                    <a href="/login_instagram.php" class="btn btn-outline-secondary flex-fill">
+                                    <a href="#" class="btn btn-outline-secondary flex-fill">
                                         <i class="bi bi-instagram me-2"></i>Instagram
                                     </a>
                                 </div>
