@@ -43,3 +43,30 @@
         </div>
     </div>
 </section>
+
+<!-- Section des couvertures de musiques défilantes -->
+<section class="music-covers py-4">
+    <div class="container-fluid">
+        <div class="scroll-container">
+            <div class="scroll-content">
+                <?php
+                require_once '../class/Database.php';
+                try {
+                    $pdo = Database::getConnection();
+                    $stmt = $pdo->prepare("SELECT Titre, ImageCouverture FROM musique WHERE StatusMusique = 'valide' ORDER BY DateProposition DESC");
+                    $stmt->execute();
+                    $musiques = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($musiques as $musique) {
+                        echo '<div class="cover-item">';
+                        echo '<img src="../create/uploads/musiques/couvertures/' . htmlspecialchars($musique['ImageCouverture']) . '" alt="' . htmlspecialchars($musique['Titre']) . '" class="cover-img">';
+                        echo '</div>';
+                    }
+                } catch (Exception $e) {
+                    // En cas d'erreur, afficher rien ou un message
+                    echo '<!-- Erreur de chargement des couvertures -->';
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</section>

@@ -24,3 +24,13 @@ window.addEventListener('scroll', function() {
         logo.src = '../icons/logos/MyPulse-removebg-preview.png';
     }
 });
+
+// Music covers auto-scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const scrollContent = document.querySelector('.scroll-content');
+    if (scrollContent) {
+        // Duplicate the content for infinite scroll
+        const originalContent = scrollContent.innerHTML;
+        scrollContent.innerHTML += originalContent;
+    }
+});
