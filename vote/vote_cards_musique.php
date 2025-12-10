@@ -58,10 +58,18 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
             </div>
 
             <div class="content-card-footer">
-                <button class="btn-outline-orange btn-play-audio"
-                    data-audio="<?php echo htmlspecialchars($audioPath); ?>">
-                    ▶ Écouter
-                </button>
+                <div class="audio-player-container">
+                    <button class="btn-outline-orange btn-play-audio"
+                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                        ▶ Écouter
+                    </button>
+                    <div class="progress-bar-container" style="display: none;">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill"></div>
+                        </div>
+                        <button class="btn-play-pause">⏸</button>
+                    </div>
+                </div>
                 <button class="btn-orange">
                     ❤ Voter pour cette musique
                 </button>
