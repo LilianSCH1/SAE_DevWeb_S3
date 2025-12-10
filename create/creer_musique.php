@@ -54,24 +54,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($titre && $artiste && $musicPath && $imagePath) {
-        $stmt = $pdo->prepare("
-            INSERT INTO musique (
-                Titre,
-                Artiste,
-                AnneePublication,
-                CheminFichierMP3,
-                ImageCouverture,
-                StatusMusique,
-                UserID,
-                DateProposition
-            ) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())
+        // Vérifier doublon avant insertion
+        $check = $pdo->prepare("
+            SELECT COUNT(*) FROM musique
+            WHERE CheminFichierMP3 = :chemin
+               OR (Titre = :titre AND Artiste = :artiste)
         ");
-        $stmt->execute([$titre, $artiste, $anneePublication, $musicPath, $imagePath, $userId]);
+        $check->execute([
+            ':chemin' => $musicPath,
+            ':titre'  => $titre,
+            ':artiste'=> $artiste
+        ]);
 
-        if ($stmt->rowCount() > 0) {
-            $message = 'Musique ajoutée avec succès !';
+        if ($check->fetchColumn() > 0) {
+            $message = "Cette musique existe déjà.";
         } else {
-            $message = 'Erreur lors de l\'ajout de la musique.';
+            try {
+                $stmt = $pdo->prepare("
+                    INSERT INTO musique (
+                        Titre,
+                        Artiste,
+                        AnneePublication,
+                        CheminFichierMP3,
+                        ImageCouverture,
+                        StatusMusique,
+                        UserID,
+                        DateProposition
+                    ) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())
+                ");
+                $stmt->execute([$titre, $artiste, $anneePublication, $musicPath, $imagePath, $userId]);
+
+                if ($stmt->rowCount() > 0) {
+                    $message = 'Musique ajoutée avec succès !';
+                } else {
+                    $message = 'Erreur lors de l\'ajout de la musique.';
+                }
+            } catch (PDOException $e) {
+                // en cas de condition de course ou autre, gérer doublon côté BD
+                if (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1062) {
+                    $message = "Cette musique existe déjà (doublon détecté).";
+                } else {
+                    // journaliser l'erreur et afficher message générique
+                    error_log($e->getMessage());
+                    $message = "Erreur lors de l'ajout.";
+                }
+            }
         }
     } else {
         $message = 'Veuillez remplir tous les champs obligatoires.';
