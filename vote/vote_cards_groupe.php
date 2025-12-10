@@ -1,3 +1,11 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../class/User.php';
+$currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+?>
+
 <?php if (empty($groupes)): ?>
     <p class="text-muted text-nowrap">Aucun groupe pour le moment.</p>
 <?php else: ?>
@@ -8,7 +16,16 @@
         ?>
         <article class="content-card">
             <div class="content-card-header">
-                <button type="button" class="delete-card-btn"><i class="bi bi-trash3-fill"></i></button>
+                <?php if ($currentUser && $currentUser->role === 'admin'): ?>
+                    <form method="post" class="delete-card-btn" aria-label="Archiver groupe">
+                        <input type="hidden" name="action" value="archiver">
+                        <input type="hidden" name="type" value="groupe">
+                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($groupe['GroupeID'] ?? ''); ?>">
+                        <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                <?php endif; ?>
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($groupe['NomGroupe']); ?>
                 </h3>

@@ -1,3 +1,11 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../class/User.php';
+$currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+?>
+
 <?php if (empty($artistes)): ?>
     <p class="text-muted text-nowrap">Aucun artiste pour le moment.</p>
 <?php else: ?>
@@ -8,7 +16,16 @@
         ?>
         <article class="content-card">
             <div class="content-card-header">
-                <button type="button" class="delete-card-btn"><i class="bi bi-trash3-fill"></i></button>
+                <?php if ($currentUser && $currentUser->role === 'admin'): ?>
+                    <form method="post" class="delete-card-btn" aria-label="Archiver artiste">
+                        <input type="hidden" name="action" value="archiver">
+                        <input type="hidden" name="type" value="artiste">
+                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($artiste['ArtisteID'] ?? ''); ?>">
+                        <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                <?php endif; ?>
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($artiste['NomArtiste']); ?>
                 </h3>
@@ -23,7 +40,7 @@
 
             <div class="content-card-body">
                 <div class="content-card-image"
-                     style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
+                    style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
                 </div>
 
                 <div class="content-card-separator"></div>
@@ -35,7 +52,7 @@
 
             <div class="content-card-footer">
                 <button class="btn-outline-orange btn-play-audio"
-                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                    data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                     ▶ Écouter
                 </button>
                 <button class="btn-orange">
