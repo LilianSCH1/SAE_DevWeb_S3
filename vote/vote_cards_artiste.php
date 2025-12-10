@@ -17,7 +17,14 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
         <article class="content-card">
             <div class="content-card-header">
                 <?php if ($currentUser && $currentUser->role === 'admin'): ?>
-                    <button type="button" class="delete-card-btn"><i class="bi bi-trash3-fill"></i></button>
+                    <form method="post" class="delete-card-btn" aria-label="Archiver artiste">
+                        <input type="hidden" name="action" value="archiver">
+                        <input type="hidden" name="type" value="artiste">
+                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($artiste['ArtisteID'] ?? ''); ?>">
+                        <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
                 <?php endif; ?>
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($artiste['NomArtiste']); ?>
