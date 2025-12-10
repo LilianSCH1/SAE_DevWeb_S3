@@ -27,13 +27,13 @@ body {
     transition: var(--transition);
     background-color: rgba(255, 255, 255, 0.8);
     -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
 }
 
 .navbar.scrolled {
     background-color: rgba(250, 133, 50, 0.8);
     -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(7px);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -50,11 +50,11 @@ body {
     transition: var(--transition);
 }
 
-.navbar-brand.scrolled {
-    background: linear-gradient(135deg, white, white);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+.navbar.scrolled .navbar-brand {
+    color: white;
+    background: none;
+    -webkit-text-fill-color: white;
+    background-clip: initial;
 }
 
 .navbar-brand i {
