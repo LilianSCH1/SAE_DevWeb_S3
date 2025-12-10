@@ -168,6 +168,8 @@ $groupes = $pdo->query("
                     currentProgressFill = progressContainer.querySelector('.progress-bar-fill');
                     currentPlayPauseBtn = progressContainer.querySelector('.btn-play-pause');
                     currentPlayPauseBtn.textContent = '⏸';
+                    // Ajouter les classes du bouton "Écouter" SANS modifier la classe existante
+                    currentPlayPauseBtn.classList.add(...playBtn.classList);
                 } else {
                     playBtn.style.display = 'block';
                     progressContainer.style.display = 'none';
@@ -218,13 +220,14 @@ $groupes = $pdo->query("
 
             // Bouton play/pause dans la barre de progression
             document.addEventListener('click', (e) => {
-                if (e.target.classList.contains('btn-play-pause')) {
+                if (e.target.classList.contains('btn-play-pause') || e.target.closest('.btn-play-pause')) {
+                    const btn = e.target.classList.contains('btn-play-pause') ? e.target : e.target.closest('.btn-play-pause');
                     if (audio.paused) {
                         audio.play();
-                        e.target.textContent = '⏸';
+                        btn.textContent = '⏸';
                     } else {
                         audio.pause();
-                        e.target.textContent = '▶';
+                        btn.textContent = '▶';
                     }
                 }
             });
