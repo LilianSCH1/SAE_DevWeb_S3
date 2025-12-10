@@ -20,7 +20,8 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                 <a class="nav-link active" href="../index/index.php">Accueil</a>
             </li>
             <?php if (isset($_SESSION['user_id'])): ?>
-                <?php if ($currentUser && $currentUser->role === 'basique'): ?>
+                <?php if ($currentUser && in_array($currentUser->role, ['basique', 'admin', 'certifie'])): ?>
+
                     <li class="nav-item">
                         <a class="nav-link" href="../vote/voter.php">Voter</a>
                     </li>
