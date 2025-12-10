@@ -11,6 +11,7 @@
         ?>
         <article class="content-card">
             <div class="content-card-header">
+                <button type="button" class="delete-card-btn">&#128465;</button>
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($musique['Titre']); ?>
                 </h3>

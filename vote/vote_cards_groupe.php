@@ -8,6 +8,7 @@
         ?>
         <article class="content-card">
             <div class="content-card-header">
+                <button type="button" class="delete-card-btn"><i class="bi bi-trash3-fill"></i></button>
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($groupe['NomGroupe']); ?>
                 </h3>
