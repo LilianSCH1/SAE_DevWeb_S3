@@ -58,7 +58,7 @@
                     $musiques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($musiques as $musique) {
                         echo '<div class="cover-item">';
-                        echo '<img src="../create/uploads/musiques/couvertures/' . htmlspecialchars($musique['ImageCouverture']) . '" alt="' . htmlspecialchars($musique['Titre']) . '" class="cover-img">';
+                        echo '<img src="../create/' . htmlspecialchars($musique['ImageCouverture']) . '" alt="' . htmlspecialchars($musique['Titre']) . '" class="cover-img">';
                         echo '</div>';
                     }
                 } catch (Exception $e) {
