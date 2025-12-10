@@ -38,37 +38,25 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
   const audio = document.getElementById("vote-audio-player");
   let currentBtn = null;
-  let currentProgressBar = null;
-  let currentProgressFill = null;
-  let currentPlayPauseBtn = null;
+  let currentProgressBar, currentProgressFill, currentProgressTime, currentPlayPauseBtn;
 
   function setBtnState(btn, isPlaying) {
-    const container = btn.closest(".audio-player-container");
-    const progressContainer = container.querySelector(
-      ".progress-bar-container"
-    );
-    const playBtn = container.querySelector(".btn-play-audio");
+    const container = btn.closest('.audio-player-container');
+    const progressContainer = container.querySelector('.progress-bar-container');
+    const playBtn = container.querySelector('.btn-play-audio');
 
     if (isPlaying) {
-      playBtn.style.display = "none";
-      progressContainer.style.display = "flex";
-      currentProgressBar = progressContainer.querySelector(".progress-bar-bg");
-      currentProgressFill =
-        progressContainer.querySelector(".progress-bar-fill");
-      currentPlayPauseBtn = progressContainer.querySelector(".btn-play-pause");
-      currentPlayPauseBtn.textContent = "⏸";
-      // Ajouter les classes du bouton "Écouter" SANS modifier la classe existante
-      currentPlayPauseBtn.classList.add(...playBtn.classList);
+        playBtn.style.display = 'none';
+        progressContainer.style.display = 'flex';
+        currentProgressBar = progressContainer.querySelector('.progress-bar-bg');
+        currentProgressFill = progressContainer.querySelector('.progress-bar-fill');
+        currentProgressTime = progressContainer.querySelector('.progress-time');
+        currentPlayPauseBtn = progressContainer.querySelector('.btn-play-pause');
+        currentPlayPauseBtn.textContent = '⏸';
+        currentPlayPauseBtn.classList.add(...playBtn.classList);
     } else {
-      playBtn.style.display = "block";
-      progressContainer.style.display = "none";
-    }
-  }
-
-  function updateProgress() {
-    if (currentProgressFill && audio.duration) {
-      const progress = (audio.currentTime / audio.duration) * 100;
-      currentProgressFill.style.width = progress + "%";
+        playBtn.style.display = 'block';
+        progressContainer.style.display = 'none';
     }
   }
 
@@ -81,6 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (currentBtn === btn && !audio.paused) {
         audio.pause();
         setBtnState(btn, false);
+        currentBtn = null;
         return;
       }
 
@@ -97,17 +86,6 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(() => {});
     });
-  });
-
-  // Gestionnaire pour la barre de progression
-  document.addEventListener("click", (e) => {
-    if (e.target.classList.contains("progress-bar-bg")) {
-      const rect = e.target.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const width = rect.width;
-      const percentage = (clickX / width) * 100;
-      audio.currentTime = (percentage / 100) * audio.duration;
-    }
   });
 
   // Bouton play/pause dans la barre de progression
@@ -129,19 +107,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // Mettre à jour la barre de progression
+  audio.addEventListener("timeupdate", () => {
+    if (currentProgressFill && audio.duration) {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      currentProgressFill.style.width = percent + "%";
+
+      if (currentProgressTime) {
+        const minutes = Math.floor(audio.currentTime / 60);
+        const seconds = Math.floor(audio.currentTime % 60);
+        currentProgressTime.textContent = `${minutes}:${seconds
+          .toString()
+          .padStart(2, "0")}`;
+      }
+    }
+  });
+
+  // Clic sur la barre pour changer la position
+  document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("progress-bar-bg")) {
+      const rect = e.target.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = percent * audio.duration;
+    }
+  });
+
   // Clic en dehors du lecteur audio pour réinitialiser
   document.addEventListener("click", (e) => {
     if (currentBtn && !e.target.closest(".audio-player-container")) {
       audio.pause();
-      setBtnState(currentBtn, false);
-      currentBtn = null;
-    }
-  });
-
-  audio.addEventListener("timeupdate", updateProgress);
-
-  audio.addEventListener("ended", () => {
-    if (currentBtn) {
       setBtnState(currentBtn, false);
       currentBtn = null;
     }

@@ -59,14 +59,15 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
 
             <div class="content-card-footer">
                 <div class="audio-player-container">
-                    <button class="btn-outline-orange btn-play-audio"
+                    <button class="btn btn-outline-orange btn-play-audio"
                         data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                         ▶ Écouter
                     </button>
-                    <div class="progress-bar-container" style="display: none;">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill"></div>
+                    <div class="progress-bar-container" style="display: none; gap: 10px; align-items: center;">
+                        <div class="progress-bar-bg" style="flex: 1; height: 6px; background-color: #e9ecef; border-radius: 3px; cursor: pointer;">
+                            <div class="progress-bar-fill" style="height: 100%; background-color: #0d6efd; border-radius: 3px; width: 0%;"></div>
                         </div>
+                        <span class="progress-time" style="font-size: 12px; min-width: 40px; text-align: right;">0:00</span>
                         <button class="btn-play-pause">⏸</button>
                     </div>
                 </div>
