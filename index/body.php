@@ -53,7 +53,7 @@
                 require_once '../class/Database.php';
                 try {
                     $pdo = Database::getConnection();
-                    $stmt = $pdo->prepare("SELECT Titre, ImageCouverture FROM musique WHERE StatusMusique = 'valide' ORDER BY DateProposition DESC");
+                    $stmt = $pdo->prepare("SELECT DISTINCT ImageCouverture, MIN(Titre) as Titre FROM musique WHERE StatusMusique = 'valide' GROUP BY ImageCouverture ORDER BY MIN(DateProposition) DESC");
                     $stmt->execute();
                     $musiques = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($musiques as $musique) {
