@@ -1,3 +1,11 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+require_once __DIR__ . '/../class/User.php';
+$currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+?>
+
 <?php if (empty($musiques)): ?>
     <p class="text-muted text-nowrap">Aucune musique pour le moment.</p>
 <?php else: ?>
@@ -11,7 +19,9 @@
         ?>
         <article class="content-card">
             <div class="content-card-header">
-                <button type="button" class="delete-card-btn">&#128465;</button>
+                <?php if ($currentUser && $currentUser->role === 'admin'): ?>
+                    <button type="button" class="delete-card-btn"><i class="bi bi-trash3-fill"></i></button>
+                <?php endif; ?>
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($musique['Titre']); ?>
                 </h3>
