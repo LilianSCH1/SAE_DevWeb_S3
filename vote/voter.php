@@ -59,7 +59,7 @@ $artistes = $pdo->query("
            CheminFichierMP3,
            AnneeNaissance as DateAffichee
     FROM artiste
-    WHERE StatusArtiste IN ('valide')
+    WHERE StatusArtiste IN ('valide', 'en_attente')
     ORDER BY DateAffichee DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -71,7 +71,7 @@ $musiques = $pdo->query("
            CheminFichierMP3,
            AnneePublication as DateAffichee
     FROM musique
-    WHERE StatusMusique IN ('valide')
+    WHERE StatusMusique IN ('valide', 'en_attente')
     ORDER BY DateAffichee DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -83,7 +83,7 @@ $groupes = $pdo->query("
            CheminFichierMP3,
            AnneeFormation as DateAffichee
     FROM groupe
-    WHERE StatusGroupe IN ('valide')
+    WHERE StatusGroupe IN ('valide', 'en_attente')
     ORDER BY DateAffichee DESC
 ")->fetchAll(PDO::FETCH_ASSOC);
 ?>
