@@ -53,10 +53,22 @@
                 require_once '../class/Database.php';
                 try {
                     $pdo = Database::getConnection();
-                    $stmt = $pdo->prepare("SELECT DISTINCT ImageCouverture, MIN(Titre) as Titre FROM musique WHERE StatusMusique = 'valide' GROUP BY ImageCouverture ORDER BY MIN(DateProposition) DESC");
+                    $stmt = $pdo->prepare("SELECT ImageCouverture, Titre FROM musique WHERE StatusMusique = 'valide' ORDER BY DateProposition DESC");
                     $stmt->execute();
-                    $musiques = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    foreach ($musiques as $musique) {
+                    $allMusiques = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    // Remove duplicates based on cover image base name (before timestamp)
+                    $uniqueCovers = [];
+                    foreach ($allMusiques as $musique) {
+                        $coverPath = $musique['ImageCouverture'];
+                        // Extract base name (remove timestamp and extension)
+                        $baseName = preg_replace('/_\d+(_couverture)?\..+$/', '', $coverPath);
+                        if (!isset($uniqueCovers[$baseName])) {
+                            $uniqueCovers[$baseName] = $musique;
+                        }
+                    }
+
+                    foreach ($uniqueCovers as $musique) {
                         echo '<div class="cover-item">';
                         echo '<img src="../create/' . htmlspecialchars($musique['ImageCouverture']) . '" alt="' . htmlspecialchars($musique['Titre']) . '" class="cover-img">';
                         echo '</div>';
