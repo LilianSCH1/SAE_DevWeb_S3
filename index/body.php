@@ -57,14 +57,15 @@
                     $stmt->execute();
                     $allMusiques = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                    // Remove duplicates based on cover image base name (before timestamp)
+                    // Remove duplicates based on actual image file content (MD5 hash)
                     $uniqueCovers = [];
                     foreach ($allMusiques as $musique) {
-                        $coverPath = $musique['ImageCouverture'];
-                        // Extract base name (remove timestamp and extension)
-                        $baseName = preg_replace('/_\d+(_couverture)?\..+$/', '', $coverPath);
-                        if (!isset($uniqueCovers[$baseName])) {
-                            $uniqueCovers[$baseName] = $musique;
+                        $coverPath = '../create/' . $musique['ImageCouverture'];
+                        if (file_exists($coverPath)) {
+                            $hash = md5_file($coverPath);
+                            if (!isset($uniqueCovers[$hash])) {
+                                $uniqueCovers[$hash] = $musique;
+                            }
                         }
                     }
 
