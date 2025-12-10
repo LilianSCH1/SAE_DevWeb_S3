@@ -1,4 +1,4 @@
-    <?php
+no    <?php
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -53,18 +53,26 @@
         }
 
         if ($nomArtiste && $soundPath && $imagePath) {
-            $stmt = $pdo->prepare("INSERT INTO artiste (NomArtiste, NomReel, BiographieCourte, AnneeNaissance, CheminFichierMP3, ImageProfil, StatusArtiste, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
-            $stmt->execute([$nomArtiste, $nomReel, $bio, $anneeNaissance, $soundPath, $imagePath, $userId]);
+    }
+            $stmt = $pdo->prepare("SELECT ArtisteID FROM artiste WHERE NomArtiste = ?");
+            $stmt->execute([$nomArtiste]);
+            $existingArtist = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($stmt->rowCount() > 0) {
-                $message = 'Artiste ajouté avec succès !';
+            if ($existingArtist) {
+                $message = 'Cet artiste existe déjà !';
             } else {
-                $message = 'Erreur lors de l\'ajout de l\'artiste.';
+                $stmt = $pdo->prepare("INSERT INTO artiste (NomArtiste, NomReel, BiographieCourte, AnneeNaissance, CheminFichierMP3, ImageProfil, StatusArtiste, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
+                $stmt->execute([$nomArtiste, $nomReel, $bio, $anneeNaissance, $soundPath, $imagePath, $userId]);
+
+                if ($stmt->rowCount() > 0) {
+                    $message = 'Artiste ajouté avec succès !';
+                } else {
+                    $message = 'Erreur lors de l\'ajout de l\'artiste.';
+                }
             }
         } else {
             $message = 'Veuillez remplir tous les champs obligatoires.';
         }
-    }
     ?>
     <!DOCTYPE html>
     <html lang="fr">
