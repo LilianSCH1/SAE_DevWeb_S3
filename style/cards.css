@@ -101,11 +101,22 @@
 /* Image responsive au-dessus de la description */
 .content-card-image {
     width: 100%;
-    padding-top: 45%;            /* ratio vertical, responsive */
+    padding-top: 100%;            /* ratio carré 1:1, responsive */
     margin-top: 18px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    border-radius: 8px;
+    position: relative;
+}
+
+.content-card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 8px;
 }
 
