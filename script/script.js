@@ -24,3 +24,14 @@ window.addEventListener('scroll', function() {
         logo.src = '../icons/logos/MyPulse-removebg-preview.png';
     }
 });
+
+// Event listener for delete card buttons
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteButtons = document.querySelectorAll('.delete-card-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const card = this.closest('.content-card');
+            card.classList.add('archive_suppr');
+        });
+    });
+});
