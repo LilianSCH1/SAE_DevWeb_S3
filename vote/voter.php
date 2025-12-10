@@ -7,6 +7,46 @@ require '../database/dbconnect.php';
 require_once __DIR__ . '/../class/User.php';
 $pdo = dbconnect();
 
+// --- AJOUT : traitement suppression musique ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_musique'])) {
+    // Vérifier que l'utilisateur est admin
+    $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+    if (!$currentUser || $currentUser->role !== 'admin') {
+        http_response_code(403);
+        exit('Accès refusé.');
+    }
+
+    // Récupérer les chemins envoyés depuis le formulaire (valeurs telles qu'enregistrées en BDD)
+    $cheminFichier = isset($_POST['chemin_fichier']) ? trim($_POST['chemin_fichier']) : '';
+    $imageCouverture = isset($_POST['image_couverture']) ? trim($_POST['image_couverture']) : '';
+
+    if ($cheminFichier !== '') {
+        // Supprimer les fichiers côté serveur si présents
+        $baseDir = __DIR__ . '/../create/'; // correspond à la construction utilisée dans les vues
+        $f1 = $baseDir . ltrim($cheminFichier, '/\\');
+        $f2 = $baseDir . ltrim($imageCouverture, '/\\');
+
+        if (is_file($f1)) {
+            @unlink($f1);
+        }
+        if ($imageCouverture !== '' && is_file($f2)) {
+            @unlink($f2);
+        }
+
+        // Supprimer l'enregistrement en base (identification via le chemin du fichier stocké)
+        try {
+            $stmt = $pdo->prepare("DELETE FROM musique WHERE CheminFichierMP3 = :chemin LIMIT 1");
+            $stmt->execute([':chemin' => $cheminFichier]);
+        } catch (Exception $e) {
+            // Optionnel : journaliser l'erreur
+        }
+    }
+
+    // Redirection pour éviter resoumission
+    header('Location: ' . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
 // Vérifier le rôle de l'utilisateur
 $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
 $userCanCreate = $currentUser && in_array($currentUser->role, ['certifie', 'admin']);
