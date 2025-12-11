@@ -72,7 +72,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
             <div class="content-card-footer">
                 <div class="audio-player-container">
                     <button class="btn btn-outline-orange btn-play-audio"
-                            data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                         ▶ Écouter
                     </button>
                     <div class="progress-bar-container" style="display: none; gap: 10px; align-items: center;">
