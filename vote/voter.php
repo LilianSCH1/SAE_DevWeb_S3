@@ -5,6 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 
 require '../database/dbconnect.php';
 require_once __DIR__ . '/../class/User.php';
+
+$voteToken = $_COOKIE['vote_token'] ?? null;
 $pdo = dbconnect();
 
 // --- AJOUT : traitement suppression musique ---

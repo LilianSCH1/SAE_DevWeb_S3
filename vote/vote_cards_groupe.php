@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../class/User.php';
 $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+$voteToken = $_COOKIE['vote_token'] ?? null;
 ?>
 
 <?php if (empty($groupes)): ?>
@@ -13,6 +14,20 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
         <?php
         $imgPath   = '../create/' . ltrim($groupe['ImageGroupe'] ?? '', '/');
         $audioPath = '../create/' . ltrim($groupe['CheminFichierMP3'] ?? '', '/');
+
+        // Détecter si ce token a déjà voté pour ce groupe
+        $hasVoted = false;
+        if (!empty($voteToken)) {
+            $stmt = $pdo->prepare("
+                SELECT COUNT(*) FROM vote
+                WHERE Token = :token AND TypeContenu = 'groupe' AND ContenuID = :id
+            ");
+            $stmt->execute([
+                ':token' => $voteToken,
+                ':id'    => (int)($groupe['GroupeID'] ?? 0)
+            ]);
+            $hasVoted = $stmt->fetchColumn() > 0;
+        }
         ?>
         <article class="content-card">
             <div class="content-card-header">
@@ -53,24 +68,19 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
 
             <div class="content-card-footer">
                 <div class="audio-player-container">
-                    <button class="btn btn-outline-orange btn-play-audio"
+                    <button class="btn-outline-orange btn-play-audio"
                         data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                         ▶ Écouter
                     </button>
-                    <div class="progress-bar-container" style="display: none; gap: 10px; align-items: center;">
-                        <div class="progress-bar-bg" style="flex: 1; height: 6px; background-color: #e9ecef; border-radius: 3px; cursor: pointer;">
-                            <div class="progress-bar-fill" style="height: 100%; background-color: #0d6efd; border-radius: 3px; width: 0%;"></div>
-                        </div>
-                        <span class="progress-time" style="font-size: 12px; min-width: 40px; text-align: right;">0:00</span>
-                        <button class="btn-play-pause">⏸</button>
-                    </div>
                 </div>
+
                 <button
                     type="button"
                     class="btn btn-orange btn-vote"
                     data-type-contenu="groupe"
-                    data-contenu-id="<?php echo (int)($groupe['GroupeID'] ?? 0); ?>">
-                    ❤ Voter pour ce groupe
+                    data-contenu-id="<?php echo (int)($groupe['GroupeID'] ?? 0); ?>"
+                    data-voted="<?php echo $hasVoted ? '1' : '0'; ?>">
+                    <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour ce groupe'; ?>
                 </button>
 
                 <span class="vote-count">
@@ -80,7 +90,6 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                     echo (int)$stmt->fetchColumn();
                     ?>
                 </span>
-
             </div>
         </article>
     <?php endforeach; ?>

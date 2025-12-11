@@ -4,6 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 require_once __DIR__ . '/../class/User.php';
 $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+
+// Token utilisé pour identifier le votant
+$voteToken = $_COOKIE['vote_token'] ?? null;
 ?>
 
 <?php if (empty($musiques)): ?>
@@ -11,11 +14,22 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
 <?php else: ?>
     <?php foreach ($musiques as $musique): ?>
         <?php
-        // chemins à partir de la valeur BDD
-        // ImageCouverture = "uploads/musiques/couvertures/XXX.jpg"
         $imgPath   = '../create/' . ltrim($musique['ImageCouverture'], '/');
         $audioPath = '../create/' . ltrim($musique['CheminFichierMP3'], '/');
 
+        // Détecter si ce token a déjà voté pour cette musique
+        $hasVoted = false;
+        if (!empty($voteToken)) {
+            $stmt = $pdo->prepare("
+                SELECT COUNT(*) FROM vote
+                WHERE Token = :token AND TypeContenu = 'musique' AND ContenuID = :id
+            ");
+            $stmt->execute([
+                ':token' => $voteToken,
+                ':id'    => (int)($musique['MusiqueID'] ?? 0)
+            ]);
+            $hasVoted = $stmt->fetchColumn() > 0;
+        }
         ?>
         <article class="content-card">
             <div class="content-card-header">
@@ -30,25 +44,25 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                     </form>
                 <?php endif; ?>
                 <h3 class="content-card-title">
-                    <?php echo htmlspecialchars($musique['Titre']); ?>
+                    <?php echo htmlspecialchars($musique['Titre'] ?? ''); ?>
                 </h3>
                 <span class="content-card-type">MUSIQUE</span>
                 <div class="content-card-date">
                     <?php if (!empty($musique['DateAffichee'])): ?>
-                        <?php echo htmlspecialchars($musique['DateAffichee']); ?>
+                        <?php echo htmlspecialchars($musique['DateAffichee'] ?? ''); ?>
                     <?php endif; ?>
                 </div>
             </div>
 
             <div class="content-card-body">
                 <div class="content-card-image"
-                    style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
+                     style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
                 </div>
 
                 <div class="content-card-separator"></div>
 
                 <p class="content-card-subtitle">
-                    <?php echo htmlspecialchars($musique['Artiste']); ?>
+                    <?php echo htmlspecialchars($musique['Artiste'] ?? ''); ?>
                 </p>
 
                 <p class="content-card-description">
@@ -59,7 +73,7 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
             <div class="content-card-footer">
                 <div class="audio-player-container">
                     <button class="btn btn-outline-orange btn-play-audio"
-                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                            data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                         ▶ Écouter
                     </button>
                     <div class="progress-bar-container" style="display: none; gap: 10px; align-items: center;">
@@ -70,12 +84,15 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                         <button class="btn-play-pause">⏸</button>
                     </div>
                 </div>
+
                 <button
                     type="button"
                     class="btn btn-orange btn-vote"
                     data-type-contenu="musique"
-                    data-contenu-id="<?php echo (int)($musique['MusiqueID'] ?? 0); ?>">
-                    ❤ Voter pour cette musique
+                    data-contenu-id="<?php echo (int)($musique['MusiqueID'] ?? 0); ?>"
+                    data-voted="<?php echo $hasVoted ? '1' : '0'; ?>"
+                >
+                    <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour cette musique'; ?>
                 </button>
 
                 <span class="vote-count">
@@ -85,7 +102,6 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                     echo (int)$stmt->fetchColumn();
                     ?>
                 </span>
-
             </div>
         </article>
     <?php endforeach; ?>
