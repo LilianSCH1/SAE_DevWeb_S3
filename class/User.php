@@ -17,7 +17,7 @@ class User
     {
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare("
-            SELECT UserID, UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role, Token, DateInscription
+            SELECT *
             FROM utilisateur
             WHERE UserID = ?
         ");
