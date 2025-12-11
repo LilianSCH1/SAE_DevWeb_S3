@@ -66,7 +66,7 @@ if (
     $email    = trim($_POST['loginEmail'] ?? '');
     $password = $_POST['loginPassword'] ?? '';
 
-    $stmt = $pdo->prepare("SELECT UserID, UserPassword, Role FROM utilisateur WHERE UserMail = ?");
+    $stmt = $pdo->prepare("SELECT UserID, UserPassword, Role, Token FROM utilisateur WHERE UserMail = ?");
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -74,6 +74,7 @@ if (
         $_SESSION['user_id']    = $user['UserID'];
         $_SESSION['user_email'] = $email;
         $_SESSION['role']       = $user['Role'];
+        $_SESSION['user_token'] = $user['Token'];
         header('Location: ../index/index.php');
         exit;
     } else {
