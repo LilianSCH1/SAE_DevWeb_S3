@@ -53,7 +53,8 @@ $userCanCreate = $currentUser && in_array($currentUser->role, ['certifie', 'admi
 
 // Affichage des données de cartes d'artistes
 $artistes = $pdo->query("
-    SELECT NomArtiste,
+    SELECT ArtisteID,
+           NomArtiste,
            BiographieCourte,
            ImageProfil,
            CheminFichierMP3,
@@ -65,7 +66,8 @@ $artistes = $pdo->query("
 
 // Affichage des données de cartes de musiques
 $musiques = $pdo->query("
-    SELECT Titre,
+    SELECT MusiqueID
+           Titre,
            Artiste,
            ImageCouverture,
            CheminFichierMP3,
@@ -77,7 +79,8 @@ $musiques = $pdo->query("
 
 // Affichage des données de cartes de groupes
 $groupes = $pdo->query("
-    SELECT NomGroupe,
+    SELECT GroupeID,
+           NomGroupe,
            BiographieCourte,
            ImageGroupe,
            CheminFichierMP3,
