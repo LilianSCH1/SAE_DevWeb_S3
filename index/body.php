@@ -24,19 +24,71 @@
         <div class="row text-center">
             <div class="col-md-4 mb-3 mb-md-0">
                 <div class="stat-item">
-                    <h3 class="stat-number"><span class="counter" data-target="0">0</span></h3>
+                    <h3 class="stat-number"><span class="counter" data-target="<?php
+                        require_once '../class/Database.php';
+                        try {
+                            $pdo = Database::getConnection();
+                            $stmt = $pdo->query("SELECT COUNT(*) as total FROM (
+                                SELECT MusiqueID FROM musique WHERE StatusMusique IN ('valide', 'en_attente')
+                                UNION ALL
+                                SELECT ArtisteID FROM artiste WHERE StatusArtiste IN ('valide', 'en_attente')
+                                UNION ALL
+                                SELECT GroupeID FROM groupe WHERE StatusGroupe IN ('valide', 'en_attente')
+                            ) as all_content");
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                            echo htmlspecialchars($row['total'] ?? 0);
+                        } catch (Exception $e) {
+                            echo '0';
+                        }
+                    ?>"><?php
+                        require_once '../class/Database.php';
+                        try {
+                            $pdo = Database::getConnection();
+                            $stmt = $pdo->query("SELECT COUNT(*) as total FROM (
+                                SELECT MusiqueID FROM musique WHERE StatusMusique IN ('valide', 'en_attente')
+                                UNION ALL
+                                SELECT ArtisteID FROM artiste WHERE StatusArtiste IN ('valide', 'en_attente')
+                                UNION ALL
+                                SELECT GroupeID FROM groupe WHERE StatusGroupe IN ('valide', 'en_attente')
+                            ) as all_content");
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                            echo htmlspecialchars($row['total'] ?? 0);
+                        } catch (Exception $e) {
+                            echo '0';
+                        }
+                    ?></span></h3>
                     <p class="stat-text">Contenus</p>
                 </div>
             </div>
             <div class="col-md-4 mb-3 mb-md-0">
                 <div class="stat-item">
-                    <h3 class="stat-number"><span class="counter" data-target="0">0</span></h3>
+                    <h3 class="stat-number"><span class="counter" data-target="3">3</span></h3>
                     <p class="stat-text">Catégories</p>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="stat-item">
-                    <h3 class="stat-number"><span class="counter" data-target="0">0</span></h3>
+                    <h3 class="stat-number"><span class="counter" data-target="<?php
+                        require_once '../class/Database.php';
+                        try {
+                            $pdo = Database::getConnection();
+                            $stmt = $pdo->query("SELECT COUNT(*) as total FROM vote");
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                            echo htmlspecialchars($row['total'] ?? 0);
+                        } catch (Exception $e) {
+                            echo '0';
+                        }
+                    ?>"><?php
+                        require_once '../class/Database.php';
+                        try {
+                            $pdo = Database::getConnection();
+                            $stmt = $pdo->query("SELECT COUNT(*) as total FROM vote");
+                            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                            echo htmlspecialchars($row['total'] ?? 0);
+                        } catch (Exception $e) {
+                            echo '0';
+                        }
+                    ?></span></h3>
                     <p class="stat-text">Votes totaux</p>
                 </div>
             </div>
