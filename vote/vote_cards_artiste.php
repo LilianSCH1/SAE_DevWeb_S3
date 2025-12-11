@@ -59,7 +59,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
 
             <div class="content-card-body">
                 <div class="content-card-image"
-                     style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
+                    style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
                 </div>
 
                 <div class="content-card-separator"></div>
@@ -71,10 +71,17 @@ $voteToken = $currentUser ? $currentUser->token : null;
 
             <div class="content-card-footer">
                 <div class="audio-player-container">
-                    <button class="btn-outline-orange btn-play-audio"
-                            data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                    <button class="btn btn-outline-orange btn-play-audio"
+                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                         ▶ Écouter
                     </button>
+                    <div class="progress-bar-container" style="display: none; gap: 10px; align-items: center;">
+                        <div class="progress-bar-bg" style="flex: 1; height: 6px; background-color: #e9ecef; border-radius: 3px; cursor: pointer;">
+                            <div class="progress-bar-fill" style="height: 100%; background-color: #0d6efd; border-radius: 3px; width: 0%;"></div>
+                        </div>
+                        <span class="progress-time" style="font-size: 12px; min-width: 40px; text-align: right;">0:00</span>
+                        <button class="btn-play-pause">⏸</button>
+                    </div>
                 </div>
 
                 <button
@@ -82,8 +89,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
                     class="btn btn-orange btn-vote"
                     data-type-contenu="chanteur"
                     data-contenu-id="<?php echo (int)($artiste['ArtisteID'] ?? 0); ?>"
-                    data-voted="<?php echo $hasVoted ? '1' : '0'; ?>"
-                >
+                    data-voted="<?php echo $hasVoted ? '1' : '0'; ?>">
                     <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour cet artiste'; ?>
                 </button>
 

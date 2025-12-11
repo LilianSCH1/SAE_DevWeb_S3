@@ -57,7 +57,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
 
             <div class="content-card-body">
                 <div class="content-card-image"
-                     style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
+                    style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
                 </div>
 
                 <div class="content-card-separator"></div>
@@ -74,7 +74,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
             <div class="content-card-footer">
                 <div class="audio-player-container">
                     <button class="btn btn-outline-orange btn-play-audio"
-                            data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                         ▶ Écouter
                     </button>
                     <div class="progress-bar-container" style="display: none; gap: 10px; align-items: center;">
@@ -91,8 +91,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
                     class="btn btn-orange btn-vote"
                     data-type-contenu="musique"
                     data-contenu-id="<?php echo (int)($musique['MusiqueID'] ?? 0); ?>"
-                    data-voted="<?php echo $hasVoted ? '1' : '0'; ?>"
-                >
+                    data-voted="<?php echo $hasVoted ? '1' : '0'; ?>">
                     <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour cette musique'; ?>
                 </button>
 
