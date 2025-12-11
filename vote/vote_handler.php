@@ -3,7 +3,6 @@ session_start();
 
 require_once __DIR__ . '/../class/Database.php';
 require_once __DIR__ . '/../class/User.php';
-require_once __DIR__ . '/../config/config_secret.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
