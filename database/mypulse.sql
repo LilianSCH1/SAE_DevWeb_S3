@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 11 déc. 2025 à 09:52
+-- Généré le : jeu. 11 déc. 2025 à 14:08
 -- Version du serveur : 8.4.7
 -- Version de PHP : 8.5.0
 
@@ -52,21 +52,22 @@ CREATE TABLE IF NOT EXISTS `artiste` (
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageProfil` varchar(500) NOT NULL,
   `StatusArtiste` enum('en_attente','valide','refusee','classement','archive') NOT NULL DEFAULT 'en_attente',
-  `UserID` int NOT NULL,
+  `UserID` int DEFAULT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `AnneeNaissance` int DEFAULT NULL,
   PRIMARY KEY (`ArtisteID`),
   UNIQUE KEY `ux_artiste_nom` (`NomArtiste`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusArtiste`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `artiste`
 --
 
 INSERT INTO `artiste` (`ArtisteID`, `NomArtiste`, `NomReel`, `BiographieCourte`, `CheminFichierMP3`, `ImageProfil`, `StatusArtiste`, `UserID`, `DateProposition`, `AnneeNaissance`) VALUES
-(12, 'SDM', 'Leonard Manzambi', 'SDM, de son vrai nom Leonard Manzambi, né le 28 novembre 1995 à Meudon, est un rappeur français. En 2021, il sort l\'album Ocho, puis, l\'année suivante, Liens du 100 ; ce dernier opus est certifié double disque de platine en treize mois. En 2024, son troisième album, À la vie à la mort, reçoit la même certification en un peu moins de six mois.', 'uploads/artistes/sons/SDM_son.mp3', 'uploads/artistes/profil/SDM_profil.jpg', 'valide', 1, '2025-12-10 20:01:33', 1995);
+(12, 'SDM', 'Leonard Manzambi', 'SDM, de son vrai nom Leonard Manzambi, né le 28 novembre 1995 à Meudon, est un rappeur français. En 2021, il sort l\'album Ocho, puis, l\'année suivante, Liens du 100 ; ce dernier opus est certifié double disque de platine en treize mois. En 2024, son troisième album, À la vie à la mort, reçoit la même certification en un peu moins de six mois.', 'uploads/artistes/sons/SDM_son.mp3', 'uploads/artistes/profil/SDM_profil.jpg', 'valide', 1, '2025-12-10 20:01:33', 1995),
+(13, 'Koba LaD', 'Marcel Loutarila', 'Koba LaD, nom de scène de Marcel Loutarila, né le 3 avril 2000 à Saint-Denis, en Seine-Saint-Denis, est un rappeur français. En 2018, il sort son premier album, VII, qui est certifié disque de platine sept mois après sa sortie.', 'uploads/artistes/sons/Koba_LaD_son.mp3', 'uploads/artistes/profil/Koba_LaD_profil.jpg', 'valide', 1, '2025-12-11 12:06:45', 2000);
 
 -- --------------------------------------------------------
 
@@ -108,7 +109,7 @@ CREATE TABLE IF NOT EXISTS `groupe` (
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageGroupe` varchar(500) NOT NULL,
   `StatusGroupe` enum('en_attente','valide','refusee','classement','archive') NOT NULL DEFAULT 'en_attente',
-  `UserID` int NOT NULL,
+  `UserID` int DEFAULT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`GroupeID`),
   UNIQUE KEY `ux_groupe_nom` (`NomGroupe`),
@@ -137,7 +138,7 @@ CREATE TABLE IF NOT EXISTS `musique` (
   `CheminFichierMP3` varchar(500) NOT NULL,
   `ImageCouverture` varchar(500) NOT NULL,
   `StatusMusique` enum('en_attente','valide','refusee','classement','archive') NOT NULL DEFAULT 'en_attente',
-  `UserID` int NOT NULL,
+  `UserID` int DEFAULT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `AnneePublication` int DEFAULT NULL,
   PRIMARY KEY (`MusiqueID`),
@@ -153,7 +154,6 @@ CREATE TABLE IF NOT EXISTS `musique` (
 --
 
 INSERT INTO `musique` (`MusiqueID`, `Titre`, `Artiste`, `CheminFichierMP3`, `ImageCouverture`, `StatusMusique`, `UserID`, `DateProposition`, `AnneePublication`) VALUES
-(22, 'Shamballa', 'Anyme023', 'uploads/musiques/sons/Shamballa_1765386985_musique.mp3', 'uploads/musiques/couvertures/Shamballa_1765386985_couverture.jpg', 'valide', 1, '2025-12-10 18:16:25', 2025),
 (23, 'FE!N', 'Travis Scott', 'uploads/musiques/sons/FEN_1765387072_musique.mp3', 'uploads/musiques/couvertures/FEN_1765387072_couverture.jpg', 'valide', 1, '2025-12-10 18:17:52', 2023),
 (25, 'Goosebumps', 'Travis Scott', 'uploads/musiques/sons/Goosebumps_1765387736_musique.mp3', 'uploads/musiques/couvertures/Goosebumps_1765387736_couverture.jpg', 'valide', 1, '2025-12-10 18:28:56', 2016),
 (27, 'Soleil Bleu', 'Bleu Soleil et Luiza', 'uploads/musiques/sons/Soleil_Bleu_1765387840_musique.mp3', 'uploads/musiques/couvertures/Soleil_Bleu_1765387840_couverture.jpg', 'valide', 1, '2025-12-10 18:30:40', 2025),
@@ -207,14 +207,16 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   UNIQUE KEY `Token` (`Token`),
   KEY `idx_role` (`Role`),
   KEY `idx_mail` (`UserMail`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `utilisateur`
 --
 
 INSERT INTO `utilisateur` (`UserID`, `UserPseudo`, `UserName`, `UserSurname`, `UserMail`, `UserPassword`, `reset_token`, `reset_expire`, `Role`, `DateInscription`, `Token`) VALUES
-(1, 'Valou', 'Valentin', 'Hoja', 'hoja.valentin@gmail.com', '$2y$12$fU7DDW2FXBUydnINYqQsZe04l1aClyINHCaQP9VgdGy2QLPvciZku', NULL, NULL, 'admin', '2025-12-08', '');
+(1, 'admin', 'Valentin', 'Hoja', 'hoja.valentin@gmail.com', '$2y$12$c7CvWyvQC2GPYIZ8bvgtFOlZtSp5O239GvkqvkgcpXRV.5cvmWrd6', NULL, NULL, 'admin', '2025-12-08', 'cb35a570501860e747fa4598e851a7c58ba4b512af285466cbc111ea33708e72'),
+(3, 'certif', 'Valentin', 'Hoja', 'certif.valentin@gmail.com', '$2y$12$qbI8KDOH2EFdNsg/qrnsxuKBOREh1nIdPg.Opy/tfQHk3vTYbyfmC', NULL, NULL, 'basique', '2025-12-11', 'a97809e05d129aaf8f8824a47595644b1d3625466fd41a7d34ceacadfee62f36'),
+(4, 'basique', 'Valentin', 'Hoja', 'basique.valentin@gmail.com', '$2y$12$aszERhrsSwuD7hahlifxx.0rW9hXwdo6jkb3sF0Jg9Xc9hRyPiD4G', NULL, NULL, 'basique', '2025-12-11', '9f6196e46566c8751edabb6b3016c74a2e5bd597a641add5cbd16208f2c2479b');
 
 -- --------------------------------------------------------
 
@@ -231,9 +233,9 @@ CREATE TABLE IF NOT EXISTS `vote` (
   `ValeurVote` int NOT NULL,
   `Token` varchar(255) NOT NULL,
   PRIMARY KEY (`VoteID`),
-  UNIQUE KEY `unique_vote` (`Token`,`TypeContenu`,`ContenuID`),
+  UNIQUE KEY `unique_vote_par_type` (`Token`,`TypeContenu`),
   KEY `idx_contenu` (`TypeContenu`,`ContenuID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Contraintes pour les tables déchargées
@@ -243,19 +245,19 @@ CREATE TABLE IF NOT EXISTS `vote` (
 -- Contraintes pour la table `artiste`
 --
 ALTER TABLE `artiste`
-  ADD CONSTRAINT `artiste_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `artiste_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
 
 --
 -- Contraintes pour la table `groupe`
 --
 ALTER TABLE `groupe`
-  ADD CONSTRAINT `groupe_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `groupe_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
 
 --
 -- Contraintes pour la table `musique`
 --
 ALTER TABLE `musique`
-  ADD CONSTRAINT `musique_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `musique_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
