@@ -291,15 +291,11 @@ body {
     padding: 0.5rem 1.5rem;
 }
 
+
 .btn-vote:hover {
     background-color: #Fa6535;
     border-color: #Fa6535;
     color: white;
-}
-
-.btn-vote.voted {
-    background-color: var(--secondary-color);
-    border-color: var(--secondary-color);
 }
 
 /* Content Sections */
