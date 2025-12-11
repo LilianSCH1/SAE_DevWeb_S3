@@ -26,6 +26,10 @@ if (!$currentUser) {
     echo json_encode(['success' => false, 'message' => 'Utilisateur introuvable.']);
     exit;
 }
+if ($currentUser->role === 'admin') {
+    echo json_encode(['success' => false, 'message' => 'Les admins ne peuvent pas voter.']);
+    exit;
+}
 
 // Vérifier le rôle : uniquement certifiés et basique
 $allowedRoles = ['certifie', 'basique'];
