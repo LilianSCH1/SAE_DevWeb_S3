@@ -34,11 +34,18 @@ if (!in_array($currentUser->role, $allowedRoles, true)) {
     exit;
 }
 
-// Générer ou récupérer le token unique navigateur
-$token = $_COOKIE['vote_token'] ?? null;
-if (!$token) {
+// Récupérer / générer le token de vote de l'utilisateur
+if (empty($currentUser->token)) {
     $token = bin2hex(random_bytes(32));
-    setcookie('vote_token', $token, time() + (365 * 24 * 60 * 60), '/', '', false, true);
+
+    // Sauvegarder en BDD
+    $stmt = $pdo->prepare("UPDATE utilisateur SET Token = :t WHERE UserID = :id");
+    $stmt->execute([':t' => $token, ':id' => $currentUser->id]);
+
+    // Le garder dans l'objet pour la suite
+    $currentUser->token = $token;
+} else {
+    $token = $currentUser->token;
 }
 
 // Récupérer les données du POST
@@ -55,6 +62,7 @@ if (!in_array($typeContenu, $allowedTypes, true) || $contenuID <= 0) {
 
 /**
  * SUPPRESSION DU VOTE
+ * (l'utilisateur clique sur "Supprimer mon vote")
  */
 if ($mode === 'delete') {
     try {
@@ -73,7 +81,7 @@ if ($mode === 'delete') {
         exit;
     }
 
-    // Recalculer le total de cette carte
+    // Recalculer le total de votes pour ce contenu
     $stmt = $pdo->prepare("
         SELECT COUNT(*) FROM vote
         WHERE TypeContenu = :type AND ContenuID = :id
@@ -93,7 +101,8 @@ if ($mode === 'delete') {
 }
 
 /**
- * AJOUT / CHANGEMENT DE VOTE
+ * AJOUT DU VOTE
+ * (l'utilisateur clique sur "❤ Voter ...")
  */
 
 // Protection double-clic : déjà voté pour CE contenu ?
@@ -111,7 +120,7 @@ if ($stmt->fetchColumn() > 0) {
     exit;
 }
 
-// Y a-t-il déjà un vote dans cette catégorie ?
+// Vérifier s'il existe déjà un vote dans cette catégorie pour ce token
 $stmt = $pdo->prepare("
     SELECT VoteID, ContenuID FROM vote
     WHERE Token = :token AND TypeContenu = :type
@@ -124,7 +133,6 @@ $existingVote = $stmt->fetch(PDO::FETCH_ASSOC);
 
 try {
     if ($existingVote) {
-        // Changer de choix dans la même catégorie
         $stmt = $pdo->prepare("
             UPDATE vote
             SET ContenuID = :id, DateVote = NOW()
@@ -135,7 +143,7 @@ try {
             ':voteId' => (int)$existingVote['VoteID']
         ]);
     } else {
-        // Aucun vote dans cette catégorie : INSERT
+        // Aucun vote dans cette catégorie pour ce token : INSERT
         $stmt = $pdo->prepare("
             INSERT INTO vote (Token, TypeContenu, ContenuID, DateVote, ValeurVote)
             VALUES (:token, :type, :id, NOW(), 1)
@@ -152,7 +160,7 @@ try {
     exit;
 }
 
-// Recalculer le total de cette carte
+// Recalculer le total de votes pour ce contenu
 $stmt = $pdo->prepare("
     SELECT COUNT(*) FROM vote
     WHERE TypeContenu = :type AND ContenuID = :id

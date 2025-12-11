@@ -2,9 +2,12 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
 require_once __DIR__ . '/../class/User.php';
 $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
-$voteToken = $_COOKIE['vote_token'] ?? null;
+
+// Token de vote propre à l'utilisateur
+$voteToken = $currentUser ? $currentUser->token : null;
 ?>
 
 <?php if (empty($artistes)): ?>
@@ -15,7 +18,7 @@ $voteToken = $_COOKIE['vote_token'] ?? null;
         $imgPath   = '../create/' . ltrim($artiste['ImageProfil'] ?? '', '/');
         $audioPath = '../create/' . ltrim($artiste['CheminFichierMP3'] ?? '', '/');
 
-        // Détecter si ce token a déjà voté pour cet artiste
+        // Détecter si cet utilisateur a déjà voté pour cet artiste
         $hasVoted = false;
         if (!empty($voteToken)) {
             $stmt = $pdo->prepare("
@@ -56,7 +59,7 @@ $voteToken = $_COOKIE['vote_token'] ?? null;
 
             <div class="content-card-body">
                 <div class="content-card-image"
-                    style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
+                     style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
                 </div>
 
                 <div class="content-card-separator"></div>
@@ -69,7 +72,7 @@ $voteToken = $_COOKIE['vote_token'] ?? null;
             <div class="content-card-footer">
                 <div class="audio-player-container">
                     <button class="btn-outline-orange btn-play-audio"
-                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                            data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                         ▶ Écouter
                     </button>
                 </div>
@@ -79,7 +82,8 @@ $voteToken = $_COOKIE['vote_token'] ?? null;
                     class="btn btn-orange btn-vote"
                     data-type-contenu="chanteur"
                     data-contenu-id="<?php echo (int)($artiste['ArtisteID'] ?? 0); ?>"
-                    data-voted="<?php echo $hasVoted ? '1' : '0'; ?>">
+                    data-voted="<?php echo $hasVoted ? '1' : '0'; ?>"
+                >
                     <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour cet artiste'; ?>
                 </button>
 
