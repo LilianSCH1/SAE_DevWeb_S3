@@ -3,10 +3,17 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/../class/Database.php';
 require_once __DIR__ . '/../class/User.php';
-$currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
 
-// Token de vote propre à l'utilisateur
+$pdo = Database::getConnection();
+
+// Utilisateur courant
+$currentUser = isset($_SESSION['user_id'])
+    ? User::findById((int)$_SESSION['user_id'])
+    : null;
+
+// Token de vote propre à l'utilisateur (colonne Token de `utilisateur`)
 $voteToken = $currentUser ? $currentUser->token : null;
 ?>
 
@@ -22,8 +29,11 @@ $voteToken = $currentUser ? $currentUser->token : null;
         $hasVoted = false;
         if (!empty($voteToken)) {
             $stmt = $pdo->prepare("
-                SELECT COUNT(*) FROM vote
-                WHERE Token = :token AND TypeContenu = 'groupe' AND ContenuID = :id
+                SELECT COUNT(*) 
+                FROM vote
+                WHERE Token = :token 
+                  AND TypeContenu = 'groupe' 
+                  AND ContenuID = :id
             ");
             $stmt->execute([
                 ':token' => $voteToken,
@@ -45,6 +55,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
                         </button>
                     </form>
                 <?php endif; ?>
+
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($groupe['NomGroupe'] ?? ''); ?>
                 </h3>
@@ -88,16 +99,21 @@ $voteToken = $currentUser ? $currentUser->token : null;
                     <button
                         type="button"
                         class="btn btn-orange btn-vote"
-                        data-type-contenu="musique"
-                        data-contenu-id="<?php echo (int)($musique['MusiqueID'] ?? 0); ?>"
+                        data-type-contenu="groupe"
+                        data-contenu-id="<?php echo (int)($groupe['GroupeID'] ?? 0); ?>"
                         data-voted="<?php echo $hasVoted ? '1' : '0'; ?>">
-                        <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour cette musique'; ?>
+                        <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour ce groupe'; ?>
                     </button>
                 <?php endif; ?>
 
                 <span class="vote-count">
                     <?php
-                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM vote WHERE TypeContenu = 'groupe' AND ContenuID = :id");
+                    $stmt = $pdo->prepare("
+                        SELECT COUNT(*) 
+                        FROM vote 
+                        WHERE TypeContenu = 'groupe' 
+                          AND ContenuID = :id
+                    ");
                     $stmt->execute([':id' => (int)($groupe['GroupeID'] ?? 0)]);
                     echo (int)$stmt->fetchColumn();
                     ?>

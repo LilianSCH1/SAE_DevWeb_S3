@@ -3,10 +3,17 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/../class/Database.php';
 require_once __DIR__ . '/../class/User.php';
-$currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
 
-// Token de vote propre à l'utilisateur
+$pdo = Database::getConnection();
+
+// Utilisateur courant
+$currentUser = isset($_SESSION['user_id'])
+    ? User::findById((int)$_SESSION['user_id'])
+    : null;
+
+// Token de vote propre à l'utilisateur (colonne Token de `utilisateur`)
 $voteToken = $currentUser ? $currentUser->token : null;
 ?>
 
@@ -15,15 +22,18 @@ $voteToken = $currentUser ? $currentUser->token : null;
 <?php else: ?>
     <?php foreach ($musiques as $musique): ?>
         <?php
-        $imgPath   = '../create/' . ltrim($musique['ImageCouverture'], '/');
-        $audioPath = '../create/' . ltrim($musique['CheminFichierMP3'], '/');
+        $imgPath   = '../create/' . ltrim($musique['ImageCouverture'] ?? '', '/');
+        $audioPath = '../create/' . ltrim($musique['CheminFichierMP3'] ?? '', '/');
 
         // Détecter si cet utilisateur a déjà voté pour cette musique
         $hasVoted = false;
         if (!empty($voteToken)) {
             $stmt = $pdo->prepare("
-                SELECT COUNT(*) FROM vote
-                WHERE Token = :token AND TypeContenu = 'musique' AND ContenuID = :id
+                SELECT COUNT(*) 
+                FROM vote
+                WHERE Token = :token 
+                  AND TypeContenu = 'musique' 
+                  AND ContenuID = :id
             ");
             $stmt->execute([
                 ':token' => $voteToken,
@@ -44,6 +54,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
                         </button>
                     </form>
                 <?php endif; ?>
+
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($musique['Titre'] ?? ''); ?>
                 </h3>
@@ -53,6 +64,7 @@ $voteToken = $currentUser ? $currentUser->token : null;
                         <?php echo htmlspecialchars($musique['DateAffichee'] ?? ''); ?>
                     <?php endif; ?>
                 </div>
+                <button type="button" class="toggle-desc-btn">+</button>
             </div>
 
             <div class="content-card-body">
@@ -62,12 +74,8 @@ $voteToken = $currentUser ? $currentUser->token : null;
 
                 <div class="content-card-separator"></div>
 
-                <p class="content-card-subtitle">
-                    <?php echo htmlspecialchars($musique['Artiste'] ?? ''); ?>
-                </p>
-
                 <p class="content-card-description">
-                    <?php /* description longue si tu ajoutes un champ dédié */ ?>
+                    <?php echo nl2br(htmlspecialchars($musique['DescriptionCourte'] ?? '')); ?>
                 </p>
             </div>
 
@@ -99,7 +107,12 @@ $voteToken = $currentUser ? $currentUser->token : null;
 
                 <span class="vote-count">
                     <?php
-                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM vote WHERE TypeContenu = 'musique' AND ContenuID = :id");
+                    $stmt = $pdo->prepare("
+                        SELECT COUNT(*) 
+                        FROM vote 
+                        WHERE TypeContenu = 'musique' 
+                          AND ContenuID = :id
+                    ");
                     $stmt->execute([':id' => (int)($musique['MusiqueID'] ?? 0)]);
                     echo (int)$stmt->fetchColumn();
                     ?>
