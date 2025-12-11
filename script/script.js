@@ -38,25 +38,31 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
   const audio = document.getElementById("vote-audio-player");
   let currentBtn = null;
-  let currentProgressBar, currentProgressFill, currentProgressTime, currentPlayPauseBtn;
+  let currentProgressBar,
+    currentProgressFill,
+    currentProgressTime,
+    currentPlayPauseBtn;
 
   function setBtnState(btn, isPlaying) {
-    const container = btn.closest('.audio-player-container');
-    const progressContainer = container.querySelector('.progress-bar-container');
-    const playBtn = container.querySelector('.btn-play-audio');
+    const container = btn.closest(".audio-player-container");
+    const progressContainer = container.querySelector(
+      ".progress-bar-container"
+    );
+    const playBtn = container.querySelector(".btn-play-audio");
 
     if (isPlaying) {
-        playBtn.style.display = 'none';
-        progressContainer.style.display = 'flex';
-        currentProgressBar = progressContainer.querySelector('.progress-bar-bg');
-        currentProgressFill = progressContainer.querySelector('.progress-bar-fill');
-        currentProgressTime = progressContainer.querySelector('.progress-time');
-        currentPlayPauseBtn = progressContainer.querySelector('.btn-play-pause');
-        currentPlayPauseBtn.textContent = '⏸';
-        currentPlayPauseBtn.classList.add(...playBtn.classList);
+      playBtn.style.display = "none";
+      progressContainer.style.display = "flex";
+      currentProgressBar = progressContainer.querySelector(".progress-bar-bg");
+      currentProgressFill =
+        progressContainer.querySelector(".progress-bar-fill");
+      currentProgressTime = progressContainer.querySelector(".progress-time");
+      currentPlayPauseBtn = progressContainer.querySelector(".btn-play-pause");
+      currentPlayPauseBtn.textContent = "⏸";
+      currentPlayPauseBtn.classList.add(...playBtn.classList);
     } else {
-        playBtn.style.display = 'block';
-        progressContainer.style.display = 'none';
+      playBtn.style.display = "block";
+      progressContainer.style.display = "none";
     }
   }
 
@@ -162,4 +168,48 @@ document.addEventListener("DOMContentLoaded", function () {
       tabElement.click();
     }
   }
+});
+
+// Gestion des votes
+document.addEventListener("click", function (e) {
+  const voteBtn = e.target.closest(".btn-vote");
+  if (!voteBtn) return;
+
+  const typeContenu = voteBtn.dataset.typeContenu; // <-- doit lire data-type-contenu
+  const contenuId = voteBtn.dataset.contenuId; // <-- doit lire data-contenu-id
+
+  if (!typeContenu || !contenuId) return;
+
+  voteBtn.disabled = true;
+  const originalHTML = voteBtn.innerHTML;
+
+  console.log("BTN DATA:", voteBtn.dataset);
+  console.log("typeContenu =", typeContenu, "contenuId =", contenuId);
+
+  typeof fetch("../vote/vote_handler.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      type_contenu: typeContenu,
+      contenu_id: contenuId,
+    }),
+  })
+    .then((r) => r.json())
+    .then((data) => {
+      if (data && data.success) {
+        voteBtn.parentElement.querySelector(".vote-count").textContent =
+          data.total;
+        voteBtn.innerHTML = "Voté !";
+        voteBtn.style.opacity = "0.6";
+      } else {
+        alert(data && data.message ? data.message : "Erreur lors du vote");
+        voteBtn.disabled = false;
+        voteBtn.innerHTML = originalHTML;
+      }
+    })
+    .catch((err) => {
+      console.error("Vote error", err);
+      voteBtn.disabled = false;
+      voteBtn.innerHTML = originalHTML;
+    });
 });
