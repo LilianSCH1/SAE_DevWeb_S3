@@ -71,16 +71,22 @@ if (
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['UserPassword'])) {
-        // Régénérer un nouveau token à chaque connexion (sécurité CSRF)
-        $newToken = bin2hex(random_bytes(32));
-        $updateStmt = $pdo->prepare("UPDATE utilisateur SET Token = ? WHERE UserID = ?");
-        $updateStmt->execute([$newToken, $user['UserID']]);
+
+        // Récupérer le token existant
+        $existingToken = $user['Token'];
+
+        // Si, pour une raison historique, il est vide, on peut en générer UN SEUL FOIS :
+        if (empty($existingToken)) {
+            $existingToken = bin2hex(random_bytes(32));
+            $updateStmt = $pdo->prepare("UPDATE utilisateur SET Token = ? WHERE UserID = ?");
+            $updateStmt->execute([$existingToken, $user['UserID']]);
+        }
 
         $_SESSION['user_id']    = $user['UserID'];
         $_SESSION['user_email'] = $email;
         $_SESSION['role']       = $user['Role'];
-        $_SESSION['user_token'] = $newToken;
-        
+        $_SESSION['user_token'] = $existingToken;
+
         header('Location: ../index/index.php');
         exit;
     } else {
