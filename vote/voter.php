@@ -235,7 +235,7 @@ $groupes = $pdo->query("
                     <?php endif; ?>
 
                     <div class="card-list">
-                        <?php require 'vote_cards_musique.php'; ?>
+                        <?php require '../vote/vote_cards_musique.php'; ?>
                     </div>
                 </div>
 
@@ -250,7 +250,7 @@ $groupes = $pdo->query("
                     <?php endif; ?>
 
                     <div class="card-list">
-                        <?php require 'vote_cards_artiste.php'; ?>
+                        <?php require '../vote/vote_cards_artiste.php'; ?>
                     </div>
                 </div>
 
@@ -265,7 +265,7 @@ $groupes = $pdo->query("
                     <?php endif; ?>
 
                     <div class="card-list">
-                        <?php require 'vote_cards_groupe.php'; ?>
+                        <?php require '../vote/vote_cards_groupe.php'; ?>
                     </div>
                 </div>
 
