@@ -243,19 +243,19 @@ CREATE TABLE IF NOT EXISTS `vote` (
 -- Contraintes pour la table `artiste`
 --
 ALTER TABLE `artiste`
-  ADD CONSTRAINT `artiste_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `artiste_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
 
 --
 -- Contraintes pour la table `groupe`
 --
 ALTER TABLE `groupe`
-  ADD CONSTRAINT `groupe_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `groupe_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
 
 --
 -- Contraintes pour la table `musique`
 --
 ALTER TABLE `musique`
-  ADD CONSTRAINT `musique_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
+  ADD CONSTRAINT `musique_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
