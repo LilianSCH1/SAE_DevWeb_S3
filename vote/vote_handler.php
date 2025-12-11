@@ -3,6 +3,7 @@ session_start();
 
 require_once __DIR__ . '/../class/Database.php';
 require_once __DIR__ . '/../class/User.php';
+require_once __DIR__ . '/../config/config_secret.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -34,18 +35,11 @@ if (!in_array($currentUser->role, $allowedRoles, true)) {
     exit;
 }
 
-// Récupérer / générer le token de vote de l'utilisateur
-if (empty($currentUser->token)) {
-    $token = bin2hex(random_bytes(32));
-
-    // Sauvegarder en BDD
-    $stmt = $pdo->prepare("UPDATE utilisateur SET Token = :t WHERE UserID = :id");
-    $stmt->execute([':t' => $token, ':id' => $currentUser->id]);
-
-    // Le garder dans l'objet pour la suite
-    $currentUser->token = $token;
-} else {
-    $token = $currentUser->token;
+// Lecture du token utilisateur
+$token = $currentUser->token;
+if (empty($token)) {
+    echo json_encode(['success' => false, 'message' => 'Token utilisateur manquant.']);
+    exit;
 }
 
 // Récupérer les données du POST
