@@ -10,13 +10,14 @@ class User
     public string $email;
     public string $passwordHash;
     public string $role = 'invité';
+    public ?string $token = null;
     public ?string $dateInscription = null;
 
     public static function findById(int $id): ?User
     {
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare("
-            SELECT UserID, UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role, DateInscription
+            SELECT UserID, UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role, Token, DateInscription
             FROM utilisateur
             WHERE UserID = ?
         ");
@@ -30,7 +31,7 @@ class User
     {
         $pdo = Database::getConnection();
         $stmt = $pdo->prepare("
-            SELECT UserID, UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role, DateInscription
+            SELECT UserID, UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role, Token, DateInscription
             FROM utilisateur
             WHERE UserMail = ?
         ");
@@ -43,9 +44,10 @@ class User
     public function create(): void
     {
         $pdo = Database::getConnection();
+        $this->token = bin2hex(random_bytes(32)); // Generate unique token
         $stmt = $pdo->prepare("
-            INSERT INTO utilisateur (UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO utilisateur (UserPseudo, UserName, UserSurname, UserMail, UserPassword, Role, Token)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         ");
         $stmt->execute([
             $this->pseudo,
@@ -53,7 +55,8 @@ class User
             $this->lastName,
             $this->email,
             $this->passwordHash,
-            $this->role
+            $this->role,
+            $this->token
         ]);
         $this->id = (int)$pdo->lastInsertId();
     }
@@ -100,6 +103,7 @@ class User
         $u->email           = $row['UserMail'];
         $u->passwordHash    = $row['UserPassword'];
         $u->role            = $row['Role'];
+        $u->token           = $row['Token'];
         $u->dateInscription = $row['DateInscription'] ?? null;
         return $u;
     }
