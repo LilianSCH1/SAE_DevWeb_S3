@@ -11,8 +11,8 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
 <?php else: ?>
     <?php foreach ($artistes as $artiste): ?>
         <?php
-        $imgPath   = '../create/' . ltrim($artiste['ImageProfil'], '/');
-        $audioPath = '../create/' . ltrim($artiste['CheminFichierMP3'], '/');
+        $imgPath   = '../create/' . ltrim($artiste['ImageProfil'] ?? '', '/');
+        $audioPath = '../create/' . ltrim($artiste['CheminFichierMP3'] ?? '', '/');
         ?>
         <article class="content-card">
             <div class="content-card-header">
@@ -27,12 +27,12 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                     </form>
                 <?php endif; ?>
                 <h3 class="content-card-title">
-                    <?php echo htmlspecialchars($artiste['NomArtiste']); ?>
+                    <?php echo htmlspecialchars($artiste['NomArtiste'] ?? ''); ?>
                 </h3>
                 <span class="content-card-type">ARTISTE</span>
                 <div class="content-card-date">
                     <?php if (!empty($artiste['DateAffichee'])): ?>
-                        <?php echo htmlspecialchars($artiste['DateAffichee']); ?>
+                        <?php echo htmlspecialchars($artiste['DateAffichee'] ?? ''); ?>
                     <?php endif; ?>
                 </div>
                 <button type="button" class="toggle-desc-btn">+</button>
@@ -40,24 +40,28 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
 
             <div class="content-card-body">
                 <div class="content-card-image"
-                    style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
+                     style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
                 </div>
 
                 <div class="content-card-separator"></div>
 
                 <p class="content-card-description">
-                    <?php echo nl2br(htmlspecialchars($artiste['BiographieCourte'])); ?>
+                    <?php echo nl2br(htmlspecialchars($artiste['BiographieCourte'] ?? '')); ?>
                 </p>
             </div>
 
             <div class="content-card-footer">
                 <button class="btn-outline-orange btn-play-audio"
-                    data-audio="<?php echo htmlspecialchars($audioPath); ?>">
+                        data-audio="<?php echo htmlspecialchars($audioPath); ?>">
                     ▶ Écouter
                 </button>
-                <button class="btn-orange">
-                    ❤ Voter pour cet artiste
-                </button>
+                <form method="post" action="vote_handler.php" class="d-inline">
+                    <input type="hidden" name="type_contenu" value="chanteur">
+                    <input type="hidden" name="contenu_id" value="<?php echo htmlspecialchars($artiste['ArtisteID'] ?? ''); ?>">
+                    <button type="submit" class="btn btn-orange">
+                        ❤ Voter pour cet artiste
+                    </button>
+                </form>
             </div>
         </article>
     <?php endforeach; ?>
