@@ -17,10 +17,11 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
         <article class="content-card">
             <div class="content-card-header">
                 <?php if ($currentUser && $currentUser->role === 'admin'): ?>
-                    <form method="post" class="delete-card-btn" aria-label="Archiver groupe">
-                        <input type="hidden" name="action" value="archiver">
-                        <input type="hidden" name="type" value="groupe">
-                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($groupe['GroupeID'] ?? ''); ?>">
+                    <form method="post" class="delete-card-btn" aria-label="Supprimer groupe">
+                        <input type="hidden" name="delete_groupe" value="1">
+                        <input type="hidden" name="groupe_id" value="<?php echo (int)($groupe['GroupeID'] ?? 0); ?>">
+                        <input type="hidden" name="image_groupe" value="<?php echo htmlspecialchars($groupe['ImageGroupe'] ?? ''); ?>">
+                        <input type="hidden" name="chemin_fichier" value="<?php echo htmlspecialchars($groupe['CheminFichierMP3'] ?? ''); ?>">
                         <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">
                             <i class="bi bi-trash"></i>
                         </button>

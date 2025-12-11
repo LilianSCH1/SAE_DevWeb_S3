@@ -20,11 +20,11 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
         <article class="content-card">
             <div class="content-card-header">
                 <?php if ($currentUser && $currentUser->role === 'admin'): ?>
-                    <form method="post" class="delete-card-btn" aria-label="Archiver musique" onsubmit="return confirm('Supprimer cette musique définitivement ?');" style="position:absolute; right:10px; top:10px;">
+                    <form method="post" class="delete-card-btn" aria-label="Supprimer musique">
                         <input type="hidden" name="delete_musique" value="1">
                         <input type="hidden" name="chemin_fichier" value="<?php echo htmlspecialchars($musique['CheminFichierMP3'] ?? ''); ?>">
                         <input type="hidden" name="image_couverture" value="<?php echo htmlspecialchars($musique['ImageCouverture'] ?? ''); ?>">
-                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer">
+                        <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">
                             <i class="bi bi-trash"></i>
                         </button>
                     </form>

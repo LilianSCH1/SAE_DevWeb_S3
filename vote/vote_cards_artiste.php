@@ -17,10 +17,11 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
         <article class="content-card">
             <div class="content-card-header">
                 <?php if ($currentUser && $currentUser->role === 'admin'): ?>
-                    <form method="post" class="delete-card-btn" aria-label="Archiver artiste">
-                        <input type="hidden" name="action" value="archiver">
-                        <input type="hidden" name="type" value="artiste">
-                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($artiste['ArtisteID'] ?? ''); ?>">
+                    <form method="post" class="delete-card-btn" aria-label="Supprimer artiste">
+                        <input type="hidden" name="delete_artiste" value="1">
+                        <input type="hidden" name="artiste_id" value="<?php echo (int)($artiste['ArtisteID'] ?? 0); ?>">
+                        <input type="hidden" name="image_profil" value="<?php echo htmlspecialchars($artiste['ImageProfil'] ?? ''); ?>">
+                        <input type="hidden" name="chemin_fichier" value="<?php echo htmlspecialchars($artiste['CheminFichierMP3'] ?? ''); ?>">
                         <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">
                             <i class="bi bi-trash"></i>
                         </button>
@@ -68,8 +69,7 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                     type="button"
                     class="btn btn-orange btn-vote"
                     data-type-contenu="chanteur"
-                    data-contenu-id="<?php echo (int)($artiste['ArtisteID'] ?? 0); ?>"
-                    >
+                    data-contenu-id="<?php echo (int)($artiste['ArtisteID'] ?? 0); ?>">
                     ❤ Voter pour cet artiste
                 </button>
 
