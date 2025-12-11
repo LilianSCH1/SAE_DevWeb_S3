@@ -70,9 +70,22 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                         <button class="btn-play-pause">⏸</button>
                     </div>
                 </div>
-                <button class="btn-orange">
+                <button
+                    type="button"
+                    class="btn btn-orange btn-vote"
+                    data-type-contenu="musique"
+                    data-contenu-id="<?php echo (int)($musique['MusiqueID'] ?? 0); ?>">
                     ❤ Voter pour cette musique
                 </button>
+
+                <span class="vote-count">
+                    <?php
+                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM vote WHERE TypeContenu = 'musique' AND ContenuID = :id");
+                    $stmt->execute([':id' => (int)($musique['MusiqueID'] ?? 0)]);
+                    echo (int)$stmt->fetchColumn();
+                    ?>
+                </span>
+
             </div>
         </article>
     <?php endforeach; ?>

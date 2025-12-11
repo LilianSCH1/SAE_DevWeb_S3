@@ -40,7 +40,7 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
 
             <div class="content-card-body">
                 <div class="content-card-image"
-                     style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
+                    style="background-image:url('<?php echo htmlspecialchars($imgPath); ?>');">
                 </div>
 
                 <div class="content-card-separator"></div>
@@ -51,17 +51,35 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
             </div>
 
             <div class="content-card-footer">
-                <button class="btn-outline-orange btn-play-audio"
+                <div class="audio-player-container">
+                    <button class="btn btn-outline-orange btn-play-audio"
                         data-audio="<?php echo htmlspecialchars($audioPath); ?>">
-                    ▶ Écouter
-                </button>
-                <form method="post" action="vote_handler.php" class="d-inline">
-                    <input type="hidden" name="type_contenu" value="groupe">
-                    <input type="hidden" name="contenu_id" value="<?php echo htmlspecialchars($groupe['GroupeID'] ?? ''); ?>">
-                    <button type="submit" class="btn btn-orange">
-                        ❤ Voter pour ce groupe
+                        ▶ Écouter
                     </button>
-                </form>
+                    <div class="progress-bar-container" style="display: none; gap: 10px; align-items: center;">
+                        <div class="progress-bar-bg" style="flex: 1; height: 6px; background-color: #e9ecef; border-radius: 3px; cursor: pointer;">
+                            <div class="progress-bar-fill" style="height: 100%; background-color: #0d6efd; border-radius: 3px; width: 0%;"></div>
+                        </div>
+                        <span class="progress-time" style="font-size: 12px; min-width: 40px; text-align: right;">0:00</span>
+                        <button class="btn-play-pause">⏸</button>
+                    </div>
+                </div>
+                <button
+                    type="button"
+                    class="btn btn-orange btn-vote"
+                    data-type-contenu="groupe"
+                    data-contenu-id="<?php echo (int)($groupe['GroupeID'] ?? 0); ?>">
+                    ❤ Voter pour ce groupe
+                </button>
+
+                <span class="vote-count">
+                    <?php
+                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM vote WHERE TypeContenu = 'groupe' AND ContenuID = :id");
+                    $stmt->execute([':id' => (int)($groupe['GroupeID'] ?? 0)]);
+                    echo (int)$stmt->fetchColumn();
+                    ?>
+                </span>
+
             </div>
         </article>
     <?php endforeach; ?>
