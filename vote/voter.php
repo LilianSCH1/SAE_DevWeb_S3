@@ -47,6 +47,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_musique'])) {
     exit;
 }
 
+// --- AJOUT : traitement suppression artiste ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_artiste'])) {
+    // Vérifier que l'utilisateur est admin
+    $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+    if (!$currentUser || $currentUser->role !== 'admin') {
+        http_response_code(403);
+        exit('Accès refusé.');
+    }
+
+    $artisteId      = isset($_POST['artiste_id']) ? (int)$_POST['artiste_id'] : 0;
+    $imageProfil    = isset($_POST['image_profil']) ? trim($_POST['image_profil']) : '';
+    $cheminFichier  = isset($_POST['chemin_fichier']) ? trim($_POST['chemin_fichier']) : '';
+
+    $baseDir = __DIR__ . '/../create/';
+
+    if ($imageProfil !== '') {
+        $fImg = $baseDir . ltrim($imageProfil, '/\\');
+        if (is_file($fImg)) {
+            @unlink($fImg);
+        }
+    }
+
+    if ($cheminFichier !== '') {
+        $fAudio = $baseDir . ltrim($cheminFichier, '/\\');
+        if (is_file($fAudio)) {
+            @unlink($fAudio);
+        }
+    }
+
+    if ($artisteId > 0) {
+        try {
+            $stmt = $pdo->prepare("DELETE FROM artiste WHERE ArtisteID = :id LIMIT 1");
+            $stmt->execute([':id' => $artisteId]);
+        } catch (Exception $e) {
+            // Optionnel : log
+        }
+    }
+
+    header('Location: ' . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+// --- AJOUT : traitement suppression groupe ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_groupe'])) {
+    // Vérifier que l'utilisateur est admin
+    $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
+    if (!$currentUser || $currentUser->role !== 'admin') {
+        http_response_code(403);
+        exit('Accès refusé.');
+    }
+
+    $groupeId       = isset($_POST['groupe_id']) ? (int)$_POST['groupe_id'] : 0;
+    $imageGroupe    = isset($_POST['image_groupe']) ? trim($_POST['image_groupe']) : '';
+    $cheminFichier  = isset($_POST['chemin_fichier']) ? trim($_POST['chemin_fichier']) : '';
+
+    $baseDir = __DIR__ . '/../create/';
+
+    if ($imageGroupe !== '') {
+        $fImg = $baseDir . ltrim($imageGroupe, '/\\');
+        if (is_file($fImg)) {
+            @unlink($fImg);
+        }
+    }
+
+    if ($cheminFichier !== '') {
+        $fAudio = $baseDir . ltrim($cheminFichier, '/\\');
+        if (is_file($fAudio)) {
+            @unlink($fAudio);
+        }
+    }
+
+    if ($groupeId > 0) {
+        try {
+            $stmt = $pdo->prepare("DELETE FROM groupe WHERE GroupeID = :id LIMIT 1");
+            $stmt->execute([':id' => $groupeId]);
+        } catch (Exception $e) {
+            // Optionnel : log
+        }
+    }
+
+    header('Location: ' . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+
 // Vérifier le rôle de l'utilisateur
 $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
 $userCanCreate = $currentUser && in_array($currentUser->role, ['certifie', 'admin']);
@@ -66,7 +151,7 @@ $artistes = $pdo->query("
 
 // Affichage des données de cartes de musiques
 $musiques = $pdo->query("
-    SELECT MusiqueID
+    SELECT MusiqueID,
            Titre,
            Artiste,
            ImageCouverture,
