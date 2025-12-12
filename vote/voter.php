@@ -138,21 +138,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_groupe'])) {
 $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
 $userCanCreate = $currentUser && in_array($currentUser->role, ['certifie', 'admin']);
 
-// Affichage des données de cartes d'artistes
-$artistes = $pdo->query("
-    SELECT ArtisteID,
-           NomArtiste,
-           BiographieCourte,
-           ImageProfil,
-           CheminFichierMP3,
-           AnneeNaissance as DateAffichee
-    FROM artiste
-    WHERE StatusArtiste IN ('valide', 'en_attente')
-    ORDER BY DateAffichee DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+// Recherche
+$searchQuery = trim($_GET['q'] ?? '');
+$searchCondition = '';
+$params = [];
+
+if (!empty($searchQuery)) {
+    $searchCondition = " AND (Titre LIKE :search OR Artiste LIKE :search)";
+    $params[':search'] = '%' . $searchQuery . '%';
+}
 
 // Affichage des données de cartes de musiques
-$musiques = $pdo->query("
+$musiques = $pdo->prepare("
     SELECT MusiqueID,
            Titre,
            Artiste,
@@ -160,12 +157,47 @@ $musiques = $pdo->query("
            CheminFichierMP3,
            AnneePublication as DateAffichee
     FROM musique
-    WHERE StatusMusique IN ('valide', 'en_attente')
+    WHERE StatusMusique IN ('valide', 'en_attente')" . $searchCondition . "
     ORDER BY DateAffichee DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$musiques->execute($params);
+$musiques = $musiques->fetchAll(PDO::FETCH_ASSOC);
+
+// Recherche pour artistes
+$searchConditionArtiste = '';
+$paramsArtiste = [];
+
+if (!empty($searchQuery)) {
+    $searchConditionArtiste = " AND NomArtiste LIKE :search";
+    $paramsArtiste[':search'] = '%' . $searchQuery . '%';
+}
+
+// Affichage des données de cartes d'artistes
+$artistes = $pdo->prepare("
+    SELECT ArtisteID,
+           NomArtiste,
+           BiographieCourte,
+           ImageProfil,
+           CheminFichierMP3,
+           AnneeNaissance as DateAffichee
+    FROM artiste
+    WHERE StatusArtiste IN ('valide', 'en_attente')" . $searchConditionArtiste . "
+    ORDER BY DateAffichee DESC
+");
+$artistes->execute($paramsArtiste);
+$artistes = $artistes->fetchAll(PDO::FETCH_ASSOC);
+
+// Recherche pour groupes
+$searchConditionGroupe = '';
+$paramsGroupe = [];
+
+if (!empty($searchQuery)) {
+    $searchConditionGroupe = " AND NomGroupe LIKE :search";
+    $paramsGroupe[':search'] = '%' . $searchQuery . '%';
+}
 
 // Affichage des données de cartes de groupes
-$groupes = $pdo->query("
+$groupes = $pdo->prepare("
     SELECT GroupeID,
            NomGroupe,
            BiographieCourte,
@@ -173,9 +205,11 @@ $groupes = $pdo->query("
            CheminFichierMP3,
            AnneeFormation as DateAffichee
     FROM groupe
-    WHERE StatusGroupe IN ('valide', 'en_attente')
+    WHERE StatusGroupe IN ('valide', 'en_attente')" . $searchConditionGroupe . "
     ORDER BY DateAffichee DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+");
+$groupes->execute($paramsGroupe);
+$groupes = $groupes->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -205,6 +239,20 @@ $groupes = $pdo->query("
             <div class="section-header text-center mb-5">
                 <span class="section-subtitle">Vote</span>
                 <h2 class="section-title">Choisissez vos artistes, musiques et groupes préférés</h2>
+            </div>
+
+            <!-- Barre de recherche -->
+            <div class="row justify-content-center mb-4">
+                <div class="col-md-8">
+                    <form method="GET" class="search-form">
+                        <div class="input-group">
+                            <input type="text" name="q" class="form-control search-input" placeholder="Rechercher des musiques, artistes ou groupes..." value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>">
+                            <button class="btn btn-primary search-btn" type="submit">
+                                <i class="bi bi-search"></i> Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <ul class="nav nav-pills justify-content-center mb-4" id="voteTabs" role="tablist">
