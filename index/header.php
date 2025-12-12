@@ -14,8 +14,13 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
             <img id="logo" src="../icons/logos/MyPulse-removebg-preview.png" alt="My Pulse Logo" height="40" class="me-2">
             <span class="fw-bold">MyPulse</span>
         </a>
-        <!-- ... autres liens ... -->
-        <ul class="navbar-nav ms-auto">
+        <!-- Bouton toggle pour mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <!-- Menu collapsible -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
             <li class="nav-item">
                 <a class="nav-link active" href="../index/index.php">Accueil</a>
             </li>
