@@ -1,4 +1,4 @@
-/* Grille des cartes : 4 colonnes */
+/* Grille des cartes : responsive */
 .card-list {
     max-width: 1200px;
     margin: 0 auto 60px;
@@ -6,6 +6,35 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 24px;
+}
+
+/* Responsive : 2 colonnes sur tablettes */
+@media (max-width: 992px) {
+    .card-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+        padding: 0 16px;
+    }
+}
+
+/* Responsive : 1 colonne sur mobiles */
+@media (max-width: 576px) {
+    .card-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        padding: 0 12px;
+    }
+
+    /* Réduire la taille globale des cartes sur mobile */
+    .content-card {
+        max-width: 90%; /* Moins large sur l'écran */
+        margin: 0 auto; /* Centrer */
+    }
+
+    /* Ajuster les images des cartes : moins hautes, plus larges */
+    .content-card-image {
+        padding-top: 70%; /* Un peu plus petit pour mobile */
+    }
 }
 
 /* Carte portrait, hauteur automatique */
