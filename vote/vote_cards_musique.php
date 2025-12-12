@@ -58,6 +58,11 @@ $voteToken = $currentUser ? $currentUser->token : null;
                 <h3 class="content-card-title">
                     <?php echo htmlspecialchars($musique['Titre'] ?? ''); ?>
                 </h3>
+                <?php if (!empty($musique['Artiste'])): ?>
+                    <p class="content-card-artist" style="margin:4px 0 0;color:#ffffff;font-size:0.95rem;">
+                        <?php echo htmlspecialchars($musique['Artiste']); ?>
+                    </p>
+                <?php endif; ?>
                 <span class="content-card-type">MUSIQUE</span>
                 <div class="content-card-date">
                     <?php if (!empty($musique['DateAffichee'])): ?>
