@@ -40,12 +40,17 @@ document.addEventListener("DOMContentLoaded", function () {
   // Audio player (vote page)
   const audio = document.getElementById("vote-audio-player");
   let currentBtn = null;
-  let currentProgressBar, currentProgressFill, currentProgressTime, currentPlayPauseBtn;
+  let currentProgressBar,
+    currentProgressFill,
+    currentProgressTime,
+    currentPlayPauseBtn;
 
   function setBtnState(btn, isPlaying) {
     const container = btn.closest(".audio-player-container");
     if (!container) return;
-    const progressContainer = container.querySelector(".progress-bar-container");
+    const progressContainer = container.querySelector(
+      ".progress-bar-container"
+    );
     const playBtn = container.querySelector(".btn-play-audio");
 
     if (!progressContainer || !playBtn) return;
@@ -54,7 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
       playBtn.style.display = "none";
       progressContainer.style.display = "flex";
       currentProgressBar = progressContainer.querySelector(".progress-bar-bg");
-      currentProgressFill = progressContainer.querySelector(".progress-bar-fill");
+      currentProgressFill =
+        progressContainer.querySelector(".progress-bar-fill");
       currentProgressTime = progressContainer.querySelector(".progress-time");
       currentPlayPauseBtn = progressContainer.querySelector(".btn-play-pause");
       if (currentPlayPauseBtn) {
@@ -154,7 +160,9 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll(".toggle-desc-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
       const card = btn.closest(".content-card");
-      const desc = card ? card.querySelector(".content-card-description") : null;
+      const desc = card
+        ? card.querySelector(".content-card-description")
+        : null;
       if (!desc) return;
 
       const isShown = desc.classList.toggle("show");
@@ -275,3 +283,39 @@ document.addEventListener("click", function (e) {
       voteBtn.disabled = false;
     });
 });
+
+(function () {
+  const form = document.querySelector(".search-form");
+  const input = document.querySelector(".search-input");
+  if (!input) return;
+  if (form)
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+    });
+
+  let timer = null;
+  function performSearch(q) {
+    const url = "search_ajax.php?q=" + encodeURIComponent(q);
+    fetch(url, { credentials: "same-origin" })
+      .then((r) => r.json())
+      .then((data) => {
+        const paneMus = document.querySelector("#pane-musique .card-list");
+        const paneArt = document.querySelector("#pane-artiste .card-list");
+        const paneGrp = document.querySelector("#pane-groupe .card-list");
+        if (paneMus && data.musiques !== undefined)
+          paneMus.innerHTML = data.musiques;
+        if (paneArt && data.artistes !== undefined)
+          paneArt.innerHTML = data.artistes;
+        if (paneGrp && data.groupes !== undefined)
+          paneGrp.innerHTML = data.groupes;
+      })
+      .catch((err) => console.error("Search error", err));
+  }
+
+  input.addEventListener("input", function (e) {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      performSearch(e.target.value.trim());
+    }, 250);
+  });
+})();
