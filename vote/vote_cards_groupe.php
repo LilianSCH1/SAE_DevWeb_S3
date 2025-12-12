@@ -106,18 +106,6 @@ $voteToken = $currentUser ? $currentUser->token : null;
                     </button>
                 <?php endif; ?>
 
-                <span class="vote-count">
-                    <?php
-                    $stmt = $pdo->prepare("
-                        SELECT COUNT(*) 
-                        FROM vote 
-                        WHERE TypeContenu = 'groupe' 
-                          AND ContenuID = :id
-                    ");
-                    $stmt->execute([':id' => (int)($groupe['GroupeID'] ?? 0)]);
-                    echo (int)$stmt->fetchColumn();
-                    ?>
-                </span>
             </div>
         </article>
     <?php endforeach; ?>
