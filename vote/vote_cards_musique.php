@@ -69,7 +69,6 @@ $voteToken = $currentUser ? $currentUser->token : null;
                         <?php echo htmlspecialchars($musique['DateAffichee'] ?? ''); ?>
                     <?php endif; ?>
                 </div>
-                <button type="button" class="toggle-desc-btn">+</button>
             </div>
 
             <div class="content-card-body">
