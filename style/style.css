@@ -114,6 +114,19 @@ body {
     width: 80%;
 }
 
+/* Menu collapsible - centrer les titres */
+.navbar-collapse .navbar-nav {
+    text-align: center;
+}
+
+.navbar-collapse .nav-link {
+    justify-content: center;
+}
+
+.navbar-collapse .nav-link:hover::after {
+    width: 20%;
+}
+
 /* Header Section */
 .header {
     background: linear-gradient(135deg, rgba(250, 133, 50, 0.2), rgba(251, 59, 59, 0.2)),
