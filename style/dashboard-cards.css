@@ -18,7 +18,6 @@
     box-shadow: 0 10px 25px rgba(0,0,0,0.18);
     display: flex;
     flex-direction: column;
-    /* plus de height fixe -> la carte grandit avec le contenu */
 }
 
 /* Header arrondi */
@@ -76,6 +75,7 @@
     cursor: pointer;
     transition: all 0.2s ease;
 }
+
 .toggle-desc-btn:hover {
     background: #ea5c1f;
     color: #212431;
@@ -84,10 +84,22 @@
 /* Image responsive au-dessus de la description - VERSION DASHBOARD */
 .content-card-image {
     width: 100%;
-    height: 200px;               /* hauteur fixe plus raisonnable */
-    object-fit: cover;           /* maintient les proportions */
-    object-position: center;
+    padding-top: 100%; /* ratio carré 1:1, responsive */
     margin-top: 18px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 8px;
+    position: relative;
+}
+
+.content-card-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 8px;
 }
 
@@ -117,10 +129,15 @@
     line-height: 1.3;
     color: #333;
     margin: 0;
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
 }
+
 .content-card-description.show {
-    display: block;
+    max-height: 200px; /* à ajuster si besoin */
+    opacity: 1;
 }
 
 /* Styles pour le dashboard */
