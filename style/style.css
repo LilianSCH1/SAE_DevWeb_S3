@@ -17,6 +17,39 @@ body {
     overflow-x: hidden;
 }
 
+/* Curseur note de musique par défaut (noir avec contour blanc) */
+* {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="28" viewBox="0 0 20 28"><path d="M18 0v18c0 3.314-2.686 6-6 6s-6-2.686-6-6 2.686-6 6-6c1.107 0 2.145.307 3.032.827V0h3z" fill="%23212431" stroke="%23ffffff" stroke-width="1"/></svg>') 2 2, auto !important;
+}
+
+/* Curseur pointer avec double note (orange avec contour blanc) sur les éléments cliquables */
+a, button, .toggle-desc-btn, input[type="submit"], [onclick], .btn, label[for] {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="28" viewBox="0 0 24 28"><path d="M18 0v12c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V0h2z" fill="%23ea5c1f" stroke="%23ffffff" stroke-width="1"/><path d="M10 6v10c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V6h2z" fill="%23ea5c1f" stroke="%23ffffff" stroke-width="1"/></svg>') 2 2, pointer !important;
+}
+
+/* Curseur blanc + hover (orange clair avec contour blanc) dans les zones sombres sur éléments cliquables */
+footer a, 
+footer button, 
+.footer a,
+.footer button,
+header.navbar a,
+header.navbar button,
+.content-card-header button,
+.content-card-header a,
+.bg-dark a,
+.bg-dark button {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="28" viewBox="0 0 24 28"><path d="M18 0v12c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V0h2z" fill="%23f8c9a8" stroke="%23ffffff" stroke-width="1.5"/><path d="M10 6v10c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V6h2z" fill="%23f8c9a8" stroke="%23ffffff" stroke-width="1.5"/></svg>') 2 2, pointer !important;
+}
+
+/* Force le curseur personnalisé même sur les éléments Bootstrap */
+.btn:hover,
+.nav-link:hover,
+.dropdown-item:hover {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="28" viewBox="0 0 24 28"><path d="M18 0v12c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V0h2z" fill="%23ea5c1f" stroke="%23ffffff" stroke-width="1"/><path d="M10 6v10c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V6h2z" fill="%23ea5c1f" stroke="%23ffffff" stroke-width="1"/></svg>') 2 2, pointer !important;
+}
+
+
+
 .text-accent {
     color: var(--accent-color);
 }
