@@ -9,7 +9,7 @@ require_once __DIR__ . '/../class/User.php';
 $voteToken = $_COOKIE['vote_token'] ?? null;
 $pdo = dbconnect();
 
-// --- AJOUT : traitement suppression musique ---
+// --- AJOUT : traitement archivage musique ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_musique'])) {
     // Vérifier que l'utilisateur est admin
     $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
@@ -18,27 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_musique'])) {
         exit('Accès refusé.');
     }
 
-    // Récupérer les chemins envoyés depuis le formulaire (valeurs telles qu'enregistrées en BDD)
-    $cheminFichier = isset($_POST['chemin_fichier']) ? trim($_POST['chemin_fichier']) : '';
-    $imageCouverture = isset($_POST['image_couverture']) ? trim($_POST['image_couverture']) : '';
+    $musiqueId = isset($_POST['musique_id']) ? (int)$_POST['musique_id'] : 0;
 
-    if ($cheminFichier !== '') {
-        // Supprimer les fichiers côté serveur si présents
-        $baseDir = __DIR__ . '/../create/'; // correspond à la construction utilisée dans les vues
-        $f1 = $baseDir . ltrim($cheminFichier, '/\\');
-        $f2 = $baseDir . ltrim($imageCouverture, '/\\');
-
-        if (is_file($f1)) {
-            @unlink($f1);
-        }
-        if ($imageCouverture !== '' && is_file($f2)) {
-            @unlink($f2);
-        }
-
-        // Supprimer l'enregistrement en base (identification via le chemin du fichier stocké)
+    if ($musiqueId > 0) {
         try {
-            $stmt = $pdo->prepare("DELETE FROM musique WHERE CheminFichierMP3 = :chemin LIMIT 1");
-            $stmt->execute([':chemin' => $cheminFichier]);
+            $stmt = $pdo->prepare("UPDATE musique SET StatusMusique = 'archive_suppr' WHERE MusiqueID = :id LIMIT 1");
+            $stmt->execute([':id' => $musiqueId]);
         } catch (Exception $e) {
             // Optionnel : journaliser l'erreur
         }
@@ -49,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_musique'])) {
     exit;
 }
 
-// --- AJOUT : traitement suppression artiste ---
+// --- AJOUT : traitement archivage artiste ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_artiste'])) {
     // Vérifier que l'utilisateur est admin
     $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
@@ -58,29 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_artiste'])) {
         exit('Accès refusé.');
     }
 
-    $artisteId      = isset($_POST['artiste_id']) ? (int)$_POST['artiste_id'] : 0;
-    $imageProfil    = isset($_POST['image_profil']) ? trim($_POST['image_profil']) : '';
-    $cheminFichier  = isset($_POST['chemin_fichier']) ? trim($_POST['chemin_fichier']) : '';
-
-    $baseDir = __DIR__ . '/../create/';
-
-    if ($imageProfil !== '') {
-        $fImg = $baseDir . ltrim($imageProfil, '/\\');
-        if (is_file($fImg)) {
-            @unlink($fImg);
-        }
-    }
-
-    if ($cheminFichier !== '') {
-        $fAudio = $baseDir . ltrim($cheminFichier, '/\\');
-        if (is_file($fAudio)) {
-            @unlink($fAudio);
-        }
-    }
+    $artisteId = isset($_POST['artiste_id']) ? (int)$_POST['artiste_id'] : 0;
 
     if ($artisteId > 0) {
         try {
-            $stmt = $pdo->prepare("DELETE FROM artiste WHERE ArtisteID = :id LIMIT 1");
+            $stmt = $pdo->prepare("UPDATE artiste SET StatusArtiste = 'archive_suppr' WHERE ArtisteID = :id LIMIT 1");
             $stmt->execute([':id' => $artisteId]);
         } catch (Exception $e) {
             // Optionnel : log
@@ -91,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_artiste'])) {
     exit;
 }
 
-// --- AJOUT : traitement suppression groupe ---
+// --- AJOUT : traitement archivage groupe ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_groupe'])) {
     // Vérifier que l'utilisateur est admin
     $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
@@ -100,29 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_groupe'])) {
         exit('Accès refusé.');
     }
 
-    $groupeId       = isset($_POST['groupe_id']) ? (int)$_POST['groupe_id'] : 0;
-    $imageGroupe    = isset($_POST['image_groupe']) ? trim($_POST['image_groupe']) : '';
-    $cheminFichier  = isset($_POST['chemin_fichier']) ? trim($_POST['chemin_fichier']) : '';
-
-    $baseDir = __DIR__ . '/../create/';
-
-    if ($imageGroupe !== '') {
-        $fImg = $baseDir . ltrim($imageGroupe, '/\\');
-        if (is_file($fImg)) {
-            @unlink($fImg);
-        }
-    }
-
-    if ($cheminFichier !== '') {
-        $fAudio = $baseDir . ltrim($cheminFichier, '/\\');
-        if (is_file($fAudio)) {
-            @unlink($fAudio);
-        }
-    }
+    $groupeId = isset($_POST['groupe_id']) ? (int)$_POST['groupe_id'] : 0;
 
     if ($groupeId > 0) {
         try {
-            $stmt = $pdo->prepare("DELETE FROM groupe WHERE GroupeID = :id LIMIT 1");
+            $stmt = $pdo->prepare("UPDATE groupe SET StatusGroupe = 'archive_suppr' WHERE GroupeID = :id LIMIT 1");
             $stmt->execute([':id' => $groupeId]);
         } catch (Exception $e) {
             // Optionnel : log

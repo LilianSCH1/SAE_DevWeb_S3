@@ -204,3 +204,9 @@
     background: #f46c29;
     border-color: #f46c29;
 }
+
+/* Empty state for dashboard */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+}
