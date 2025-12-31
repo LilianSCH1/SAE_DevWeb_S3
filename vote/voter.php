@@ -104,7 +104,8 @@ $musiques = $pdo->prepare("
            Artiste,
            ImageCouverture,
            CheminFichierMP3,
-           AnneePublication as DateAffichee
+           AnneePublication as DateAffichee,
+           NombreVotes
     FROM musique
     WHERE StatusMusique IN ('valide', 'en_attente')" . $searchCondition . "
     ORDER BY DateAffichee DESC
@@ -128,7 +129,8 @@ $artistes = $pdo->prepare("
            BiographieCourte,
            ImageProfil,
            CheminFichierMP3,
-           AnneeNaissance as DateAffichee
+           AnneeNaissance as DateAffichee,
+           NombreVotes
     FROM artiste
     WHERE StatusArtiste IN ('valide', 'en_attente')" . $searchConditionArtiste . "
     ORDER BY DateAffichee DESC
@@ -152,7 +154,8 @@ $groupes = $pdo->prepare("
            BiographieCourte,
            ImageGroupe,
            CheminFichierMP3,
-           AnneeFormation as DateAffichee
+           AnneeFormation as DateAffichee,
+           NombreVotes
     FROM groupe
     WHERE StatusGroupe IN ('valide', 'en_attente')" . $searchConditionGroupe . "
     ORDER BY DateAffichee DESC

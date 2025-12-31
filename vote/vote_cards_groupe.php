@@ -96,14 +96,17 @@ $voteToken = $currentUser ? $currentUser->token : null;
                 </div>
 
                 <?php if (!$currentUser || $currentUser->role !== 'admin') : ?>
-                    <button
-                        type="button"
-                        class="btn btn-orange btn-vote"
-                        data-type-contenu="groupe"
-                        data-contenu-id="<?php echo (int)($groupe['GroupeID'] ?? 0); ?>"
-                        data-voted="<?php echo $hasVoted ? '1' : '0'; ?>">
-                        <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour ce groupe'; ?>
-                    </button>
+                    <div class="vote-info">
+                        <span class="vote-count"><?php echo (int)($groupe['NombreVotes'] ?? 0); ?> votes</span>
+                        <button
+                            type="button"
+                            class="btn btn-orange btn-vote"
+                            data-type-contenu="groupe"
+                            data-contenu-id="<?php echo (int)($groupe['GroupeID'] ?? 0); ?>"
+                            data-voted="<?php echo $hasVoted ? '1' : '0'; ?>">
+                            <?php echo $hasVoted ? 'Supprimer mon vote' : '❤ Voter pour ce groupe'; ?>
+                        </button>
+                    </div>
                 <?php endif; ?>
 
             </div>

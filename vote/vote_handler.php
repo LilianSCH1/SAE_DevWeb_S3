@@ -57,6 +57,18 @@ if (!in_array($typeContenu, $allowedTypes, true) || $contenuID <= 0) {
     exit;
 }
 
+$table = match($typeContenu) {
+    'musique' => 'musique',
+    'chanteur' => 'artiste',
+    'groupe' => 'groupe',
+};
+
+$idColumn = match($typeContenu) {
+    'musique' => 'MusiqueID',
+    'chanteur' => 'ArtisteID',
+    'groupe' => 'GroupeID',
+};
+
 /**
  * SUPPRESSION DU VOTE
  * (l'utilisateur clique sur "Supprimer mon vote")
@@ -88,6 +100,22 @@ if ($mode === 'delete') {
         ':id'   => $contenuID
     ]);
     $total = (int)$stmt->fetchColumn();
+
+    // Mettre à jour NombreVotes dans la table correspondante
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE {$table}
+            SET NombreVotes = :total
+            WHERE {$idColumn} = :id
+        ");
+        $stmt->execute([
+            ':total' => $total,
+            ':id'    => $contenuID
+        ]);
+    } catch (PDOException $e) {
+        error_log('Update NombreVotes error (delete): ' . $e->getMessage());
+        // Ne pas échouer la requête principale pour une erreur de mise à jour
+    }
 
     echo json_encode([
         'success' => true,
@@ -167,6 +195,22 @@ $stmt->execute([
     ':id'   => $contenuID
 ]);
 $total = (int)$stmt->fetchColumn();
+
+// Mettre à jour NombreVotes dans la table correspondante
+try {
+    $stmt = $pdo->prepare("
+        UPDATE {$table}
+        SET NombreVotes = :total
+        WHERE {$idColumn} = :id
+    ");
+    $stmt->execute([
+        ':total' => $total,
+        ':id'    => $contenuID
+    ]);
+} catch (PDOException $e) {
+    error_log('Update NombreVotes error (add): ' . $e->getMessage());
+    // Ne pas échouer la requête principale pour une erreur de mise à jour
+}
 
 echo json_encode([
     'success' => true,
