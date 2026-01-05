@@ -13,12 +13,16 @@
 <?php
 require_once '../class/Database.php';
 require_once '../class/User.php';
+require_once '../database/promote_to_top.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 $pdo = Database::getConnection();
+
+// Check and run promotion if needed (every Monday at 16:00 UTC)
+promoteToTopIfNeeded();
 
 // Check if user is admin
 $isAdmin = false;
@@ -102,7 +106,7 @@ foreach ($categories as $type) {
                             <h4 class="text-center">Musiques</h4>
                             <div class="podium">
                                 <?php if (!empty($topItems['musique'])): ?>
-                                    <?php $rank = 1; foreach ($topItems['musique'] as $item): ?>
+                                    <?php $rank = 1; $previousVotes = null; foreach ($topItems['musique'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } ?>
                                         <div class="podium-item rank-<?php echo $rank; ?>">
                                             <div class="rank-badge">#<?php echo $rank; ?></div>
                                             <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
@@ -110,8 +114,9 @@ foreach ($categories as $type) {
                                                 <h5><?php echo htmlspecialchars($item['title']); ?></h5>
                                                 <span class="votes"><?php echo $item['votes']; ?> votes</span>
                                             </div>
+                                            <?php $previousVotes = $item['votes']; ?>
                                         </div>
-                                    <?php $rank++; endforeach; ?>
+                                    <?php endforeach; ?>
                                 <?php else: ?>
                                     <p class="text-center text-muted">Aucun top musique</p>
                                 <?php endif; ?>
@@ -124,7 +129,7 @@ foreach ($categories as $type) {
                             <h4 class="text-center">Artistes</h4>
                             <div class="podium">
                                 <?php if (!empty($topItems['chanteur'])): ?>
-                                    <?php $rank = 1; foreach ($topItems['chanteur'] as $item): ?>
+                                    <?php $rank = 1; $previousVotes = null; foreach ($topItems['chanteur'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } ?>
                                         <div class="podium-item rank-<?php echo $rank; ?>">
                                             <div class="rank-badge">#<?php echo $rank; ?></div>
                                             <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
@@ -132,8 +137,9 @@ foreach ($categories as $type) {
                                                 <h5><?php echo htmlspecialchars($item['title']); ?></h5>
                                                 <span class="votes"><?php echo $item['votes']; ?> votes</span>
                                             </div>
+                                            <?php $previousVotes = $item['votes']; ?>
                                         </div>
-                                    <?php $rank++; endforeach; ?>
+                                    <?php endforeach; ?>
                                 <?php else: ?>
                                     <p class="text-center text-muted">Aucun top artiste</p>
                                 <?php endif; ?>
@@ -146,7 +152,7 @@ foreach ($categories as $type) {
                             <h4 class="text-center">Groupes</h4>
                             <div class="podium">
                                 <?php if (!empty($topItems['groupe'])): ?>
-                                    <?php $rank = 1; foreach ($topItems['groupe'] as $item): ?>
+                                    <?php $rank = 1; $previousVotes = null; foreach ($topItems['groupe'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } ?>
                                         <div class="podium-item rank-<?php echo $rank; ?>">
                                             <div class="rank-badge">#<?php echo $rank; ?></div>
                                             <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
@@ -154,8 +160,9 @@ foreach ($categories as $type) {
                                                 <h5><?php echo htmlspecialchars($item['title']); ?></h5>
                                                 <span class="votes"><?php echo $item['votes']; ?> votes</span>
                                             </div>
+                                            <?php $previousVotes = $item['votes']; ?>
                                         </div>
-                                    <?php $rank++; endforeach; ?>
+                                    <?php endforeach; ?>
                                 <?php else: ?>
                                       <p class="text-center text-muted">Aucun top groupe</p>
                                 <?php endif; ?>
