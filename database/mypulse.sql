@@ -271,6 +271,7 @@ INSERT INTO `vote` (`VoteID`, `TypeContenu`, `ContenuID`, `DateVote`, `ValeurVot
 (356, 'musique', 30, '2026-01-05 11:34:37', 1, 'token_musique_30_1'),
 (357, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_1'),
 (358, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_2');
+(359, 'musique', 33, '2026-01-05 11:34:37', 1, 'token_musique_33_1');
 
 --
 -- Contraintes pour la table `artiste`
