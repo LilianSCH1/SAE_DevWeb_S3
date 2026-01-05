@@ -147,7 +147,7 @@ function getContentsByStatus($pdo, $status)
 
 // Récupération des contenus par statut
 $en_attente = getContentsByStatus($pdo, 'en_attente');
-$archive_classement = getContentsByStatus($pdo, 'archive');
+$archive_classement = getContentsByStatus($pdo, 'archive_top');
 $archive_suppression = getContentsByStatus($pdo, 'archive_suppr');
 $refuses = getContentsByStatus($pdo, 'refusee');
 ?>

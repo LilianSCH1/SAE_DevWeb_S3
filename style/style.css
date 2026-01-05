@@ -25,6 +25,7 @@ body {
 /* Curseur pointer avec double note (orange avec contour blanc) sur les éléments cliquables */
 a, button, .toggle-desc-btn, input[type="submit"], [onclick], .btn, label[for] {
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="28" viewBox="0 0 24 28"><path d="M18 0v12c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V0h2z" fill="%23ea5c1f" stroke="%23ffffff" stroke-width="1"/><path d="M10 6v10c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V6h2z" fill="%23ea5c1f" stroke="%23ffffff" stroke-width="1"/></svg>') 2 2, pointer !important;
+
 }
 
 /* Curseur blanc + hover (orange clair avec contour blanc) dans les zones sombres sur éléments cliquables */
@@ -650,4 +651,92 @@ header.navbar button,
     100% {
         transform: translateX(-50%);
     }
+}
+
+/* Weekly Winners Podium */
+.weekly-winners {
+    background: linear-gradient(135deg, rgba(250, 133, 50, 0.1), rgba(251, 59, 59, 0.1));
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.weekly-winners h3 {
+    color: var(--dark-color);
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.winner-category {
+    background-color: white;
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    box-shadow: var(--box-shadow);
+    height: 100%;
+}
+
+.winner-category h4 {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.podium {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.podium-item {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    transition: var(--transition);
+    position: relative;
+}
+
+.podium-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.rank-badge {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    background-color: var(--primary-color);
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.winner-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-right: 1rem;
+    border: 3px solid var(--primary-color);
+}
+
+.winner-info h5 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--dark-color);
+}
+
+.votes {
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: 0.9rem;
 }
