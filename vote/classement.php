@@ -10,7 +10,38 @@
     <link rel="stylesheet" href="../style/style.css">
 </head>
 <body>
-    <?php require '../index/header.php'; ?>
+<?php
+require_once '../class/Database.php';
+require_once '../class/User.php';
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$pdo = Database::getConnection();
+
+// Fetch top items for each category (status = 'classement')
+$topItems = [];
+$categories = ['musique', 'chanteur', 'groupe'];
+foreach ($categories as $type) {
+    $table = ($type === 'musique') ? 'musique' : (($type === 'chanteur') ? 'artiste' : 'groupe');
+    $idCol = ($type === 'musique') ? 'MusiqueID' : (($type === 'chanteur') ? 'ArtisteID' : 'GroupeID');
+    $titleCol = ($type === 'musique') ? 'Titre' : (($type === 'chanteur') ? 'NomArtiste' : 'NomGroupe');
+    $imageCol = ($type === 'musique') ? 'ImageCouverture' : (($type === 'chanteur') ? 'ImageProfil' : 'ImageGroupe');
+    $statusCol = 'Status' . $table;
+
+    $stmt = $pdo->prepare("
+        SELECT {$idCol} as id, {$titleCol} as title, {$imageCol} as image, NombreVotes as votes
+        FROM {$table}
+        WHERE {$statusCol} = 'classement'
+        ORDER BY NombreVotes DESC, {$idCol} ASC
+    ");
+    $stmt->execute();
+    $topItems[$type] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+?>
+
+<?php require '../index/header.php'; ?>
 
     <!-- Section des classements -->
     <section class="py-5" style="margin-top: 80px;">
@@ -21,53 +52,73 @@
                 <p class="section-description">Les contenus les plus votés par la communauté</p>
             </div>
 
-            <!-- Onglets de classements -->
-            <div class="row justify-content-center mb-4">
-                <div class="col-md-8">
-                    <ul class="nav nav-pills justify-content-center" id="rankingTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="musics-ranking-tab" data-bs-toggle="pill" data-bs-target="#musics-ranking" type="button" role="tab">Top Musiques</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="artists-ranking-tab" data-bs-toggle="pill" data-bs-target="#artists-ranking" type="button" role="tab">Top Artistes</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="groups-ranking-tab" data-bs-toggle="pill" data-bs-target="#groups-ranking" type="button" role="tab">Top Groupes</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Contenu des onglets -->
-            <div class="tab-content" id="rankingTabsContent">
-                <!-- Top Musiques -->
-                <div class="tab-pane fade show active" id="musics-ranking" role="tabpanel">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="ranking-list" id="ranking-musics-full">
-                                <!-- Le classement complet sera généré par JavaScript -->
+            <!-- Weekly Winners Podium -->
+            <div class="weekly-winners mb-5">
+                <h3 class="text-center mb-4">🏆 Top de la Semaine</h3>
+                <div class="row">
+                    <!-- Musiques -->
+                    <div class="col-md-4">
+                        <div class="winner-category">
+                            <h4 class="text-center">Musiques</h4>
+                            <div class="podium">
+                                <?php if (!empty($topItems['musique'])): ?>
+                                    <?php $rank = 1; foreach ($topItems['musique'] as $item): ?>
+                                        <div class="podium-item rank-<?php echo $rank; ?>">
+                                            <div class="rank-badge">#<?php echo $rank; ?></div>
+                                            <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
+                                            <div class="winner-info">
+                                                <h5><?php echo htmlspecialchars($item['title']); ?></h5>
+                                                <span class="votes"><?php echo $item['votes']; ?> votes</span>
+                                            </div>
+                                        </div>
+                                    <?php $rank++; endforeach; ?>
+                                <?php else: ?>
+                                    <p class="text-center text-muted">Aucun top musique</p>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Top Artistes -->
-                <div class="tab-pane fade" id="artists-ranking" role="tabpanel">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="ranking-list" id="ranking-artists-full">
-                                <!-- Le classement complet sera généré par JavaScript -->
+                    <!-- Artistes -->
+                    <div class="col-md-4">
+                        <div class="winner-category">
+                            <h4 class="text-center">Artistes</h4>
+                            <div class="podium">
+                                <?php if (!empty($topItems['chanteur'])): ?>
+                                    <?php $rank = 1; foreach ($topItems['chanteur'] as $item): ?>
+                                        <div class="podium-item rank-<?php echo $rank; ?>">
+                                            <div class="rank-badge">#<?php echo $rank; ?></div>
+                                            <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
+                                            <div class="winner-info">
+                                                <h5><?php echo htmlspecialchars($item['title']); ?></h5>
+                                                <span class="votes"><?php echo $item['votes']; ?> votes</span>
+                                            </div>
+                                        </div>
+                                    <?php $rank++; endforeach; ?>
+                                <?php else: ?>
+                                    <p class="text-center text-muted">Aucun top artiste</p>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Top Groupes -->
-                <div class="tab-pane fade" id="groups-ranking" role="tabpanel">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="ranking-list" id="ranking-groups-full">
-                                <!-- Le classement complet sera généré par JavaScript -->
+                    <!-- Groupes -->
+                    <div class="col-md-4">
+                        <div class="winner-category">
+                            <h4 class="text-center">Groupes</h4>
+                            <div class="podium">
+                                <?php if (!empty($topItems['groupe'])): ?>
+                                    <?php $rank = 1; foreach ($topItems['groupe'] as $item): ?>
+                                        <div class="podium-item rank-<?php echo $rank; ?>">
+                                            <div class="rank-badge">#<?php echo $rank; ?></div>
+                                            <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
+                                            <div class="winner-info">
+                                                <h5><?php echo htmlspecialchars($item['title']); ?></h5>
+                                                <span class="votes"><?php echo $item['votes']; ?> votes</span>
+                                            </div>
+                                        </div>
+                                    <?php $rank++; endforeach; ?>
+                                <?php else: ?>
+                                      <p class="text-center text-muted">Aucun top groupe</p>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -75,6 +126,7 @@
             </div>
         </div>
     </section>
+
 
     <?php require '../index/footer.php'; ?>
 
