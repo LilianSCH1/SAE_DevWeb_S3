@@ -203,7 +203,7 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   `UserPassword` varchar(255) NOT NULL,
   `reset_token` varchar(255) DEFAULT NULL,
   `reset_expire` datetime DEFAULT NULL,
-  `Role` enum('admin','invite','certifie','basique') NOT NULL DEFAULT 'invite',
+  `Role` enum('admin','certifie','basique') NOT NULL DEFAULT 'basique',
   `DateInscription` date NOT NULL DEFAULT (curdate()),
   `Token` varchar(255) NOT NULL,
   PRIMARY KEY (`UserID`),
