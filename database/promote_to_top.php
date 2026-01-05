@@ -50,6 +50,10 @@ function promoteToTopIfNeeded() {
         $stmt->execute();
     }
 
+    // Reset general comments every week
+    $stmt = $pdo->prepare("DELETE FROM commentaire WHERE TypeContenu = 'general'");
+    $stmt->execute();
+
     // Update last promotion date
     $stmt = $pdo->prepare("INSERT INTO system_settings (setting_key, setting_value) VALUES ('last_promotion_date', ?) ON DUPLICATE KEY UPDATE setting_value = ?");
     $stmt->execute([$today, $today]);

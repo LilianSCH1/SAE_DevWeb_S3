@@ -86,6 +86,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->exec("DELETE FROM artiste WHERE StatusArtiste = '$status'");
         $pdo->exec("DELETE FROM musique WHERE StatusMusique = '$status'");
         $pdo->exec("DELETE FROM groupe WHERE StatusGroupe = '$status'");
+    } elseif ($action === 'reset_archive') {
+        // Remettre tous les contenus archivés en valide
+        $pdo->exec("UPDATE artiste SET StatusArtiste = 'valide' WHERE StatusArtiste = 'archive_top'");
+        $pdo->exec("UPDATE musique SET StatusMusique = 'valide' WHERE StatusMusique = 'archive_top'");
+        $pdo->exec("UPDATE groupe SET StatusGroupe = 'valide' WHERE StatusGroupe = 'archive_top'");
     } elseif ($action === 'retablir' && $id > 0) {
         // Rétablir le contenu en attente
         if ($type === 'artiste') {
@@ -396,10 +401,14 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                 <!-- ARCHIVE CLASSEMENT -->
                 <div class="tab-pane fade" id="pane-archive-classement" role="tabpanel" aria-labelledby="tab-archive-classement">
                     <?php if (!empty($archive_classement)): ?>
-                        <div class="d-flex justify-content-end mb-3">
+                        <div class="d-flex justify-content-start mb-3">
+                            <form method="post" style="display:inline;">
+                                <input type="hidden" name="action" value="reset_archive">
+                                <button type="submit" class="btn btn-warning me-3" onclick="return confirm('Êtes-vous sûr de vouloir remettre tous les éléments archivés en valide ?')">Remettre Archives en Valide</button>
+                            </form>
                             <form method="post" style="display:inline;">
                                 <input type="hidden" name="action" value="clear_all">
-                                <input type="hidden" name="status" value="archive">
+                                <input type="hidden" name="status" value="archive_top">
                                 <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer tous les contenus archivés pour classement ?')">Clear All</button>
                             </form>
                         </div>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ieequ<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -29,6 +29,103 @@ $isAdmin = false;
 if (isset($_SESSION['user_id'])) {
     $currentUser = User::findById((int)$_SESSION['user_id']);
     $isAdmin = ($currentUser && $currentUser->role === 'admin');
+}
+
+// Handle status switch if admin
+if (isset($_POST['switch_statuses']) && $isAdmin) {
+    $categories = ['musique', 'chanteur', 'groupe'];
+    foreach ($categories as $type) {
+        $table = ($type === 'musique') ? 'musique' : (($type === 'chanteur') ? 'artiste' : 'groupe');
+        $statusCol = 'Status' . $table;
+
+        // First, move 'classement' to 'archive_top'
+        $pdo->prepare("UPDATE {$table} SET {$statusCol} = 'archive_top' WHERE {$statusCol} = 'classement'")->execute();
+
+        // Then, move 'valide' to 'classement'
+        $pdo->prepare("UPDATE {$table} SET {$statusCol} = 'classement' WHERE {$statusCol} = 'valide'")->execute();
+    }
+
+    // Redirect to refresh the page
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+// Handle adding comment
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
+    if (isset($_SESSION['user_id'])) {
+        $type = $_POST['type'];
+        $id = (int)$_POST['id'];
+        $comment = trim($_POST['comment']);
+        if (!empty($comment)) {
+            $stmt = $pdo->prepare("INSERT INTO commentaire (TypeContenu, ContenuID, UserID, Commentaire) VALUES (?, ?, ?, ?)");
+            $stmt->execute([$type, $id, $_SESSION['user_id'], $comment]);
+        }
+    }
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+// Handle adding general comment
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_general_comment'])) {
+    if (isset($_SESSION['user_id'])) {
+        // Check if user has already commented this week
+        $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaire WHERE UserID = ? AND TypeContenu = 'general' AND DateCommentaire >= ?");
+        $stmt->execute([$_SESSION['user_id'], $startOfWeek]);
+        if ($stmt->fetchColumn() == 0) {
+            $comment = trim($_POST['comment']);
+            if (!empty($comment)) {
+                $stmt = $pdo->prepare("INSERT INTO commentaire (TypeContenu, ContenuID, UserID, Commentaire) VALUES ('general', 0, ?, ?)");
+                $stmt->execute([$_SESSION['user_id'], $comment]);
+            }
+        }
+    }
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_comment'])) {
+// Handle editing comment
+    if (isset($_SESSION['user_id'])) {
+        $commentId = (int)$_POST['comment_id'];
+        $newComment = trim($_POST['comment']);
+        if (!empty($newComment)) {
+            // Check if user owns the comment
+            $stmt = $pdo->prepare("SELECT UserID FROM commentaire WHERE CommentaireID = ?");
+            $stmt->execute([$commentId]);
+            $commentOwner = $stmt->fetch(PDO::FETCH_ASSOC);
+            if ($commentOwner && $commentOwner['UserID'] == $_SESSION['user_id']) {
+                $stmt = $pdo->prepare("UPDATE commentaire SET Commentaire = ? WHERE CommentaireID = ?");
+                $stmt->execute([$newComment, $commentId]);
+            }
+        }
+    }
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+// Handle deleting comment
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
+    if (isset($_SESSION['user_id'])) {
+        $commentId = (int)$_POST['comment_id'];
+        // Check if user owns the comment or is admin
+        $stmt = $pdo->prepare("SELECT UserID FROM commentaire WHERE CommentaireID = ?");
+        $stmt->execute([$commentId]);
+        $commentOwner = $stmt->fetch(PDO::FETCH_ASSOC);
+        $canDelete = false;
+        if ($commentOwner) {
+            if ($commentOwner['UserID'] == $_SESSION['user_id']) {
+                $canDelete = true; // Owner
+            } elseif ($isAdmin) {
+                $canDelete = true; // Admin
+            }
+        }
+        if ($canDelete) {
+            $stmt = $pdo->prepare("DELETE FROM commentaire WHERE CommentaireID = ?");
+            $stmt->execute([$commentId]);
+        }
+    }
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
 }
 
 // Fetch top items for each category (status = 'classement')
@@ -75,6 +172,45 @@ foreach ($categories as $type) {
     $stmt->execute();
     $archivedItems[$type] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Fetch comments for top items
+$comments = [];
+foreach ($categories as $type) {
+    if (!empty($topItems[$type])) {
+        foreach ($topItems[$type] as $item) {
+            $stmt = $pdo->prepare("
+                SELECT c.Commentaire, c.DateCommentaire, u.UserPseudo
+                FROM commentaire c
+                JOIN utilisateur u ON c.UserID = u.UserID
+                WHERE c.TypeContenu = ? AND c.ContenuID = ?
+                ORDER BY c.DateCommentaire DESC
+            ");
+            $stmt->execute([$type, $item['id']]);
+            $comments[$type][$item['id']] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+}
+
+// Fetch general comments
+$generalComments = [];
+$stmt = $pdo->prepare("
+    SELECT c.CommentaireID, c.Commentaire, c.DateCommentaire, c.UserID, u.UserPseudo
+    FROM commentaire c
+    JOIN utilisateur u ON c.UserID = u.UserID
+    WHERE c.TypeContenu = 'general'
+    ORDER BY c.DateCommentaire DESC
+");
+$stmt->execute();
+$generalComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Check if user has already commented this week
+$userHasCommentedThisWeek = false;
+if (isset($_SESSION['user_id'])) {
+    $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaire WHERE UserID = ? AND TypeContenu = 'general' AND DateCommentaire >= ?");
+    $stmt->execute([$_SESSION['user_id'], $startOfWeek]);
+    $userHasCommentedThisWeek = $stmt->fetchColumn() > 0;
+}
 ?>
 
 <?php require '../index/header.php'; ?>
@@ -91,6 +227,9 @@ foreach ($categories as $type) {
             <!-- Admin Controls -->
             <?php if ($isAdmin): ?>
             <div class="admin-controls text-center mb-4">
+                <form method="post" style="display: inline;">
+                    <button type="submit" name="switch_statuses" class="btn btn-danger me-3" onclick="return confirm('Êtes-vous sûr de vouloir changer le statut de tous les éléments ?')">Changer Statuts (Valide → Classement, Classement → Archive)</button>
+                </form>
                 <button class="btn btn-primary me-3" onclick="toggleValideCards()">Afficher les cartes valides</button>
                 <button class="btn btn-secondary" onclick="toggleArchivedCards()">Afficher les archives</button>
             </div>
@@ -179,6 +318,47 @@ foreach ($categories as $type) {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <!-- Commentary Section -->
+            <div class="commentary-section mb-5">
+                <h3 class="text-center mb-4">💬 Commentaires sur les Tops</h3>
+                <div class="comments-list mb-4">
+                    <?php if (!empty($generalComments)): ?>
+                        <?php foreach ($generalComments as $comment): ?>
+                            <div class="comment">
+                                <strong><?php echo htmlspecialchars($comment['UserPseudo']); ?>:</strong>
+                                <p><?php echo htmlspecialchars($comment['Commentaire']); ?></p>
+                                <small><?php echo date('d/m/Y H:i', strtotime($comment['DateCommentaire'])); ?></small>
+                                <?php if (isset($_SESSION['user_id']) && ($comment['UserID'] == $_SESSION['user_id'] || $isAdmin)): ?>
+                                    <div class="comment-actions">
+                                        <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
+                                        <form method="post" style="display: inline;">
+                                            <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
+                                            <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
+                                        </form>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <p class="text-muted text-center">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
+                    <?php endif; ?>
+                </div>
+                <?php if (isset($_SESSION['user_id'])): ?>
+                    <?php if ($userHasCommentedThisWeek): ?>
+                        <p class="text-muted text-center">Vous ne pouvez envoyer qu'un commentaire par classement.</p>
+                    <?php else: ?>
+                        <form method="post" class="comment-form">
+                            <div class="input-group">
+                                <input type="text" name="comment" class="form-control" placeholder="Partagez votre avis sur les tops de la semaine..." required>
+                                <button type="submit" name="add_general_comment" class="btn btn-primary">Commenter</button>
+                            </div>
+                        </form>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <p class="text-muted text-center">Connectez-vous pour laisser un commentaire.</p>
+                <?php endif; ?>
             </div>
 
             <!-- Valide Cards Section (Hidden by default) -->
@@ -363,6 +543,36 @@ foreach ($categories as $type) {
                 button.textContent = 'Afficher les archives';
                 button.classList.remove('btn-info');
                 button.classList.add('btn-secondary');
+            }
+        }
+
+        function editComment(commentId, currentComment) {
+            const newComment = prompt('Modifier le commentaire:', currentComment);
+            if (newComment !== null && newComment.trim() !== '') {
+                const form = document.createElement('form');
+                form.method = 'post';
+                form.style.display = 'none';
+
+                const commentIdInput = document.createElement('input');
+                commentIdInput.type = 'hidden';
+                commentIdInput.name = 'comment_id';
+                commentIdInput.value = commentId;
+
+                const commentInput = document.createElement('input');
+                commentInput.type = 'hidden';
+                commentInput.name = 'comment';
+                commentInput.value = newComment.trim();
+
+                const editInput = document.createElement('input');
+                editInput.type = 'hidden';
+                editInput.name = 'edit_comment';
+                editInput.value = '1';
+
+                form.appendChild(commentIdInput);
+                form.appendChild(commentInput);
+                form.appendChild(editInput);
+                document.body.appendChild(form);
+                form.submit();
             }
         }
     </script>

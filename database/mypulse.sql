@@ -1,3 +1,13 @@
+
+
+
+
+
+
+
+
+
+
 -- phpMyAdmin SQL Dump
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
@@ -225,6 +235,25 @@ INSERT INTO `utilisateur` (`UserID`, `UserPseudo`, `UserName`, `UserSurname`, `U
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `commentaire`
+--
+
+DROP TABLE IF EXISTS `commentaire`;
+CREATE TABLE IF NOT EXISTS `commentaire` (
+  `CommentaireID` int NOT NULL AUTO_INCREMENT,
+  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
+  `ContenuID` int NOT NULL,
+  `UserID` int NOT NULL,
+  `Commentaire` text NOT NULL,
+  `DateCommentaire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`CommentaireID`),
+  KEY `UserID` (`UserID`),
+  KEY `idx_contenu` (`TypeContenu`,`ContenuID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Structure de la table `vote`
 --
 
@@ -287,10 +316,16 @@ ALTER TABLE `groupe`
 
 --
 -- Contraintes pour la table `musique`
---
-ALTER TABLE `musique`
-  ADD CONSTRAINT `musique_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
+  ADD CONSTRAINT `commentaire_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
 COMMIT;
+--
+  ADD CONSTRAINT `musique_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
+
+--
+-- Contraintes pour la table `commentaire`
+--
+ALTER TABLE `commentaire`
+ALTER TABLE `musique`
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
