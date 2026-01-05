@@ -104,19 +104,22 @@ foreach ($categories as $type) {
                     <div class="col-md-4">
                         <div class="winner-category">
                             <h4 class="text-center">Musiques</h4>
-                            <div class="podium">
+                            <div class="podium" id="musique-podium">
                                 <?php if (!empty($topItems['musique'])): ?>
-                                    <?php $rank = 1; $previousVotes = null; foreach ($topItems['musique'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } ?>
-                                        <div class="podium-item rank-<?php echo $rank; ?>">
+                                    <?php $rank = 1; $previousVotes = null; $count = 0; foreach ($topItems['musique'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } $class = ($count >= 3) ? 'd-none' : ''; ?>
+                                        <div class="podium-item rank-<?php echo $rank; ?> <?php echo $class; ?>">
                                             <div class="rank-badge">#<?php echo $rank; ?></div>
                                             <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
                                             <div class="winner-info">
                                                 <h5><?php echo htmlspecialchars($item['title']); ?></h5>
                                                 <span class="votes"><?php echo $item['votes']; ?> votes</span>
                                             </div>
-                                            <?php $previousVotes = $item['votes']; ?>
+                                            <?php $previousVotes = $item['votes']; $count++; ?>
                                         </div>
                                     <?php endforeach; ?>
+                                    <?php if (count($topItems['musique']) > 3): ?>
+                                        <button class="btn btn-secondary mt-3" onclick="toggleShow('musique')">Voir plus</button>
+                                    <?php endif; ?>
                                 <?php else: ?>
                                     <p class="text-center text-muted">Aucun top musique</p>
                                 <?php endif; ?>
@@ -127,19 +130,22 @@ foreach ($categories as $type) {
                     <div class="col-md-4">
                         <div class="winner-category">
                             <h4 class="text-center">Artistes</h4>
-                            <div class="podium">
+                            <div class="podium" id="chanteur-podium">
                                 <?php if (!empty($topItems['chanteur'])): ?>
-                                    <?php $rank = 1; $previousVotes = null; foreach ($topItems['chanteur'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } ?>
-                                        <div class="podium-item rank-<?php echo $rank; ?>">
+                                    <?php $rank = 1; $previousVotes = null; $count = 0; foreach ($topItems['chanteur'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } $class = ($count >= 3) ? 'd-none' : ''; ?>
+                                        <div class="podium-item rank-<?php echo $rank; ?> <?php echo $class; ?>">
                                             <div class="rank-badge">#<?php echo $rank; ?></div>
                                             <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
                                             <div class="winner-info">
                                                 <h5><?php echo htmlspecialchars($item['title']); ?></h5>
                                                 <span class="votes"><?php echo $item['votes']; ?> votes</span>
                                             </div>
-                                            <?php $previousVotes = $item['votes']; ?>
+                                            <?php $previousVotes = $item['votes']; $count++; ?>
                                         </div>
                                     <?php endforeach; ?>
+                                    <?php if (count($topItems['chanteur']) > 3): ?>
+                                        <button class="btn btn-secondary mt-3" onclick="toggleShow('chanteur')">Voir plus</button>
+                                    <?php endif; ?>
                                 <?php else: ?>
                                     <p class="text-center text-muted">Aucun top artiste</p>
                                 <?php endif; ?>
@@ -150,19 +156,22 @@ foreach ($categories as $type) {
                     <div class="col-md-4">
                         <div class="winner-category">
                             <h4 class="text-center">Groupes</h4>
-                            <div class="podium">
+                            <div class="podium" id="groupe-podium">
                                 <?php if (!empty($topItems['groupe'])): ?>
-                                    <?php $rank = 1; $previousVotes = null; foreach ($topItems['groupe'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } ?>
-                                        <div class="podium-item rank-<?php echo $rank; ?>">
+                                    <?php $rank = 1; $previousVotes = null; $count = 0; foreach ($topItems['groupe'] as $item): if ($previousVotes !== null && $item['votes'] < $previousVotes) { $rank++; } $class = ($count >= 3) ? 'd-none' : ''; ?>
+                                        <div class="podium-item rank-<?php echo $rank; ?> <?php echo $class; ?>">
                                             <div class="rank-badge">#<?php echo $rank; ?></div>
                                             <img src="../create/<?php echo htmlspecialchars($item['image']); ?>" alt="<?php echo htmlspecialchars($item['title']); ?>" class="winner-image">
                                             <div class="winner-info">
                                                 <h5><?php echo htmlspecialchars($item['title']); ?></h5>
                                                 <span class="votes"><?php echo $item['votes']; ?> votes</span>
                                             </div>
-                                            <?php $previousVotes = $item['votes']; ?>
+                                            <?php $previousVotes = $item['votes']; $count++; ?>
                                         </div>
                                     <?php endforeach; ?>
+                                    <?php if (count($topItems['groupe']) > 3): ?>
+                                        <button class="btn btn-secondary mt-3" onclick="toggleShow('groupe')">Voir plus</button>
+                                    <?php endif; ?>
                                 <?php else: ?>
                                       <p class="text-center text-muted">Aucun top groupe</p>
                                 <?php endif; ?>
@@ -320,6 +329,7 @@ foreach ($categories as $type) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script/script.js"></script>
     <script src="../script/modals.js"></script>
+    <script src="script/toggle.js"></script>
 
     <script>
         function toggleValideCards() {
