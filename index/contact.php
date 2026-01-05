@@ -12,6 +12,29 @@
 <body>
     <?php require '../index/header.php'; ?>
 
+    <?php
+    // Handle success/error messages from email sending
+    if (isset($_GET['status'])) {
+        if ($_GET['status'] == 'success') {
+            echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i>Message envoyé avec succès ! Nous vous répondrons bientôt.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>';
+        } elseif ($_GET['status'] == 'error') {
+            $errorMessage = isset($_GET['message']) ? urldecode($_GET['message']) : 'Une erreur est survenue lors de l\'envoi du message.';
+            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Erreur : ' . htmlspecialchars($errorMessage) . '
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>';
+        } elseif ($_GET['status'] == 'invalid') {
+            echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>Méthode non autorisée.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>';
+        }
+    }
+    ?>
+
     <!-- Section de contact -->
     <section class="py-5" style="margin-top: 80px;">
         <div class="container">
@@ -68,17 +91,17 @@
                                 <form id="contactForm" action="send_email.php" method="POST">
                                     <div class="mb-3">
                                         <label for="name" class="form-label">Nom complet</label>
-                                        <input type="text" class="form-control" id="name" required>
+                                        <input type="text" class="form-control" id="name" name="name" required>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" required>
+                                        <input type="email" class="form-control" id="email" name="email" required>
                                     </div>
 
                                     <div class="mb-3">
                                         <label for="subject" class="form-label">Sujet</label>
-                                        <select class="form-control" id="subject" required>
+                                        <select class="form-control" id="subject" name="subject" required>
                                             <option value="">Choisissez un sujet</option>
                                             <option value="support">Support technique</option>
                                             <option value="bug">Signalement de bug</option>
@@ -90,7 +113,7 @@
 
                                     <div class="mb-3">
                                         <label for="message" class="form-label">Message</label>
-                                        <textarea class="form-control" id="message" rows="5" required></textarea>
+                                        <textarea class="form-control" id="message" name="message" rows="5" required></textarea>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary w-100">
