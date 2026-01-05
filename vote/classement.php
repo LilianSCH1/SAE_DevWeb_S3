@@ -31,6 +31,25 @@ if (isset($_SESSION['user_id'])) {
     $isAdmin = ($currentUser && $currentUser->role === 'admin');
 }
 
+// Handle status switch if admin
+if (isset($_POST['switch_statuses']) && $isAdmin) {
+    $categories = ['musique', 'chanteur', 'groupe'];
+    foreach ($categories as $type) {
+        $table = ($type === 'musique') ? 'musique' : (($type === 'chanteur') ? 'artiste' : 'groupe');
+        $statusCol = 'Status' . $table;
+
+        // First, move 'classement' to 'archive_top'
+        $pdo->prepare("UPDATE {$table} SET {$statusCol} = 'archive_top' WHERE {$statusCol} = 'classement'")->execute();
+
+        // Then, move 'valide' to 'classement'
+        $pdo->prepare("UPDATE {$table} SET {$statusCol} = 'classement' WHERE {$statusCol} = 'valide'")->execute();
+    }
+
+    // Redirect to refresh the page
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
 // Fetch top items for each category (status = 'classement')
 $topItems = [];
 // Fetch valide items for each category
@@ -91,6 +110,9 @@ foreach ($categories as $type) {
             <!-- Admin Controls -->
             <?php if ($isAdmin): ?>
             <div class="admin-controls text-center mb-4">
+                <form method="post" style="display: inline;">
+                    <button type="submit" name="switch_statuses" class="btn btn-danger me-3" onclick="return confirm('Êtes-vous sûr de vouloir changer le statut de tous les éléments ?')">Changer Statuts (Valide → Classement, Classement → Archive)</button>
+                </form>
                 <button class="btn btn-primary me-3" onclick="toggleValideCards()">Afficher les cartes valides</button>
                 <button class="btn btn-secondary" onclick="toggleArchivedCards()">Afficher les archives</button>
             </div>
