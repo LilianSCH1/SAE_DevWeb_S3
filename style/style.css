@@ -693,8 +693,13 @@ header.navbar button,
     background-color: #f8f9fa;
     border-radius: var(--border-radius);
     padding: 1rem;
-    transition: var(--transition);
+    transition: var(--transition), opacity 1s ease;
     position: relative;
+}
+
+.podium-item.hidden {
+    opacity: 0;
+    visibility: hidden;
 }
 
 /* Top 3 podium styling */
