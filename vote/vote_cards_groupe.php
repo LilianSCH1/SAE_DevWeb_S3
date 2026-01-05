@@ -97,7 +97,6 @@ $voteToken = $currentUser ? $currentUser->token : null;
 
                 <?php if (!$currentUser || $currentUser->role !== 'admin') : ?>
                     <div class="vote-info">
-                        <span class="vote-count"><?php echo (int)($groupe['NombreVotes'] ?? 0); ?> votes</span>
                         <button
                             type="button"
                             class="btn btn-orange btn-vote"
