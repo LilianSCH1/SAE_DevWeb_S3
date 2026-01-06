@@ -271,6 +271,22 @@ CREATE TABLE IF NOT EXISTS `vote` (
 ) ENGINE=InnoDB AUTO_INCREMENT=626 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
+-- Structure de la table `commentaire`
+--
+DROP TABLE IF EXISTS `commentaire`;
+CREATE TABLE IF NOT EXISTS `commentaire` (
+  `CommentaireID` int NOT NULL AUTO_INCREMENT,
+  `TypeContenu` enum('musique','chanteur','groupe','general') NOT NULL,
+  `ContenuID` int NOT NULL DEFAULT 0,
+  `UserID` int NOT NULL,
+  `Commentaire` text NOT NULL,
+  `DateCommentaire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`CommentaireID`),
+  KEY `UserID` (`UserID`),
+  KEY `idx_contenu` (`TypeContenu`,`ContenuID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
 -- Déchargement des données de la table `vote`
 --
 
@@ -301,6 +317,13 @@ INSERT INTO `vote` (`VoteID`, `TypeContenu`, `ContenuID`, `DateVote`, `ValeurVot
 (357, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_1'),
 (358, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_2');
 (359, 'musique', 33, '2026-01-05 11:34:37', 1, 'token_musique_33_1');
+
+--
+-- Contraintes pour la table `commentaire`
+--
+
+ALTER TABLE `commentaire`
+  ADD CONSTRAINT `commentaire_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `artiste`
