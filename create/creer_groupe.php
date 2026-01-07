@@ -1,4 +1,4 @@
-pesu<?php
+<?php
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
@@ -53,13 +53,21 @@ pesu<?php
         }
 
         if ($nomGroupe && $soundPath && $imagePath) {
-            $stmt = $pdo->prepare("INSERT INTO groupe (NomGroupe, AnneeFormation, BiographieCourte, CheminFichierMP3, ImageGroupe, StatusGroupe, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
-            $stmt->execute([$nomGroupe, $anneeFormation, $biographieCourte, $soundPath, $imagePath, $userId]);
+            $stmt = $pdo->prepare("SELECT GroupeID FROM groupe WHERE NomGroupe = ?");
+            $stmt->execute([$nomGroupe]);
+            $existingGroup = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            if ($stmt->rowCount() > 0) {
-                $message = 'Groupe ajouté avec succès !';
+            if ($existingGroup) {
+                $message = 'Ce groupe existe déjà !';
             } else {
-                $message = 'Erreur lors de l\'ajout du groupe.';
+                $stmt = $pdo->prepare("INSERT INTO groupe (NomGroupe, AnneeFormation, BiographieCourte, CheminFichierMP3, ImageGroupe, StatusGroupe, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
+                $stmt->execute([$nomGroupe, $anneeFormation, $biographieCourte, $soundPath, $imagePath, $userId]);
+
+                if ($stmt->rowCount() > 0) {
+                    $message = 'Groupe ajouté avec succès !';
+                } else {
+                    $message = 'Erreur lors de l\'ajout du groupe.';
+                }
             }
         } else {
             $message = 'Veuillez remplir tous les champs obligatoires.';

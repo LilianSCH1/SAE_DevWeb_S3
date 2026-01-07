@@ -53,7 +53,6 @@
         }
 
         if ($nomArtiste && $soundPath && $imagePath) {
-    }
             $stmt = $pdo->prepare("SELECT ArtisteID FROM artiste WHERE NomArtiste = ?");
             $stmt->execute([$nomArtiste]);
             $existingArtist = $stmt->fetch(PDO::FETCH_ASSOC);
