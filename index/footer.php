@@ -55,6 +55,7 @@ $userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/terms_of_use.php', 'Conditions d\'utilisation')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Conditions d'utilisation</a></li>
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/privacy_policy.php', 'Politique de confidentialité')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de confidentialité</a></li>
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/cookies_policy.php', 'Politique de cookie')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de cookie</a></li>
+                            <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/legal_notices.php', 'Mentions légales')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Mentions légales</a></li>
                         </ul>
                     </div>
 
