@@ -1,4 +1,4 @@
-ieequ<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -68,10 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
 // Handle adding general comment
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_general_comment'])) {
     if (isset($_SESSION['user_id'])) {
-        // Check if user has already commented this week
-        $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+        // Check if user has already commented this year
+        $startOfYear = date('Y-m-d', strtotime('1st january this year'));
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaire WHERE UserID = ? AND TypeContenu = 'general' AND DateCommentaire >= ?");
-        $stmt->execute([$_SESSION['user_id'], $startOfWeek]);
+        $stmt->execute([$_SESSION['user_id'], $startOfYear]);
         if ($stmt->fetchColumn() == 0) {
             $comment = trim($_POST['comment']);
             if (!empty($comment)) {
@@ -203,13 +203,13 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $generalComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Check if user has already commented this week
-$userHasCommentedThisWeek = false;
+// Check if user has already commented this year
+$userHasCommentedThisYear = false;
 if (isset($_SESSION['user_id'])) {
-    $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+    $startOfYear = date('Y-m-d', strtotime('1st january next year'));
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaire WHERE UserID = ? AND TypeContenu = 'general' AND DateCommentaire >= ?");
-    $stmt->execute([$_SESSION['user_id'], $startOfWeek]);
-    $userHasCommentedThisWeek = $stmt->fetchColumn() > 0;
+    $stmt->execute([$_SESSION['user_id'], $startOfYear]);
+    $userHasCommentedThisYear = $stmt->fetchColumn() > 0;
 }
 ?>
 
@@ -235,9 +235,9 @@ if (isset($_SESSION['user_id'])) {
             </div>
             <?php endif; ?>
 
-            <!-- Weekly Winners Podium -->
-            <div class="weekly-winners mb-5">
-                <h3 class="text-center mb-4">🏆 Top de la Semaine</h3>
+            <!-- Annual Winners Podium -->
+            <div class="annual-winners mb-5">
+                <h3 class="text-center mb-4">🏆 Top de l'Année</h3>
                 <div class="row">
                     <!-- Musiques -->
                     <div class="col-md-4">
@@ -346,12 +346,12 @@ if (isset($_SESSION['user_id'])) {
                     <?php endif; ?>
                 </div>
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <?php if ($userHasCommentedThisWeek): ?>
+                    <?php if ($userHasCommentedThisYear): ?>
                         <p class="text-muted text-center">Vous ne pouvez envoyer qu'un commentaire par classement.</p>
                     <?php else: ?>
                         <form method="post" class="comment-form">
                             <div class="input-group">
-                                <input type="text" name="comment" class="form-control" placeholder="Partagez votre avis sur les tops de la semaine..." required>
+                                <input type="text" name="comment" class="form-control" placeholder="Partagez votre avis sur les tops de l'année..." required>
                                 <button type="submit" name="add_general_comment" class="btn btn-primary">Commenter</button>
                             </div>
                         </form>

@@ -16,13 +16,12 @@ function promoteToTopIfNeeded() {
         )
     ");
 
-    // Check if it's Monday and after 15:30 UTC
+    // Check if it's January 1st and after 00:00 UTC
     $now = new DateTime('now', new DateTimeZone('UTC'));
-    $dayOfWeek = $now->format('N'); // 1 = Monday
-    $hour = $now->format('H');
-    $minute = $now->format('i');
+    $month = $now->format('n'); // 1 = January
+    $day = $now->format('j'); // Day of month
 
-    if ($dayOfWeek != 1 || ($hour < 15 || ($hour == 15 && $minute < 30))) {
+    if ($month != 1 || $day != 1) {
         return false; // Not time yet
     }
 
@@ -50,7 +49,7 @@ function promoteToTopIfNeeded() {
         $stmt->execute();
     }
 
-    // Reset general comments every week
+    // Reset general comments every year
     $stmt = $pdo->prepare("DELETE FROM commentaire WHERE TypeContenu = 'general'");
     $stmt->execute();
 

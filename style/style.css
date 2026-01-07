@@ -653,21 +653,22 @@ header.navbar button,
     }
 }
 
-/* Weekly Winners Podium */
-.weekly-winners {
+/* Annual Winners Podium */
+.annual-winners {
     background: linear-gradient(135deg, rgba(250, 133, 50, 0.1), rgba(251, 59, 59, 0.1));
+
     border-radius: var(--border-radius);
     padding: 2rem;
     margin-bottom: 2rem;
 }
 
-.weekly-winners h3 {
+.annual-winners h3 {
     color: var(--dark-color);
     font-weight: 700;
     margin-bottom: 2rem;
 }
 
-.winner-category {
+.annual-category {
     background-color: white;
     border-radius: var(--border-radius);
     padding: 1.5rem;
