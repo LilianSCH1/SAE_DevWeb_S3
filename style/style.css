@@ -23,7 +23,7 @@ body {
 }
 
 /* Curseur pointer avec double note (orange avec contour blanc) sur les éléments cliquables */
-a, button, .toggle-desc-btn, input[type="submit"], [onclick], .btn, label[for] {
+a, button, .toggle-desc-btn, input[type="submit"], [onclick], .btn, label[for], input[type="checkbox"], .nav-link {
     cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="28" viewBox="0 0 24 28"><path d="M18 0v12c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V0h2z" fill="%23ea5c1f" stroke="%23ffffff" stroke-width="1"/><path d="M10 6v10c0 2.21-1.79 4-4 4s-4-1.79-4-4 1.79-4 4-4c.74 0 1.43.21 2.02.56V6h2z" fill="%23ea5c1f" stroke="%23ffffff" stroke-width="1"/></svg>') 2 2, pointer !important;
 
 }

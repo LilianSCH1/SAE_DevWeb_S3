@@ -178,6 +178,13 @@ if (isset($_SESSION['user_id'])) {
                                             <label class="form-check-label" for="rememberMe">Se souvenir de moi</label>
                                         </div>
 
+                                        <div class="mb-3 form-check">
+                                            <input type="checkbox" class="form-check-input" id="acceptTermsLogin" required>
+                                            <label class="form-check-label" for="acceptTermsLogin">
+                                                J'accepte les <a href="#" onclick="event.preventDefault(); event.stopPropagation(); openPageModal('../pages/terms_of_use.php', 'Conditions d\'utilisation')" class="text-decoration-none">conditions générales d'utilisation</a>
+                                            </label>
+                                        </div>
+
                                         <button type="submit" class="btn btn-primary w-100 mb-3">
                                             <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
                                         </button>
