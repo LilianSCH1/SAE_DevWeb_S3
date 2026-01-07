@@ -41,6 +41,15 @@ function openPageModal(url, title) {
         .catch(error => {
             modalBody.innerHTML = '<p>Erreur de chargement</p>';
         });
+
+    // Disposer du modal après sa fermeture pour éviter le problème du backdrop gris
+    modalElement.addEventListener('hidden.bs.modal', function () {
+        modal.dispose();
+        modalElement.remove();
+        // Supprimer tous les backdrops restants
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+        backdrops.forEach(backdrop => backdrop.remove());
+    });
 }
 
 // Handle artist form submission

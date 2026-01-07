@@ -240,7 +240,7 @@ if (isset($_SESSION['user_id'])) {
                                         <div class="mb-3 form-check">
                                             <input type="checkbox" class="form-check-input" id="acceptTerms" required>
                                             <label class="form-check-label" for="acceptTerms">
-                                                J'accepte les <a href="#" class="text-decoration-none">conditions d'utilisation</a>
+                                                J'accepte les <a href="#" class="text-decoration-none">conditions générales d'utilisation</a>
                                             </label>
                                         </div>
 
