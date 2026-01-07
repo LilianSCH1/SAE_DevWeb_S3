@@ -12,9 +12,8 @@ Directeurs de la publication : HOJA Valentin et SCHMITT Lilian<br>
 <h4> Hébergement :</h4>
 <p>
 Le site MyPulse est hébergé par :<br>
-Nom de l'hébergeur : <br>
-Adresse : <br>
-Téléphone : <br>
+Nom de l'hébergeur : Wamp Server (localement)<br>
+Adresse : <a href="https://www.wampserver.com/">https://www.wampserver.com/</a><br>
 </p>
 <br>
 
