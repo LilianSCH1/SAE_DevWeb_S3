@@ -107,7 +107,7 @@ $musiques = $pdo->prepare("
            AnneePublication as DateAffichee,
            NombreVotes
     FROM musique
-    WHERE StatusMusique IN ('valide', 'en_attente')" . $searchCondition . "
+    WHERE StatusMusique = 'valide'" . $searchCondition . "
     ORDER BY DateAffichee DESC
 ");
 $musiques->execute($params);
@@ -132,7 +132,7 @@ $artistes = $pdo->prepare("
            AnneeNaissance as DateAffichee,
            NombreVotes
     FROM artiste
-    WHERE StatusArtiste IN ('valide', 'en_attente')" . $searchConditionArtiste . "
+    WHERE StatusArtiste = 'valide'" . $searchConditionArtiste . "
     ORDER BY DateAffichee DESC
 ");
 $artistes->execute($paramsArtiste);
@@ -157,7 +157,7 @@ $groupes = $pdo->prepare("
            AnneeFormation as DateAffichee,
            NombreVotes
     FROM groupe
-    WHERE StatusGroupe IN ('valide', 'en_attente')" . $searchConditionGroupe . "
+    WHERE StatusGroupe = 'valide'" . $searchConditionGroupe . "
     ORDER BY DateAffichee DESC
 ");
 $groupes->execute($paramsGroupe);
