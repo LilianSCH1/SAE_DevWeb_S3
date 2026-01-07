@@ -42,7 +42,7 @@
 
     <h4> CONTACTEZ-NOUS </h4>
     <p>
-        Pour toute question, suggestion ou assistance, contactez notre support à l'adresse email : `contact@mypulse.com`.
+        Pour toute question, suggestion ou assistance, contactez notre support à l'adresse email : `mypulse.company@gmail.com`.
         <br>
         Nous sommes à l'écoute de notre communauté pour améliorer continuellement MyPulse.
     </p>

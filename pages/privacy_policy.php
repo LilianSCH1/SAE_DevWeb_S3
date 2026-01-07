@@ -36,7 +36,7 @@ Mesures : HTTPS, limitation d'accès par rôle, backups chiffrés.
 <p>
 Vos Droits RGPD
 <br>
-Accès, rectification, effacement via contact@mypulse.com.
+Accès, rectification, effacement via mypulse.company@gmail.com.
 <br>
 Opposition, limitation, portabilité ; rétractation du consentement.
 <br>
