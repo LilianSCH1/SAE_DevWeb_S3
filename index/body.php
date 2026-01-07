@@ -29,11 +29,11 @@
                         try {
                             $pdo = Database::getConnection();
                             $stmt = $pdo->query("SELECT COUNT(*) as total FROM (
-                                SELECT MusiqueID FROM musique WHERE StatusMusique IN ('valide', 'en_attente')
+                                SELECT MusiqueID FROM musique WHERE StatusMusique IN ('valide', 'classement')
                                 UNION ALL
-                                SELECT ArtisteID FROM artiste WHERE StatusArtiste IN ('valide', 'en_attente')
+                                SELECT ArtisteID FROM artiste WHERE StatusArtiste IN ('valide', 'classement')
                                 UNION ALL
-                                SELECT GroupeID FROM groupe WHERE StatusGroupe IN ('valide', 'en_attente')
+                                SELECT GroupeID FROM groupe WHERE StatusGroupe IN ('valide', 'classement')
                             ) as all_content");
                             $row = $stmt->fetch(PDO::FETCH_ASSOC);
                             echo htmlspecialchars($row['total'] ?? 0);
@@ -105,7 +105,7 @@
                 require_once '../class/Database.php';
                 try {
                     $pdo = Database::getConnection();
-                    $stmt = $pdo->prepare("SELECT ImageCouverture, Titre FROM musique WHERE StatusMusique = 'valide' ORDER BY DateProposition DESC");
+                    $stmt = $pdo->prepare("SELECT ImageCouverture, Titre FROM musique WHERE StatusMusique IN ('valide', 'classement', 'archive_top') ORDER BY DateProposition DESC");
                     $stmt->execute();
                     $allMusiques = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
