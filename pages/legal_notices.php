@@ -39,7 +39,7 @@ Le droit industriel protège les inventions, marques, dessins et modèles indust
 
 <h4> Données personnelles :</h4>
 <p>
-Conformément à la loi Informatique et Libertés et au RGPD, les données collectées sont utilisées uniquement pour les besoins du service. Pour plus d'informations, consultez notre Politique de confidentialité.
+Conformément à la loi Informatique et Libertés et au RGPD, les données collectées sont utilisées uniquement pour les besoins du service. Pour plus d'informations, consultez notre <a href="#" onclick="event.preventDefault(); openPageModal('../pages/privacy_policy.php', 'Politique de confidentialité')">Politique de confidentialité</a>.
 Conformément à la loi des données numériques.
 </p>
 <br>
