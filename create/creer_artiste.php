@@ -23,6 +23,23 @@
     }
 
     $message = '';
+    $messageType = 'info';
+
+    if (isset($_GET['success'])) {
+        $message = 'Artiste ajouté avec succès !';
+        $messageType = 'success';
+    } elseif (isset($_GET['error'])) {
+        if ($_GET['error'] == 'exists') {
+            $message = 'Cet artiste existe déjà !';
+            $messageType = 'danger';
+        } elseif ($_GET['error'] == 'insert') {
+            $message = 'Erreur lors de l\'ajout de l\'artiste.';
+            $messageType = 'danger';
+        } elseif ($_GET['error'] == 'fields') {
+            $message = 'Veuillez remplir tous les champs obligatoires.';
+            $messageType = 'danger';
+        }
+    }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nomArtiste = $_POST['nomArtiste'] ?? '';
@@ -58,20 +75,25 @@
             $existingArtist = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($existingArtist) {
-                $message = 'Cet artiste existe déjà !';
+                header('Location: creer_artiste.php?error=exists');
+                exit;
             } else {
                 $stmt = $pdo->prepare("INSERT INTO artiste (NomArtiste, NomReel, BiographieCourte, AnneeNaissance, CheminFichierMP3, ImageProfil, StatusArtiste, UserID, DateProposition) VALUES (?, ?, ?, ?, ?, ?, 'en_attente', ?, NOW())");
                 $stmt->execute([$nomArtiste, $nomReel, $bio, $anneeNaissance, $soundPath, $imagePath, $userId]);
 
                 if ($stmt->rowCount() > 0) {
-                    $message = 'Artiste ajouté avec succès !';
+                    header('Location: creer_artiste.php?success=1');
+                    exit;
                 } else {
-                    $message = 'Erreur lors de l\'ajout de l\'artiste.';
+                    header('Location: creer_artiste.php?error=insert');
+                    exit;
                 }
             }
         } else {
-            $message = 'Veuillez remplir tous les champs obligatoires.';
+            header('Location: creer_artiste.php?error=fields');
+            exit;
         }
+    }
     ?>
     <!DOCTYPE html>
     <html lang="fr">
@@ -105,7 +127,7 @@
                             </div>
                             <div class="card-body">
                                 <?php if ($message): ?>
-                                    <div class="alert alert-info"><?php echo htmlspecialchars($message); ?></div>
+                                    <div class="alert alert-<?php echo $messageType; ?>"><?php echo htmlspecialchars($message); ?></div>
                                 <?php endif; ?>
 
                                 <form method="POST" enctype="multipart/form-data">
