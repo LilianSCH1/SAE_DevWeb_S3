@@ -59,9 +59,14 @@ $userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
                         </ul>
                     </div>
 
-                </div>
-            </div>
         </div>
+    </div>
+</div>
+
+<!-- Floating Cookie Icon -->
+<div id="cookie-icon" class="cookie-floating-icon" onclick="openCookiePopup()" style="display: none;">
+    🍪
+</div>
         <!-- Séparateur -->
         <hr style="background-color: rgba(255,255,255,0.1); margin: 2rem 0;">
         <!-- Copyright -->
@@ -70,3 +75,15 @@ $userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
         </div>
     </div>
 </footer>
+
+<script>
+// Show cookie icon for all users to allow preference management
+document.addEventListener("DOMContentLoaded", function () {
+    const cookieIcon = document.getElementById("cookie-icon");
+    if (cookieIcon) {
+        cookieIcon.style.display = "flex";
+    }
+});
+</script>
+
+
