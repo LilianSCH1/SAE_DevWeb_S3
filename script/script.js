@@ -1,16 +1,4 @@
-function togglePassword(fieldId) {
-  const input = document.getElementById(fieldId);
-  const icon = input.nextElementSibling.querySelector("i");
-  if (input.type === "password") {
-    input.type = "text";
-    icon.classList.remove("bi-eye");
-    icon.classList.add("bi-eye-slash");
-  } else {
-    input.type = "password";
-    icon.classList.remove("bi-eye-slash");
-    icon.classList.add("bi-eye");
-  }
-}
+
 
 // Scroll event listener for navbar
 window.addEventListener("scroll", function () {
@@ -484,14 +472,26 @@ function acceptAllCookies() {
   });
 })();
 
-document.addEventListener("DOMContentLoaded", function () {
-  const toggles = document.querySelectorAll(".password-toggle");
-  toggles.forEach((toggle) => {
-    toggle.addEventListener("click", function () {
-      const targetId = this.getAttribute("data-target");
-      const input = document.getElementById(targetId);
-      const icon = this.querySelector("i");
+console.log("Password toggle script loaded");
 
+// Find all password toggle elements
+const toggles = document.querySelectorAll(".password-toggle");
+console.log("Found toggles:", toggles);
+
+toggles.forEach((toggle, index) => {
+  console.log(`Toggle ${index}:`, toggle);
+  toggle.addEventListener("click", function (e) {
+    console.log("Toggle clicked", e.target);
+    e.preventDefault();
+
+    const targetId = toggle.getAttribute("data-target");
+    console.log("Target ID:", targetId);
+    const input = document.getElementById(targetId);
+    console.log("Input found:", input);
+    const icon = toggle.querySelector("i");
+    console.log("Icon found:", icon);
+
+    if (input && icon) {
       if (input.type === "password") {
         input.type = "text";
         icon.classList.remove("bi-eye");
@@ -501,7 +501,7 @@ document.addEventListener("DOMContentLoaded", function () {
         icon.classList.remove("bi-eye-slash");
         icon.classList.add("bi-eye");
       }
-    });
+    }
   });
 });
 
@@ -515,24 +515,7 @@ document.querySelectorAll(".toggle-desc-btn").forEach((btn) => {
   });
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-            const toggles = document.querySelectorAll('.password-toggle');
-            toggles.forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    const icon = this.querySelector('i');
 
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.className = 'bi bi-eye-slash';
-                    } else {
-                        input.type = 'password';
-                        icon.className = 'bi bi-eye';
-                    }
-                });
-            });
-        });
 
         // Show cookie icon for all users to allow preference management
 document.addEventListener("DOMContentLoaded", function () {
