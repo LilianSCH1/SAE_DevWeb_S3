@@ -22,7 +22,7 @@ MyPulse permet de proposer, gérer et voter pour des musiques, artistes et group
 
 **Fonctionnalités**
 
-- Gestion des musiques, artistes et groupes (création, modification, suppression pour les admins).
+- Gestion des musiques, artistes et groupes (création, modification, archivage pour les admins).
 - Système de vote par utilisateur (token de vote) avec possibilité de supprimer son vote.
 - Lecteur audio intégré pour écouter les musiques (bouton "Écouter").
 - Recherche interactive pour musiques, artistes et groupes.
@@ -101,3 +101,17 @@ Fichiers clés :
 - 500 / erreurs PHP : activez l'affichage des erreurs en développement (`php.ini`) ou vérifiez les logs Apache/PHP.
 - Problèmes de connexion DB : vérifiez les paramètres dans [database/dbconnect.php](database/dbconnect.php) et que le serveur MySQL tourne.
 - Assets manquants : assurez-vous que `create/uploads/` contient les fichiers et que les chemins relatifs sont corrects.
+- Problèmes d'upload : vérifiez les permissions des dossiers `create/uploads/` et la taille maximale des fichiers dans `php.ini`.
+- Votes non enregistrés : assurez-vous que l'utilisateur est connecté et possède un token valide.
+
+**Licence & Crédits**
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails (si présent).
+
+**Crédits**
+- Développé par HOJA Valentin et SCHMITT Lilian dans le cadre du projet SAE DevWeb S3.
+- Icônes : [Source des icônes, ex. Flaticon ou créées par l'équipe].
+- Polices : Raleway et Lavonia Font.
+- Technologies : PHP, MySQL, HTML/CSS/JS, Composer.
+
+Pour toute question, contactez mypulse.company@gmail.com.
