@@ -822,16 +822,6 @@ $recrutements = $recrutements->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Toggle simple sur les descriptions
-        document.querySelectorAll('.toggle-desc-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const card = btn.closest('.content-card');
-                if (!card) return;
-                card.classList.toggle('show-description');
-                btn.textContent = card.classList.contains('show-description') ? '-' : '+';
-            });
-        });
-    </script>
+    
 </body>
 </html>

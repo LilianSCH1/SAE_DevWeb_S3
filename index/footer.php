@@ -76,14 +76,4 @@ $userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
     </div>
 </footer>
 
-<script>
-// Show cookie icon for all users to allow preference management
-document.addEventListener("DOMContentLoaded", function () {
-    const cookieIcon = document.getElementById("cookie-icon");
-    if (cookieIcon) {
-        cookieIcon.style.display = "flex";
-    }
-});
-</script>
-
-
+<script src="../script/script.js"></script>

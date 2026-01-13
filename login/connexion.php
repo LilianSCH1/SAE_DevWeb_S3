@@ -307,26 +307,7 @@ if (isset($_SESSION['user_id'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script/modals.js"></script>
     <script src="../script/script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggles = document.querySelectorAll('.password-toggle');
-            toggles.forEach(toggle => {
-                toggle.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
-                    const input = document.getElementById(targetId);
-                    const icon = this.querySelector('i');
 
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        icon.className = 'bi bi-eye-slash';
-                    } else {
-                        input.type = 'password';
-                        icon.className = 'bi bi-eye';
-                    }
-                });
-            });
-        });
-    </script>
 </body>
 
 </html>
