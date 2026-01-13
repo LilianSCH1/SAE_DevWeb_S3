@@ -1,4 +1,4 @@
-/* Grille des cartes : 4 colonnes */
+/* Grille des cartes : 4 colonnes pour plus d'espace */
 .card-list {
     max-width: 1200px;
     margin: 0 auto 60px;

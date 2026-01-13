@@ -1,19 +1,9 @@
-
-
-
-
-
-
-
-
-
-
 -- phpMyAdmin SQL Dump
 -- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 05 jan. 2026 à 15:10
+-- Généré le : mar. 13 jan. 2026 à 15:53
 -- Version du serveur : 8.4.7
 -- Version de PHP : 8.3.28
 
@@ -65,12 +55,12 @@ CREATE TABLE IF NOT EXISTS `artiste` (
   `UserID` int DEFAULT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `AnneeNaissance` int DEFAULT NULL,
-  `NombreVotes` int DEFAULT 0,
+  `NombreVotes` int DEFAULT '0',
   PRIMARY KEY (`ArtisteID`),
   UNIQUE KEY `ux_artiste_nom` (`NomArtiste`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusArtiste`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `artiste`
@@ -109,6 +99,24 @@ INSERT INTO `categorie` (`CategorieID`, `NomCategorie`, `Description`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `commentaire`
+--
+
+DROP TABLE IF EXISTS `commentaire`;
+CREATE TABLE IF NOT EXISTS `commentaire` (
+  `CommentaireID` int NOT NULL AUTO_INCREMENT,
+  `TypeContenu` enum('general') NOT NULL,
+  `UserID` int NOT NULL,
+  `Commentaire` text NOT NULL,
+  `DateCommentaire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_offensive` tinyint(1) NOT NULL DEFAULT '0',
+  `report_reason` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`CommentaireID`),
+  KEY `UserID` (`UserID`),
+  KEY `idx_contenu` (`TypeContenu`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
 -- Structure de la table `groupe`
 --
 
@@ -123,12 +131,12 @@ CREATE TABLE IF NOT EXISTS `groupe` (
   `StatusGroupe` enum('en_attente','valide','refusee','classement','archive_top','archive_suppr') NOT NULL DEFAULT 'en_attente',
   `UserID` int DEFAULT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `NombreVotes` int DEFAULT 0,
+  `NombreVotes` int DEFAULT '0',
   PRIMARY KEY (`GroupeID`),
   UNIQUE KEY `ux_groupe_nom` (`NomGroupe`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusGroupe`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `groupe`
@@ -154,14 +162,14 @@ CREATE TABLE IF NOT EXISTS `musique` (
   `UserID` int DEFAULT NULL,
   `DateProposition` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `AnneePublication` int DEFAULT NULL,
-  `NombreVotes` int DEFAULT 0,
+  `NombreVotes` int DEFAULT '0',
   PRIMARY KEY (`MusiqueID`),
   UNIQUE KEY `ux_musique_chemin` (`CheminFichierMP3`),
   UNIQUE KEY `ux_musique_titre_artiste` (`Titre`,`Artiste`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusMusique`),
   KEY `idx_artiste` (`Artiste`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `musique`
@@ -173,10 +181,43 @@ INSERT INTO `musique` (`MusiqueID`, `Titre`, `Artiste`, `CheminFichierMP3`, `Ima
 (27, 'Soleil Bleu', 'Bleu Soleil et Luiza', 'uploads/musiques/sons/Soleil_Bleu_1765387840_musique.mp3', 'uploads/musiques/couvertures/Soleil_Bleu_1765387840_couverture.jpg', 'valide', NULL, '2025-12-10 18:30:40', 2025, 6),
 (30, 'Soleil Levant', 'Orelsan et SDM', 'uploads/musiques/sons/Soleil_Levant_1765389622_musique.mp3', 'uploads/musiques/couvertures/Soleil_Levant_1765389622_couverture.jpg', 'valide', NULL, '2025-12-10 19:00:22', 2025, 1),
 (31, 'Un monde à l\'autre', 'GIMS, La Mano 1.9 et SCH', 'uploads/musiques/sons/Un_monde__lautre_1765389819_musique.mp3', 'uploads/musiques/couvertures/Un_monde__lautre_1765389819_couverture.jpg', 'valide', NULL, '2025-12-10 19:03:39', 2025, 4),
-(33, 'Ailleurs', 'Orelsan', 'uploads/musiques/sons/Ailleurs_1765390046_musique.mp3', 'uploads/musiques/couvertures/Ailleurs_1765390046_couverture.jpg', 'valide', NULL, '2025-12-10 19:07:26', 2025, 0),
+(33, 'Ailleurs', 'Orelsan', 'uploads/musiques/sons/Ailleurs_1765390046_musique.mp3', 'uploads/musiques/couvertures/Ailleurs_1765390046_couverture.jpg', 'valide', NULL, '2025-12-10 19:07:26', 2025, 1),
 (36, 'Die With a Smile', 'Lady Gaga et Bruno Mars', 'uploads/musiques/sons/Die_With_a_Smile_1765394639_musique.mp3', 'uploads/musiques/couvertures/Die_With_a_Smile_1765394639_couverture.jpg', 'valide', NULL, '2025-12-10 20:23:59', 2024, 0),
 (37, 'APT.', 'ROSÉ et Bruno Mars', 'uploads/musiques/sons/APT_1765394922_musique.mp3', 'uploads/musiques/couvertures/APT_1765394922_couverture.jpg', 'valide', NULL, '2025-12-10 20:28:42', 2024, 0),
 (38, 'BIRDS OF A FEATHER', 'Billie Eilish', 'uploads/musiques/sons/BIRDS_OF_A_FEATHER_1765395240_musique.mp3', 'uploads/musiques/couvertures/BIRDS_OF_A_FEATHER_1765395240_couverture.jpg', 'valide', NULL, '2025-12-10 20:34:00', 2024, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `recrutement`
+--
+
+DROP TABLE IF EXISTS `recrutement`;
+CREATE TABLE IF NOT EXISTS `recrutement` (
+  `RecrutementID` int NOT NULL AUTO_INCREMENT,
+  `UserID` int NOT NULL,
+  `Nom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Prenom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Age` int NOT NULL,
+  `Motivation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `MyPulseAccount` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `PhotoIdentite` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Status` enum('en_attente','accepte','refuse') COLLATE utf8mb4_unicode_ci DEFAULT 'en_attente',
+  `DateSoumission` datetime DEFAULT CURRENT_TIMESTAMP,
+  `DateDecision` datetime DEFAULT NULL,
+  `AdminID` int DEFAULT NULL,
+  `Screenshot` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`RecrutementID`),
+  KEY `UserID` (`UserID`),
+  KEY `AdminID` (`AdminID`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `recrutement`
+--
+
+INSERT INTO `recrutement` (`RecrutementID`, `UserID`, `Nom`, `Prenom`, `Age`, `Motivation`, `MyPulseAccount`, `PhotoIdentite`, `Status`, `DateSoumission`, `DateDecision`, `AdminID`, `Screenshot`) VALUES
+(1, 5, 'SCHMITT', 'Lilian', 20, 'J\'aime les pommes de terre', '{\"instagram\":\"lilian_smt\",\"twitter\":\"Lilian_wbb\",\"facebook\":\"lilian_smt\",\"youtube\":\"LilianYTB\",\"spot', 'uploads/recrutement/69661b82c25f8_Attestation mutuelle.pdf', 'en_attente', '2026-01-13 11:16:34', NULL, NULL, 'uploads/recrutement/69661b82c27ec_screenshot_gims.jpg');
 
 -- --------------------------------------------------------
 
@@ -196,6 +237,27 @@ CREATE TABLE IF NOT EXISTS `resultat` (
   UNIQUE KEY `unique_resultat` (`TypeContenu`,`ContenuID`),
   KEY `idx_contenu` (`TypeContenu`,`ContenuID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `system_settings`
+--
+
+DROP TABLE IF EXISTS `system_settings`;
+CREATE TABLE IF NOT EXISTS `system_settings` (
+  `setting_key` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `setting_value` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`setting_key`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `system_settings`
+--
+
+INSERT INTO `system_settings` (`setting_key`, `setting_value`, `updated_at`) VALUES
+('last_promotion_date', '2026-01-05', '2026-01-05 16:30:57');
 
 -- --------------------------------------------------------
 
@@ -235,25 +297,6 @@ INSERT INTO `utilisateur` (`UserID`, `UserPseudo`, `UserName`, `UserSurname`, `U
 -- --------------------------------------------------------
 
 --
--- Structure de la table `commentaire`
---
-
-DROP TABLE IF EXISTS `commentaire`;
-CREATE TABLE IF NOT EXISTS `commentaire` (
-  `CommentaireID` int NOT NULL AUTO_INCREMENT,
-  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
-  `ContenuID` int NOT NULL,
-  `UserID` int NOT NULL,
-  `Commentaire` text NOT NULL,
-  `DateCommentaire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`CommentaireID`),
-  KEY `UserID` (`UserID`),
-  KEY `idx_contenu` (`TypeContenu`,`ContenuID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
 -- Structure de la table `vote`
 --
 
@@ -268,33 +311,16 @@ CREATE TABLE IF NOT EXISTS `vote` (
   PRIMARY KEY (`VoteID`),
   UNIQUE KEY `unique_vote_par_type` (`Token`,`TypeContenu`),
   KEY `idx_contenu` (`TypeContenu`,`ContenuID`)
-) ENGINE=InnoDB AUTO_INCREMENT=626 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Structure de la table `commentaire`
---
-DROP TABLE IF EXISTS `commentaire`;
-CREATE TABLE IF NOT EXISTS `commentaire` (
-  `CommentaireID` int NOT NULL AUTO_INCREMENT,
-  `TypeContenu` enum('musique','chanteur','groupe','general') NOT NULL,
-  `ContenuID` int NOT NULL DEFAULT 0,
-  `UserID` int NOT NULL,
-  `Commentaire` text NOT NULL,
-  `DateCommentaire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`CommentaireID`),
-  KEY `UserID` (`UserID`),
-  KEY `idx_contenu` (`TypeContenu`,`ContenuID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=627 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `vote`
 --
 
 INSERT INTO `vote` (`VoteID`, `TypeContenu`, `ContenuID`, `DateVote`, `ValeurVote`, `Token`) VALUES
-(16, 'musique', 31, '2026-01-05 11:20:58', 1, '7ce1d0136d92bab45db33323f99716c9e9398a03e507058ccf357ec3cc992240'),
 (20, 'groupe', 9, '2026-01-05 11:34:37', 1, '7ce1d0136d92bab45db33323f99716c9e9398a03e507058ccf357ec3cc992240'),
 (21, 'chanteur', 12, '2026-01-05 11:34:37', 1, '7ce1d0136d92bab45db33323f99716c9e9398a03e507058ccf357ec3cc992240'),
-(22, 'musique', 31, '2026-01-05 11:20:58', 1, 'd04046e68569c9fe7fce3047a1ef32844efd6bd9103392352f9cda4d0bf42dae'),
+(22, 'musique', 40, '2026-01-07 11:01:23', 1, 'd04046e68569c9fe7fce3047a1ef32844efd6bd9103392352f9cda4d0bf42dae'),
 (23, 'chanteur', 13, '2026-01-05 11:34:37', 1, 'd04046e68569c9fe7fce3047a1ef32844efd6bd9103392352f9cda4d0bf42dae'),
 (24, 'groupe', 9, '2026-01-05 11:34:37', 1, 'd04046e68569c9fe7fce3047a1ef32844efd6bd9103392352f9cda4d0bf42dae'),
 (27, 'musique', 27, '2026-01-05 11:20:58', 1, '817acb72a6c701562cb2ff2f1d77b59e31e86c8098bcb926d33928c9f05c2cf8'),
@@ -315,21 +341,24 @@ INSERT INTO `vote` (`VoteID`, `TypeContenu`, `ContenuID`, `DateVote`, `ValeurVot
 (355, 'musique', 29, '2026-01-05 11:34:37', 1, 'token_musique_29_1'),
 (356, 'musique', 30, '2026-01-05 11:34:37', 1, 'token_musique_30_1'),
 (357, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_1'),
-(358, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_2');
+(358, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_2'),
 (359, 'musique', 33, '2026-01-05 11:34:37', 1, 'token_musique_33_1');
 
 --
--- Contraintes pour la table `commentaire`
+-- Contraintes pour les tables déchargées
 --
-
-ALTER TABLE `commentaire`
-  ADD CONSTRAINT `commentaire_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `artiste`
 --
 ALTER TABLE `artiste`
   ADD CONSTRAINT `artiste_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
+
+--
+-- Contraintes pour la table `commentaire`
+--
+ALTER TABLE `commentaire`
+  ADD CONSTRAINT `commentaire_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `groupe`
@@ -339,16 +368,10 @@ ALTER TABLE `groupe`
 
 --
 -- Contraintes pour la table `musique`
-  ADD CONSTRAINT `commentaire_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
-COMMIT;
 --
-  ADD CONSTRAINT `musique_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
-
---
--- Contraintes pour la table `commentaire`
---
-ALTER TABLE `commentaire`
 ALTER TABLE `musique`
+  ADD CONSTRAINT `musique_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

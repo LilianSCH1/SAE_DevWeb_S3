@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_certification']
             $nom = trim($_POST['nom']);
             $prenom = trim($_POST['prenom']);
             $age = (int)$_POST['age'];
-            $story = trim($_POST['story']);
+            $motivation = trim($_POST['motivation']);
             $instagram = trim($_POST['instagram']);
             $twitter = trim($_POST['twitter']);
             $facebook = trim($_POST['facebook']);
@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_certification']
             $photo_identite = $_FILES['photo_identite'] ?? null;
             $screenshot = $_FILES['screenshot'] ?? null;
 
-            if (!empty($nom) && !empty($prenom) && $age > 0 && !empty($story) && $photo_identite && $screenshot) {
+            if (!empty($nom) && !empty($prenom) && $age > 0 && !empty($motivation) && $photo_identite && $screenshot) {
                 // Handle file uploads
                 $photoPath = null;
                 if ($photo_identite && $photo_identite['error'] === UPLOAD_ERR_OK) {
@@ -76,19 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_certification']
                 }
 
                 if (!$message) {
-                    // Prepare social media data as JSON
-                    $reseaux_sociaux = json_encode([
-                        'instagram' => $instagram ?: null,
-                        'twitter' => $twitter ?: null,
-                        'facebook' => $facebook ?: null,
-                        'youtube' => $youtube ?: null,
-                        'spotify' => $spotify ?: null,
-                        'deezer' => $deezer ?: null
-                    ]);
-
                     // Insert into recrutement table
-                    $stmt = $pdo->prepare("INSERT INTO recrutement (UserID, Nom, Prenom, Age, Story, MyPulseAccount, PhotoIdentite, Screenshot) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                    $success = $stmt->execute([$currentUser->id, $nom, $prenom, $age, $story, $reseaux_sociaux, $photoPath, $screenshotPath]);
+                    $stmt = $pdo->prepare("INSERT INTO recrutement (UserID, Nom, Prenom, Age, Motivation, Instagram, Twitter, Facebook, Youtube, Spotify, Deezer, PhotoIdentite, Screenshot) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    $success = $stmt->execute([$currentUser->id, $nom, $prenom, $age, $motivation, $instagram ?: null, $twitter ?: null, $facebook ?: null, $youtube ?: null, $spotify ?: null, $deezer ?: null, $photoPath, $screenshotPath]);
 
                     if ($success) {
                         $message = "Votre demande de recrutement a été soumise avec succès. Les administrateurs la examineront sous peu.";
@@ -141,6 +131,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_certification']
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <?php $currentUser = User::findById((int)$_SESSION['user_id']); ?>
                             <?php if ($currentUser && $currentUser->role === 'basique'): ?>
+                                <?php
+                                // Check if user already has a pending application
+                                $stmt = $pdo->prepare("SELECT COUNT(*) FROM recrutement WHERE UserID = ? AND Status = 'en_attente'");
+                                $stmt->execute([$currentUser->id]);
+                                $hasPendingApplication = $stmt->fetchColumn() > 0;
+                                ?>
+
+                                <?php if ($hasPendingApplication): ?>
+                                    <div class="alert alert-info text-center">
+                                        <h4>Demande en cours</h4>
+                                        <p>Vous avez déjà une demande de certification en attente de validation. Vous ne pouvez pas soumettre une nouvelle demande tant que celle-ci n'a pas été traitée.</p>
+                                    </div>
+                                <?php else: ?>
                                 <form method="post" enctype="multipart/form-data">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -156,9 +159,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_certification']
                                         <label for="age" class="form-label">Âge <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" id="age" name="age" placeholder="Votre âge" min="13" max="100" required>
                                     </div>
+
                                     <div class="mb-3">
-                                        <label for="story" class="form-label">Histoire personnelle <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="story" name="story" rows="4" placeholder="Racontez votre histoire, vos motivations, votre parcours..." required></textarea>
+                                        <label for="motivation" class="form-label">Motivation <span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="motivation" name="motivation" rows="3" placeholder="Pourquoi voulez-vous devenir certifié ?" required></textarea>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Réseaux sociaux (optionnel)</label>
@@ -197,6 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['apply_certification']
                                         <button type="submit" name="apply_certification" class="btn btn-primary btn-lg">Envoyer la demande</button>
                                     </div>
                                 </form>
+                                <?php endif; ?>
                             <?php elseif ($currentUser && $currentUser->role === 'certifie'): ?>
                                 <div class="alert alert-success text-center">
                                     <h4>Vous êtes déjà certifié !</h4>
