@@ -3,7 +3,15 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
+<<<<<<< HEAD
 -- Généré le : mar. 13 jan. 2026 à 16:00
+=======
+<<<<<<< HEAD
+-- Généré le : mar. 13 jan. 2026 à 15:53
+=======
+-- Généré le : jeu. 08 jan. 2026 à 19:21
+>>>>>>> ea7468d51672ebe23887398eb76c64a2ce2fa079
+>>>>>>> 768f74103383067b86e0d539d6dd25b6b3078b5f
 -- Version du serveur : 8.4.7
 -- Version de PHP : 8.5.0
 
@@ -60,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `artiste` (
   UNIQUE KEY `ux_artiste_nom` (`NomArtiste`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusArtiste`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `artiste`
@@ -105,7 +113,11 @@ INSERT INTO `categorie` (`CategorieID`, `NomCategorie`, `Description`) VALUES
 DROP TABLE IF EXISTS `commentaire`;
 CREATE TABLE IF NOT EXISTS `commentaire` (
   `CommentaireID` int NOT NULL AUTO_INCREMENT,
+<<<<<<< HEAD
+  `TypeContenu` enum('general') NOT NULL,
+=======
   `TypeContenu` enum('musique','chanteur','groupe','general') NOT NULL,
+>>>>>>> ea7468d51672ebe23887398eb76c64a2ce2fa079
   `UserID` int NOT NULL,
   `Commentaire` text NOT NULL,
   `DateCommentaire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -114,6 +126,7 @@ CREATE TABLE IF NOT EXISTS `commentaire` (
   PRIMARY KEY (`CommentaireID`),
   KEY `UserID` (`UserID`),
   KEY `idx_contenu` (`TypeContenu`)
+<<<<<<< HEAD
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
@@ -122,8 +135,15 @@ CREATE TABLE IF NOT EXISTS `commentaire` (
 
 INSERT INTO `commentaire` (`CommentaireID`, `TypeContenu`, `UserID`, `Commentaire`, `DateCommentaire`, `is_offensive`, `report_reason`) VALUES
 (16, 'general', 5, 'dvxvc', '2026-01-13 12:05:34', 0, NULL);
+=======
+<<<<<<< HEAD
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+=======
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+>>>>>>> 768f74103383067b86e0d539d6dd25b6b3078b5f
 
 -- --------------------------------------------------------
+>>>>>>> ea7468d51672ebe23887398eb76c64a2ce2fa079
 
 --
 -- Structure de la table `groupe`
@@ -145,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `groupe` (
   UNIQUE KEY `ux_groupe_nom` (`NomGroupe`),
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusGroupe`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `groupe`
@@ -178,13 +198,24 @@ CREATE TABLE IF NOT EXISTS `musique` (
   KEY `UserID` (`UserID`),
   KEY `idx_status` (`StatusMusique`),
   KEY `idx_artiste` (`Artiste`)
-) ENGINE=InnoDB AUTO_INCREMENT=40 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Déchargement des données de la table `musique`
 --
 
 INSERT INTO `musique` (`MusiqueID`, `Titre`, `Artiste`, `CheminFichierMP3`, `ImageCouverture`, `StatusMusique`, `UserID`, `DateProposition`, `AnneePublication`, `NombreVotes`) VALUES
+<<<<<<< HEAD
+(23, 'FE!N', 'Travis Scott', 'uploads/musiques/sons/FEN_1765387072_musique.mp3', 'uploads/musiques/couvertures/FEN_1765387072_couverture.jpg', 'valide', NULL, '2025-12-10 18:17:52', 2023, 3),
+(25, 'Goosebumps', 'Travis Scott', 'uploads/musiques/sons/Goosebumps_1765387736_musique.mp3', 'uploads/musiques/couvertures/Goosebumps_1765387736_couverture.jpg', 'valide', NULL, '2025-12-10 18:28:56', 2016, 2),
+(27, 'Soleil Bleu', 'Bleu Soleil et Luiza', 'uploads/musiques/sons/Soleil_Bleu_1765387840_musique.mp3', 'uploads/musiques/couvertures/Soleil_Bleu_1765387840_couverture.jpg', 'valide', NULL, '2025-12-10 18:30:40', 2025, 6),
+(30, 'Soleil Levant', 'Orelsan et SDM', 'uploads/musiques/sons/Soleil_Levant_1765389622_musique.mp3', 'uploads/musiques/couvertures/Soleil_Levant_1765389622_couverture.jpg', 'valide', NULL, '2025-12-10 19:00:22', 2025, 1),
+(31, 'Un monde à l\'autre', 'GIMS, La Mano 1.9 et SCH', 'uploads/musiques/sons/Un_monde__lautre_1765389819_musique.mp3', 'uploads/musiques/couvertures/Un_monde__lautre_1765389819_couverture.jpg', 'valide', NULL, '2025-12-10 19:03:39', 2025, 4),
+(33, 'Ailleurs', 'Orelsan', 'uploads/musiques/sons/Ailleurs_1765390046_musique.mp3', 'uploads/musiques/couvertures/Ailleurs_1765390046_couverture.jpg', 'valide', NULL, '2025-12-10 19:07:26', 2025, 1),
+(36, 'Die With a Smile', 'Lady Gaga et Bruno Mars', 'uploads/musiques/sons/Die_With_a_Smile_1765394639_musique.mp3', 'uploads/musiques/couvertures/Die_With_a_Smile_1765394639_couverture.jpg', 'valide', NULL, '2025-12-10 20:23:59', 2024, 0),
+(37, 'APT.', 'ROSÉ et Bruno Mars', 'uploads/musiques/sons/APT_1765394922_musique.mp3', 'uploads/musiques/couvertures/APT_1765394922_couverture.jpg', 'valide', NULL, '2025-12-10 20:28:42', 2024, 0),
+(38, 'BIRDS OF A FEATHER', 'Billie Eilish', 'uploads/musiques/sons/BIRDS_OF_A_FEATHER_1765395240_musique.mp3', 'uploads/musiques/couvertures/BIRDS_OF_A_FEATHER_1765395240_couverture.jpg', 'valide', NULL, '2025-12-10 20:34:00', 2024, 0);
+=======
 (23, 'FE!N', 'Travis Scott', 'uploads/musiques/sons/FEN_1765387072_musique.mp3', 'uploads/musiques/couvertures/FEN_1765387072_couverture.jpg', 'classement', NULL, '2025-12-10 18:17:52', 2023, 3),
 (25, 'Goosebumps', 'Travis Scott', 'uploads/musiques/sons/Goosebumps_1765387736_musique.mp3', 'uploads/musiques/couvertures/Goosebumps_1765387736_couverture.jpg', 'classement', NULL, '2025-12-10 18:28:56', 2016, 2),
 (27, 'Soleil Bleu', 'Bleu Soleil et Luiza', 'uploads/musiques/sons/Soleil_Bleu_1765387840_musique.mp3', 'uploads/musiques/couvertures/Soleil_Bleu_1765387840_couverture.jpg', 'classement', NULL, '2025-12-10 18:30:40', 2025, 6),
@@ -194,6 +225,40 @@ INSERT INTO `musique` (`MusiqueID`, `Titre`, `Artiste`, `CheminFichierMP3`, `Ima
 (36, 'Die With a Smile', 'Lady Gaga et Bruno Mars', 'uploads/musiques/sons/Die_With_a_Smile_1765394639_musique.mp3', 'uploads/musiques/couvertures/Die_With_a_Smile_1765394639_couverture.jpg', 'classement', NULL, '2025-12-10 20:23:59', 2024, 0),
 (37, 'APT.', 'ROSÉ et Bruno Mars', 'uploads/musiques/sons/APT_1765394922_musique.mp3', 'uploads/musiques/couvertures/APT_1765394922_couverture.jpg', 'classement', NULL, '2025-12-10 20:28:42', 2024, 0),
 (38, 'BIRDS OF A FEATHER', 'Billie Eilish', 'uploads/musiques/sons/BIRDS_OF_A_FEATHER_1765395240_musique.mp3', 'uploads/musiques/couvertures/BIRDS_OF_A_FEATHER_1765395240_couverture.jpg', 'classement', NULL, '2025-12-10 20:34:00', 2024, 0);
+>>>>>>> ea7468d51672ebe23887398eb76c64a2ce2fa079
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `recrutement`
+--
+
+DROP TABLE IF EXISTS `recrutement`;
+CREATE TABLE IF NOT EXISTS `recrutement` (
+  `RecrutementID` int NOT NULL AUTO_INCREMENT,
+  `UserID` int NOT NULL,
+  `Nom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Prenom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Age` int NOT NULL,
+  `Motivation` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `MyPulseAccount` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `PhotoIdentite` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `Status` enum('en_attente','accepte','refuse') COLLATE utf8mb4_unicode_ci DEFAULT 'en_attente',
+  `DateSoumission` datetime DEFAULT CURRENT_TIMESTAMP,
+  `DateDecision` datetime DEFAULT NULL,
+  `AdminID` int DEFAULT NULL,
+  `Screenshot` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`RecrutementID`),
+  KEY `UserID` (`UserID`),
+  KEY `AdminID` (`AdminID`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `recrutement`
+--
+
+INSERT INTO `recrutement` (`RecrutementID`, `UserID`, `Nom`, `Prenom`, `Age`, `Motivation`, `MyPulseAccount`, `PhotoIdentite`, `Status`, `DateSoumission`, `DateDecision`, `AdminID`, `Screenshot`) VALUES
+(1, 5, 'SCHMITT', 'Lilian', 20, 'J\'aime les pommes de terre', '{\"instagram\":\"lilian_smt\",\"twitter\":\"Lilian_wbb\",\"facebook\":\"lilian_smt\",\"youtube\":\"LilianYTB\",\"spot', 'uploads/recrutement/69661b82c25f8_Attestation mutuelle.pdf', 'en_attente', '2026-01-13 11:16:34', NULL, NULL, 'uploads/recrutement/69661b82c27ec_screenshot_gims.jpg');
 
 -- --------------------------------------------------------
 
@@ -233,7 +298,11 @@ CREATE TABLE IF NOT EXISTS `system_settings` (
 --
 
 INSERT INTO `system_settings` (`setting_key`, `setting_value`, `updated_at`) VALUES
+<<<<<<< HEAD
+('last_promotion_date', '2026-01-05', '2026-01-05 16:30:57');
+=======
 ('last_promotion_date', '2026-01-05', '2026-01-05 16:40:22');
+>>>>>>> ea7468d51672ebe23887398eb76c64a2ce2fa079
 
 -- --------------------------------------------------------
 
@@ -296,7 +365,7 @@ CREATE TABLE IF NOT EXISTS `vote` (
 INSERT INTO `vote` (`VoteID`, `TypeContenu`, `ContenuID`, `DateVote`, `ValeurVote`, `Token`) VALUES
 (20, 'groupe', 9, '2026-01-05 11:34:37', 1, '7ce1d0136d92bab45db33323f99716c9e9398a03e507058ccf357ec3cc992240'),
 (21, 'chanteur', 12, '2026-01-05 11:34:37', 1, '7ce1d0136d92bab45db33323f99716c9e9398a03e507058ccf357ec3cc992240'),
-(22, 'musique', 31, '2026-01-05 11:20:58', 1, 'd04046e68569c9fe7fce3047a1ef32844efd6bd9103392352f9cda4d0bf42dae'),
+(22, 'musique', 40, '2026-01-07 11:01:23', 1, 'd04046e68569c9fe7fce3047a1ef32844efd6bd9103392352f9cda4d0bf42dae'),
 (23, 'chanteur', 13, '2026-01-05 11:34:37', 1, 'd04046e68569c9fe7fce3047a1ef32844efd6bd9103392352f9cda4d0bf42dae'),
 (24, 'groupe', 9, '2026-01-05 11:34:37', 1, 'd04046e68569c9fe7fce3047a1ef32844efd6bd9103392352f9cda4d0bf42dae'),
 (27, 'musique', 27, '2026-01-05 11:20:58', 1, '817acb72a6c701562cb2ff2f1d77b59e31e86c8098bcb926d33928c9f05c2cf8'),
@@ -318,7 +387,11 @@ INSERT INTO `vote` (`VoteID`, `TypeContenu`, `ContenuID`, `DateVote`, `ValeurVot
 (356, 'musique', 30, '2026-01-05 11:34:37', 1, 'token_musique_30_1'),
 (357, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_1'),
 (358, 'musique', 31, '2026-01-05 11:34:37', 1, 'token_musique_31_2'),
+<<<<<<< HEAD
+(359, 'musique', 33, '2026-01-05 11:34:37', 1, 'token_musique_33_1');
+=======
 (626, 'musique', 31, '2026-01-05 16:27:55', 1, '7ce1d0136d92bab45db33323f99716c9e9398a03e507058ccf357ec3cc992240');
+>>>>>>> ea7468d51672ebe23887398eb76c64a2ce2fa079
 
 --
 -- Contraintes pour les tables déchargées
@@ -329,6 +402,12 @@ INSERT INTO `vote` (`VoteID`, `TypeContenu`, `ContenuID`, `DateVote`, `ValeurVot
 --
 ALTER TABLE `artiste`
   ADD CONSTRAINT `artiste_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE SET NULL;
+
+--
+-- Contraintes pour la table `commentaire`
+--
+ALTER TABLE `commentaire`
+  ADD CONSTRAINT `commentaire_ibfk_1` FOREIGN KEY (`UserID`) REFERENCES `utilisateur` (`UserID`) ON DELETE CASCADE;
 
 --
 -- Contraintes pour la table `groupe`
