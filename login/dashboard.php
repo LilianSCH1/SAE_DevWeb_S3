@@ -392,25 +392,35 @@ $recrutements = $recrutements->fetchAll(PDO::FETCH_ASSOC);
                                             <?php
                                             $links = [];
 
+                                            // Helper function to build social link
+                                            function buildSocialLink($value, $platform, $baseUrl) {
+                                                if (empty($value)) return null;
+                                                // If value already contains a full URL, use it directly
+                                                if (preg_match('/^https?:\/\//', $value)) {
+                                                    return '<a href="' . htmlspecialchars($value) . '" target="_blank">' . htmlspecialchars($platform) . '</a>';
+                                                }
+                                                // Otherwise, prepend the base URL
+                                                return '<a href="' . $baseUrl . htmlspecialchars($value) . '" target="_blank">' . htmlspecialchars($platform) . '</a>';
+                                            }
+
                                             // Check separate columns first
-                                            if (!empty($recrutement['Instagram'])) {
-                                                $links[] = '<a href="https://instagram.com/' . htmlspecialchars($recrutement['Instagram']) . '" target="_blank">Instagram</a>';
-                                            }
-                                            if (!empty($recrutement['Twitter'])) {
-                                                $links[] = '<a href="https://twitter.com/' . htmlspecialchars($recrutement['Twitter']) . '" target="_blank">Twitter</a>';
-                                            }
-                                            if (!empty($recrutement['Facebook'])) {
-                                                $links[] = '<a href="https://facebook.com/' . htmlspecialchars($recrutement['Facebook']) . '" target="_blank">Facebook</a>';
-                                            }
-                                            if (!empty($recrutement['Youtube'])) {
-                                                $links[] = '<a href="https://youtube.com/' . htmlspecialchars($recrutement['Youtube']) . '" target="_blank">YouTube</a>';
-                                            }
-                                            if (!empty($recrutement['Spotify'])) {
-                                                $links[] = '<a href="https://open.spotify.com/artist/' . htmlspecialchars($recrutement['Spotify']) . '" target="_blank">Spotify</a>';
-                                            }
-                                            if (!empty($recrutement['Deezer'])) {
-                                                $links[] = '<a href="https://www.deezer.com/artist/' . htmlspecialchars($recrutement['Deezer']) . '" target="_blank">Deezer</a>';
-                                            }
+                                            $instagramLink = buildSocialLink($recrutement['Instagram'], 'Instagram', 'https://instagram.com/');
+                                            if ($instagramLink) $links[] = $instagramLink;
+
+                                            $twitterLink = buildSocialLink($recrutement['Twitter'], 'Twitter', 'https://twitter.com/');
+                                            if ($twitterLink) $links[] = $twitterLink;
+
+                                            $facebookLink = buildSocialLink($recrutement['Facebook'], 'Facebook', 'https://facebook.com/');
+                                            if ($facebookLink) $links[] = $facebookLink;
+
+                                            $youtubeLink = buildSocialLink($recrutement['Youtube'], 'YouTube', 'https://youtube.com/');
+                                            if ($youtubeLink) $links[] = $youtubeLink;
+
+                                            $spotifyLink = buildSocialLink($recrutement['Spotify'], 'Spotify', 'https://open.spotify.com/artist/');
+                                            if ($spotifyLink) $links[] = $spotifyLink;
+
+                                            $deezerLink = buildSocialLink($recrutement['Deezer'], 'Deezer', 'https://www.deezer.com/artist/');
+                                            if ($deezerLink) $links[] = $deezerLink;
 
                                             // If no links from separate columns, try JSON fallback
                                             if (empty($links) && !empty($recrutement['MyPulseAccount'])) {
