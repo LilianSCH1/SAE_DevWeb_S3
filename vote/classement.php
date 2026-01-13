@@ -217,7 +217,7 @@ foreach ($categories as $type) {
 // Fetch general comments
 $generalComments = [];
 $stmt = $pdo->prepare("
-    SELECT c.CommentaireID, c.Commentaire, c.DateCommentaire, c.UserID, c.is_offensive, c.report_reason, u.UserPseudo
+    SELECT c.CommentaireID, c.Commentaire, c.DateCommentaire, c.UserID, c.is_offensive, c.report_reason, u.UserPseudo, u.Role
     FROM commentaire c
     JOIN utilisateur u ON c.UserID = u.UserID
     WHERE c.TypeContenu = 'general'
@@ -351,7 +351,7 @@ if (isset($_SESSION['user_id']) && !$isAdmin) {
                         <?php foreach ($generalComments as $comment): ?>
                             <?php if (!$comment['is_offensive'] || $comment['UserID'] == ($_SESSION['user_id'] ?? null) || $isAdmin): ?>
                                 <div class="comment <?php echo ($isAdmin && $comment['is_offensive']) ? 'comment-offensive' : ''; ?>">
-                                    <strong><?php echo htmlspecialchars($comment['UserPseudo']); ?>:</strong>
+                                    <strong><?php echo htmlspecialchars($comment['UserPseudo']); ?><?php if ($comment['Role'] === 'certifie'): ?><i class="bi bi-patch-check-fill text-info ms-1" title="Membre certifié"></i><?php endif; ?><?php if ($comment['Role'] === 'admin'): ?> <span class="badge bg-danger ms-1">Admin</span><?php endif; ?>:</strong>
                                     <?php if ($comment['is_offensive'] && $comment['UserID'] == ($_SESSION['user_id'] ?? null)): ?>
                                         <p><em>Ce commentaire est en cours de révision par l'équipe de modération.</em></p>
                                     <?php else: ?>
