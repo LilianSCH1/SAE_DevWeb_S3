@@ -123,7 +123,7 @@ function roleLabel(string $role): string {
                                 value="<?php echo htmlspecialchars($currentUser->email); ?>" required>
                         </div>
 
-                        <p><strong>Rôle :</strong> <?php echo htmlspecialchars(roleLabel($currentUser->role)); ?></p>
+                        <p><strong>Rôle :</strong> <?php echo htmlspecialchars(roleLabel($currentUser->role)); ?><?php if ($currentUser->role === 'certifie'): ?><i class="bi bi-patch-check-fill text-info ms-1" title="Membre certifié"></i><?php endif; ?><?php if ($currentUser->role === 'admin'): ?> <span class="badge bg-danger ms-1">Admin</span><?php endif; ?></p>
                         <?php if ($currentUser->dateInscription): ?>
                             <p><strong>Date d’inscription :</strong>
                                 <?php echo htmlspecialchars($currentUser->dateInscription); ?>
