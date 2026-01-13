@@ -284,6 +284,169 @@ document.addEventListener("click", function (e) {
     });
 });
 
+// Cookie Pop-up functionality
+document.addEventListener("DOMContentLoaded", function () {
+  // Check if user has already made a choice about cookies and if user is logged in
+  const cookieConsent = sessionStorage.getItem("cookieConsent");
+  const isLoggedIn = window.isLoggedIn === 'true';
+
+  // Show cookie popup only for first-time visitors who are not logged in
+  if (!cookieConsent && !isLoggedIn) {
+    const cookiePopup = document.getElementById("cookie-popup");
+    if (cookiePopup) {
+      cookiePopup.style.display = "flex";
+    }
+  }
+});
+
+// Global variable to store original cookie popup content
+window.originalCookieContent = null;
+
+// Function to accept all cookies
+function acceptCookies() {
+  sessionStorage.setItem("cookieConsent", "accepted");
+  closeCookiePopup();
+  // Here you can add code to enable analytics cookies
+}
+
+// Function to reject analytics cookies
+function rejectCookies() {
+  sessionStorage.setItem("cookieConsent", "rejected");
+  closeCookiePopup();
+  // Here you can add code to disable analytics cookies
+}
+
+// Function to close the cookie popup
+function closeCookiePopup() {
+  const cookiePopup = document.getElementById("cookie-popup");
+  if (cookiePopup) {
+    cookiePopup.style.display = "none";
+  }
+}
+
+// Function to open the cookie popup
+function openCookiePopup() {
+  const cookiePopup = document.getElementById("cookie-popup");
+  if (cookiePopup) {
+    // Always restore original content when reopening
+    if (window.originalCookieContent) {
+      const body = cookiePopup.querySelector(".cookie-popup-body");
+      if (body) {
+        body.innerHTML = window.originalCookieContent;
+      }
+    }
+    cookiePopup.style.display = "flex";
+  }
+}
+
+// Additional cookie functions for popup buttons
+function manageCookiePreferences() {
+  // Show detailed preferences panel
+  const popup = document.getElementById("cookie-popup");
+  const body = popup.querySelector(".cookie-popup-body");
+
+  // Save original content to global variable
+  window.originalCookieContent = body.innerHTML;
+
+  // Create preferences interface
+  body.innerHTML = `
+    <h6>GÉRER VOS PRÉFÉRENCES DE COOKIES</h6>
+    <p>Choisissez les types de cookies que vous souhaitez autoriser :</p>
+
+    <div class="cookie-preference">
+      <div class="preference-item">
+        <label class="preference-label">
+          <input type="checkbox" id="essential-cookies" checked disabled>
+          <strong>Cookies essentiels</strong> - Indispensables au fonctionnement du site
+        </label>
+        <small>Ces cookies sont nécessaires et ne peuvent pas être désactivés.</small>
+      </div>
+
+      <div class="preference-item">
+        <label class="preference-label">
+          <input type="checkbox" id="analytics-cookies">
+          <strong>Cookies analytiques</strong> - Mesure d'audience et statistiques
+        </label>
+        <small>Aide à améliorer le site en analysant l'utilisation.</small>
+      </div>
+
+      <div class="preference-item">
+        <label class="preference-label">
+          <input type="checkbox" id="functional-cookies">
+          <strong>Cookies fonctionnels</strong> - Personnalisation et partage
+        </label>
+        <small>Permet de mémoriser vos préférences et faciliter le partage.</small>
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <button type="button" class="btn btn-outline-primary me-2" onclick="saveCookiePreferences()">Enregistrer mes choix</button>
+      <button type="button" class="btn btn-outline-secondary" onclick="cancelPreferences()">Annuler</button>
+    </div>
+  `;
+
+  // Load current preferences
+  const analyticsCookies = document.getElementById("analytics-cookies");
+  const functionalCookies = document.getElementById("functional-cookies");
+
+  const analyticsPref = sessionStorage.getItem("analyticsCookies");
+  const functionalPref = sessionStorage.getItem("functionalCookies");
+
+  analyticsCookies.checked = analyticsPref === "true";
+  functionalCookies.checked = functionalPref === "true";
+}
+
+function saveCookiePreferences() {
+  const analyticsCookies = document.getElementById("analytics-cookies").checked;
+  const functionalCookies = document.getElementById("functional-cookies").checked;
+
+  // Save individual cookie preferences to sessionStorage (cleared when session ends)
+  sessionStorage.setItem("analyticsCookies", analyticsCookies);
+  sessionStorage.setItem("functionalCookies", functionalCookies);
+
+  // Set overall cookie consent based on preferences
+  if (analyticsCookies && functionalCookies) {
+    sessionStorage.setItem("cookieConsent", "accepted");
+  } else if (!analyticsCookies && !functionalCookies) {
+    sessionStorage.setItem("cookieConsent", "rejected");
+  } else {
+    sessionStorage.setItem("cookieConsent", "custom");
+  }
+
+  // Restore original popup content and close
+  const popup = document.getElementById("cookie-popup");
+  const body = popup.querySelector(".cookie-popup-body");
+  body.innerHTML = window.originalCookieContent;
+  closeCookiePopup();
+}
+
+function cancelPreferences() {
+  const popup = document.getElementById("cookie-popup");
+  const body = popup.querySelector(".cookie-popup-body");
+  body.innerHTML = window.originalCookieContent;
+  // Keep popup open with original content
+}
+
+function rejectNonEssentialCookies() {
+  sessionStorage.setItem("cookieConsent", "rejected");
+  sessionStorage.setItem("analyticsCookies", false);
+  sessionStorage.setItem("functionalCookies", false);
+  // Disable analytics and functional cookies
+  // Here you can add code to disable Google Analytics, etc.
+  console.log("Non-essential cookies rejected");
+  closeCookiePopup();
+}
+
+function acceptAllCookies() {
+  sessionStorage.setItem("cookieConsent", "accepted");
+  sessionStorage.setItem("analyticsCookies", true);
+  sessionStorage.setItem("functionalCookies", true);
+  // Enable all cookies
+  // Here you can add code to enable Google Analytics, etc.
+  console.log("All cookies accepted");
+  closeCookiePopup();
+}
+
 (function () {
   const form = document.querySelector(".search-form");
   const input = document.querySelector(".search-input");

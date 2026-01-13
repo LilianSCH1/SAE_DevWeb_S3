@@ -1,3 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conditions d'utilisation - MyPulse</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../style/pages.css">
+    <link rel="icon" href="../icons/logos/MyPulse_Icon.png" type="image/png">
+</head>
+
+<body>
 <h4> ACCEPTATION GÉNÉRALE </h4>
 <p>
 L'accès à MyPulse implique acceptation pleine de ces conditions par l'entreprise MyPulse.
@@ -40,3 +53,8 @@ Interdiction de scraping ou reverse engineering.
 <p>
 Comptes supprimables à tout moment ; litiges sous juridiction française. Entreprise se réserve droit de clôturer services sans préavis.
 </p>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="../script/modals.js"></script>
+</body>
+</html>

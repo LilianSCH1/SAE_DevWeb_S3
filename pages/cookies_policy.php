@@ -40,6 +40,4 @@
 <h4> VOS DROITS </h4>
 <p>
     Conformément au RGPD, contactez mypulse.company@gmail.com pour accéder, rectifier ou supprimer les données cookies.
-    <br>
-    Nous conservons les logs essentiels pendant 13 mois pour des raisons de sécurité.
 </p>

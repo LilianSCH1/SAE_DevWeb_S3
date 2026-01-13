@@ -52,16 +52,21 @@ $userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
                     <div class="col-md-4">
                         <h5>Légal</h5>
                         <ul style="list-style: none; padding: 0%;">
-                            <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/terms_of_use.php', 'Conditions d\'utilisation')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Conditions d'utilisation</a></li>
+                            <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/terms_of_use.php', 'Conditions générales d\'utilisation')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Conditions générales d'utilisation</a></li>
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/privacy_policy.php', 'Politique de confidentialité')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de confidentialité</a></li>
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/cookies_policy.php', 'Politique de cookie')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Politique de cookie</a></li>
                             <li><a href="#" onclick="event.preventDefault(); openPageModal('../pages/legal_notices.php', 'Mentions légales')" style="color: rgba(255,255,255,0.7); text-decoration: none;">Mentions légales</a></li>
                         </ul>
                     </div>
 
-                </div>
-            </div>
         </div>
+    </div>
+</div>
+
+<!-- Floating Cookie Icon -->
+<div id="cookie-icon" class="cookie-floating-icon" onclick="openCookiePopup()" style="display: none;">
+    🍪
+</div>
         <!-- Séparateur -->
         <hr style="background-color: rgba(255,255,255,0.1); margin: 2rem 0;">
         <!-- Copyright -->
@@ -70,3 +75,15 @@ $userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
         </div>
     </div>
 </footer>
+
+<script>
+// Show cookie icon for all users to allow preference management
+document.addEventListener("DOMContentLoaded", function () {
+    const cookieIcon = document.getElementById("cookie-icon");
+    if (cookieIcon) {
+        cookieIcon.style.display = "flex";
+    }
+});
+</script>
+
+
