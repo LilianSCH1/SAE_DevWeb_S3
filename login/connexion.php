@@ -169,8 +169,13 @@ if (isset($_SESSION['user_id'])) {
 
                                         <div class="mb-3">
                                             <label for="loginPassword" class="form-label">Mot de passe</label>
-                                            <input type="password" class="form-control"
-                                                id="loginPassword" name="loginPassword" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control"
+                                                    id="loginPassword" name="loginPassword" required>
+                                                <span class="input-group-text password-toggle" data-target="loginPassword" style="cursor: pointer;">
+                                                    <i class="bi bi-eye"></i>
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3 form-check">
@@ -227,14 +232,24 @@ if (isset($_SESSION['user_id'])) {
 
                                         <div class="mb-3">
                                             <label for="registerPassword" class="form-label">Mot de passe</label>
-                                            <input type="password" class="form-control"
-                                                id="registerPassword" name="registerPassword" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control"
+                                                    id="registerPassword" name="registerPassword" required>
+                                                <span class="input-group-text password-toggle" data-target="registerPassword" style="cursor: pointer;">
+                                                    <i class="bi bi-eye"></i>
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="registerConfirmPassword" class="form-label">Confirmer le mot de passe</label>
-                                            <input type="password" class="form-control"
-                                                id="registerConfirmPassword" name="registerConfirmPassword" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control"
+                                                    id="registerConfirmPassword" name="registerConfirmPassword" required>
+                                                <span class="input-group-text password-toggle" data-target="registerConfirmPassword" style="cursor: pointer;">
+                                                    <i class="bi bi-eye"></i>
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3 form-check">
@@ -262,6 +277,28 @@ if (isset($_SESSION['user_id'])) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script/modals.js"></script>
     <script src="../script/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggles = document.querySelectorAll('.password-toggle');
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('bi-eye');
+                        icon.classList.add('bi-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('bi-eye-slash');
+                        icon.classList.add('bi-eye');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
