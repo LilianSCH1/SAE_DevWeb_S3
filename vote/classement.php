@@ -364,26 +364,21 @@ if (isset($_SESSION['user_id']) && !$isAdmin) {
                                         </div>
                                     <?php endif; ?>
                                     <div class="comment-actions">
-                                        <?php if ($comment['UserID'] == $_SESSION['user_id']): ?>
+                                        <?php if (isset($_SESSION['user_id']) && $comment['UserID'] == $_SESSION['user_id']): ?>
                                             <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
+                                            <form method="post" style="display: inline;">
+                                                <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
+                                                <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
+                                            </form>
                                         <?php endif; ?>
-                                        <form method="post" style="display: inline;">
-                                            <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
-                                            <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
-                                        </form>
                                         <?php if (isset($_SESSION['user_id']) && !$comment['is_offensive'] && $comment['UserID'] != $_SESSION['user_id']): ?>
                                             <button class="btn btn-sm btn-outline-warning" onclick="reportComment(<?php echo $comment['CommentaireID']; ?>)">Signaler</button>
-                                        <?php endif; ?>
-                                        <?php if (isset($_SESSION['user_id']) && $comment['UserID'] == $_SESSION['user_id'] && !$comment['is_offensive']): ?>
-                                            <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
                                         <?php endif; ?>
                                         <?php if ($isAdmin && $comment['is_offensive']): ?>
                                             <form method="post" style="display: inline;">
                                                 <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
                                                 <button type="submit" name="restore_comment" class="btn btn-sm btn-outline-success" onclick="return confirm('Êtes-vous sûr de vouloir remettre ce commentaire ?')">Annuler le signalement</button>
                                             </form>
-                                        <?php endif; ?>
-                                        <?php if (isset($_SESSION['user_id']) && (($comment['UserID'] == $_SESSION['user_id'] && !$comment['is_offensive']) || ($isAdmin && $comment['is_offensive']))): ?>
                                             <form method="post" style="display: inline;">
                                                 <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
                                                 <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
