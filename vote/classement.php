@@ -206,7 +206,7 @@ $generalComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // Check if user has already commented this year
 $userHasCommentedThisYear = false;
 if (isset($_SESSION['user_id'])) {
-    $startOfYear = date('Y-m-d', strtotime('1st january next year'));
+    $startOfYear = date('Y-m-d', strtotime('1st january this year'));
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaire WHERE UserID = ? AND TypeContenu = 'general' AND DateCommentaire >= ?");
     $stmt->execute([$_SESSION['user_id'], $startOfYear]);
     $userHasCommentedThisYear = $stmt->fetchColumn() > 0;
