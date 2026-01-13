@@ -288,12 +288,10 @@ if (isset($_SESSION['user_id'])) {
 
                     if (input.type === 'password') {
                         input.type = 'text';
-                        icon.classList.remove('bi-eye');
-                        icon.classList.add('bi-eye-slash');
+                        icon.className = 'bi bi-eye-slash';
                     } else {
                         input.type = 'password';
-                        icon.classList.remove('bi-eye-slash');
-                        icon.classList.add('bi-eye');
+                        icon.className = 'bi bi-eye';
                     }
                 });
             });
