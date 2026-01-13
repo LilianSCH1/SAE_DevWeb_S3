@@ -13,8 +13,8 @@ $currentUser = isset($_SESSION['user_id'])
     ? User::findById((int)$_SESSION['user_id'])
     : null;
 
-// Token de vote propre à l'utilisateur (colonne Token de `utilisateur`)
-$voteToken = $currentUser ? $currentUser->token : null;
+// Token de vote anonyme basé sur la session
+$voteToken = session_id();
 ?>
 
 <?php if (empty($artistes)): ?>

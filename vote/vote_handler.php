@@ -38,10 +38,10 @@ if (!in_array($currentUser->role, $allowedRoles, true)) {
     exit;
 }
 
-// Lecture du token utilisateur
-$token = $currentUser->token;
+// Utiliser session_id() pour anonymiser les votes
+$token = session_id();
 if (empty($token)) {
-    echo json_encode(['success' => false, 'message' => 'Token utilisateur manquant.']);
+    echo json_encode(['success' => false, 'message' => 'Session invalide.']);
     exit;
 }
 
@@ -49,6 +49,9 @@ if (empty($token)) {
 $typeContenu = $_POST['type_contenu'] ?? '';
 $contenuID   = isset($_POST['contenu_id']) ? (int)$_POST['contenu_id'] : 0;
 $mode        = $_POST['mode'] ?? 'vote'; // 'vote' ou 'delete'
+
+// Debug logging
+error_log("Vote request: mode=$mode, type=$typeContenu, id=$contenuID, user_id=" . ($_SESSION['user_id'] ?? 'none') . ", token=$token");
 
 // Valider
 $allowedTypes = ['musique', 'chanteur', 'groupe'];
@@ -130,21 +133,6 @@ if ($mode === 'delete') {
  * (l'utilisateur clique sur "❤ Voter ...")
  */
 
-// Protection double-clic : déjà voté pour CE contenu ?
-$stmt = $pdo->prepare("
-    SELECT COUNT(*) FROM vote
-    WHERE Token = :token AND TypeContenu = :type AND ContenuID = :id
-");
-$stmt->execute([
-    ':token' => $token,
-    ':type'  => $typeContenu,
-    ':id'    => $contenuID
-]);
-if ($stmt->fetchColumn() > 0) {
-    echo json_encode(['success' => false, 'message' => 'Vous avez déjà voté pour cet élément.']);
-    exit;
-}
-
 // Vérifier s'il existe déjà un vote dans cette catégorie pour ce token
 $stmt = $pdo->prepare("
     SELECT VoteID, ContenuID FROM vote
@@ -158,6 +146,16 @@ $existingVote = $stmt->fetch(PDO::FETCH_ASSOC);
 
 try {
     if ($existingVote) {
+        // If changing to a different content, decrement old count
+        if ($existingVote['ContenuID'] != $contenuID) {
+            $stmt = $pdo->prepare("
+                UPDATE {$table}
+                SET NombreVotes = NombreVotes - 1
+                WHERE {$idColumn} = :old_id
+            ");
+            $stmt->execute([':old_id' => $existingVote['ContenuID']]);
+        }
+
         $stmt = $pdo->prepare("
             UPDATE vote
             SET ContenuID = :id, DateVote = NOW()
