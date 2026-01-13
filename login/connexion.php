@@ -185,8 +185,8 @@ if (isset($_SESSION['user_id'])) {
 
                                         <div class="mb-3 form-check">
                                             <input type="checkbox" class="form-check-input" id="acceptTermsLogin" required>
-                                            <label class="form-check-label" for="acceptTermsLogin">
-                                                J'accepte les <span onclick="openPageModal('../pages/terms_of_use.php', 'Conditions d\'utilisation')" class="text-decoration-none" style="cursor: pointer;">conditions générales d'utilisation</span>
+                                            <label class="form-check-label" for="acceptTerms">
+                                                J'accepte les <a href="#" onclick="event.preventDefault(); event.stopPropagation(); openPageModal('../pages/terms_of_use.php', 'Conditions d\'utilisation')" class="text-decoration-none">conditions générales d'utilisation</a>
                                             </label>
                                         </div>
 
