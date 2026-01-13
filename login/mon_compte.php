@@ -123,7 +123,7 @@ function roleLabel(string $role): string {
                                 value="<?php echo htmlspecialchars($currentUser->email); ?>" required>
                         </div>
 
-                        <p><strong>Rôle :</strong> <?php echo htmlspecialchars(roleLabel($currentUser->role)); ?></p>
+                        <p><strong>Rôle :</strong> <?php echo htmlspecialchars(roleLabel($currentUser->role)); ?><?php if ($currentUser->role === 'certifie'): ?><i class="bi bi-patch-check-fill text-info ms-1" title="Membre certifié"></i><?php endif; ?><?php if ($currentUser->role === 'admin'): ?> <span class="badge bg-danger ms-1">Admin</span><?php endif; ?></p>
                         <?php if ($currentUser->dateInscription): ?>
                             <p><strong>Date d’inscription :</strong>
                                 <?php echo htmlspecialchars($currentUser->dateInscription); ?>
@@ -144,17 +144,32 @@ function roleLabel(string $role): string {
 
                         <div class="mb-3">
                             <label class="form-label">Mot de passe actuel</label>
-                            <input type="password" name="currentPassword" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" name="currentPassword" id="currentPassword" class="form-control" required>
+                                <span class="input-group-text password-toggle" data-target="currentPassword" style="cursor: pointer;">
+                                    <i class="bi bi-eye"></i>
+                                </span>
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Nouveau mot de passe</label>
-                            <input type="password" name="newPassword" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" name="newPassword" id="newPassword" class="form-control" required>
+                                <span class="input-group-text password-toggle" data-target="newPassword" style="cursor: pointer;">
+                                    <i class="bi bi-eye"></i>
+                                </span>
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Confirmer le nouveau mot de passe</label>
-                            <input type="password" name="confirmNewPassword" class="form-control" required>
+                            <div class="input-group">
+                                <input type="password" name="confirmNewPassword" id="confirmNewPassword" class="form-control" required>
+                                <span class="input-group-text password-toggle" data-target="confirmNewPassword" style="cursor: pointer;">
+                                    <i class="bi bi-eye"></i>
+                                </span>
+                            </div>
                         </div>
 
                         <button type="submit" class="btn account-btn-primary">Mettre à jour le mot de passe</button>
@@ -183,6 +198,37 @@ function roleLabel(string $role): string {
     </section>
 
     <?php require '../index/footer.php'; ?>
+
+    <!-- Cookie Pop-up -->
+    <div id="cookie-popup" class="cookie-popup">
+        <div class="cookie-popup-content">
+            <div class="cookie-popup-header">
+                <h5>🍪 Gestion des Cookies</h5>
+                <button type="button" class="btn-close" aria-label="Fermer" onclick="closeCookiePopup()"></button>
+            </div>
+            <div class="cookie-popup-body">
+                <h6>TYPES DE COOKIES UTILISÉS</h6>
+                <p>Nous utilisons différents types de cookies pour améliorer votre expérience sur MyPulse :</p>
+                <ul>
+                    <li><strong>Cookies essentiels :</strong> Indispensables au fonctionnement, ils gèrent l'authentification, les votes uniques par catégorie et les sessions utilisateur. Aucun consentement n'est requis.</li>
+                    <li><strong>Cookies analytiques :</strong> Anonymes, ils mesurent l'audience (pages vues, classements consultés) pour optimiser la plateforme. Consentement préalable via notre bandeau.</li>
+                    <li><strong>Cookies fonctionnels :</strong> Personnalisent l'interface (thèmes sombre/clair, notifications) et intègrent les partages sociaux pour les résultats de concours. Aucun cookie publicitaire tiers n'est utilisé ; durée maximale de 6 mois, renouvelable avec consentement.</li>
+                </ul>
+
+                <h6>GESTION ET CONSENTEMENT</h6>
+                <p>Lors de votre première visite, un bandeau collecte votre consentement exprès pour les cookies non essentiels. Modifiez vos préférences via l'icône en bas d'écran ou les paramètres de votre navigateur. Refuser les cookies analytiques n'empêche pas l'accès aux votes ou classements.</p>
+
+                <h6>VOS DROITS</h6>
+                <p>Conformément au RGPD, contactez mypulse.company@gmail.com pour accéder, rectifier ou supprimer les données cookies.</p>
+            </div>
+            <div class="cookie-popup-footer">
+                <button type="button" class="btn btn-outline-primary me-2" onclick="manageCookiePreferences()">Gérer les préférences</button>
+                <button type="button" class="btn btn-outline-secondary me-2" onclick="rejectNonEssentialCookies()">Refuser non-essentiels</button>
+                <button type="button" class="btn btn-primary" onclick="acceptAllCookies()">Accepter tout</button>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script/modals.js"></script>
     <script src="../script/script.js"></script>

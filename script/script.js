@@ -288,7 +288,7 @@ document.addEventListener("click", function (e) {
 document.addEventListener("DOMContentLoaded", function () {
   // Check if user has already made a choice about cookies and if user is logged in
   const cookieConsent = sessionStorage.getItem("cookieConsent");
-  const isLoggedIn = window.isLoggedIn === 'true';
+  const isLoggedIn = window.isLoggedIn === "true";
 
   // Show cookie popup only for first-time visitors who are not logged in
   if (!cookieConsent && !isLoggedIn) {
@@ -398,7 +398,8 @@ function manageCookiePreferences() {
 
 function saveCookiePreferences() {
   const analyticsCookies = document.getElementById("analytics-cookies").checked;
-  const functionalCookies = document.getElementById("functional-cookies").checked;
+  const functionalCookies =
+    document.getElementById("functional-cookies").checked;
 
   // Save individual cookie preferences to sessionStorage (cleared when session ends)
   sessionStorage.setItem("analyticsCookies", analyticsCookies);
@@ -482,3 +483,61 @@ function acceptAllCookies() {
     }, 250);
   });
 })();
+
+document.addEventListener("DOMContentLoaded", function () {
+  const toggles = document.querySelectorAll(".password-toggle");
+  toggles.forEach((toggle) => {
+    toggle.addEventListener("click", function () {
+      const targetId = this.getAttribute("data-target");
+      const input = document.getElementById(targetId);
+      const icon = this.querySelector("i");
+
+      if (input.type === "password") {
+        input.type = "text";
+        icon.classList.remove("bi-eye");
+        icon.classList.add("bi-eye-slash");
+      } else {
+        input.type = "password";
+        icon.classList.remove("bi-eye-slash");
+        icon.classList.add("bi-eye");
+      }
+    });
+  });
+});
+
+// Toggle simple sur les descriptions
+document.querySelectorAll(".toggle-desc-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const card = btn.closest(".content-card");
+    if (!card) return;
+    card.classList.toggle("show-description");
+    btn.textContent = card.classList.contains("show-description") ? "-" : "+";
+  });
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+            const toggles = document.querySelectorAll('.password-toggle');
+            toggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    const icon = this.querySelector('i');
+
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.className = 'bi bi-eye-slash';
+                    } else {
+                        input.type = 'password';
+                        icon.className = 'bi bi-eye';
+                    }
+                });
+            });
+        });
+
+        // Show cookie icon for all users to allow preference management
+document.addEventListener("DOMContentLoaded", function () {
+    const cookieIcon = document.getElementById("cookie-icon");
+    if (cookieIcon) {
+        cookieIcon.style.display = "flex";
+    }
+});

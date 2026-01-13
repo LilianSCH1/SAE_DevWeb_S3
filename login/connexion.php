@@ -169,8 +169,13 @@ if (isset($_SESSION['user_id'])) {
 
                                         <div class="mb-3">
                                             <label for="loginPassword" class="form-label">Mot de passe</label>
-                                            <input type="password" class="form-control"
-                                                id="loginPassword" name="loginPassword" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control"
+                                                    id="loginPassword" name="loginPassword" required>
+                                                <span class="input-group-text password-toggle" data-target="loginPassword" style="cursor: pointer;">
+                                                    <i class="bi bi-eye"></i>
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3 form-check">
@@ -227,14 +232,24 @@ if (isset($_SESSION['user_id'])) {
 
                                         <div class="mb-3">
                                             <label for="registerPassword" class="form-label">Mot de passe</label>
-                                            <input type="password" class="form-control"
-                                                id="registerPassword" name="registerPassword" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control"
+                                                    id="registerPassword" name="registerPassword" required>
+                                                <span class="input-group-text password-toggle" data-target="registerPassword" style="cursor: pointer;">
+                                                    <i class="bi bi-eye"></i>
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3">
                                             <label for="registerConfirmPassword" class="form-label">Confirmer le mot de passe</label>
-                                            <input type="password" class="form-control"
-                                                id="registerConfirmPassword" name="registerConfirmPassword" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control"
+                                                    id="registerConfirmPassword" name="registerConfirmPassword" required>
+                                                <span class="input-group-text password-toggle" data-target="registerConfirmPassword" style="cursor: pointer;">
+                                                    <i class="bi bi-eye"></i>
+                                                </span>
+                                            </div>
                                         </div>
 
                                         <div class="mb-3 form-check">
@@ -259,9 +274,40 @@ if (isset($_SESSION['user_id'])) {
 
     <?php require '../index/footer.php'; ?>
 
+    <!-- Cookie Pop-up -->
+    <div id="cookie-popup" class="cookie-popup">
+        <div class="cookie-popup-content">
+            <div class="cookie-popup-header">
+                <h5>🍪 Gestion des Cookies</h5>
+                <button type="button" class="btn-close" aria-label="Fermer" onclick="closeCookiePopup()"></button>
+            </div>
+            <div class="cookie-popup-body">
+                <h6>TYPES DE COOKIES UTILISÉS</h6>
+                <p>Nous utilisons différents types de cookies pour améliorer votre expérience sur MyPulse :</p>
+                <ul>
+                    <li><strong>Cookies essentiels :</strong> Indispensables au fonctionnement, ils gèrent l'authentification, les votes uniques par catégorie et les sessions utilisateur. Aucun consentement n'est requis.</li>
+                    <li><strong>Cookies analytiques :</strong> Anonymes, ils mesurent l'audience (pages vues, classements consultés) pour optimiser la plateforme. Consentement préalable via notre bandeau.</li>
+                    <li><strong>Cookies fonctionnels :</strong> Personnalisent l'interface (thèmes sombre/clair, notifications) et intègrent les partages sociaux pour les résultats de concours. Aucun cookie publicitaire tiers n'est utilisé ; durée maximale de 6 mois, renouvelable avec consentement.</li>
+                </ul>
+
+                <h6>GESTION ET CONSENTEMENT</h6>
+                <p>Lors de votre première visite, un bandeau collecte votre consentement exprès pour les cookies non essentiels. Modifiez vos préférences via l'icône en bas d'écran ou les paramètres de votre navigateur. Refuser les cookies analytiques n'empêche pas l'accès aux votes ou classements.</p>
+
+                <h6>VOS DROITS</h6>
+                <p>Conformément au RGPD, contactez mypulse.company@gmail.com pour accéder, rectifier ou supprimer les données cookies.</p>
+            </div>
+            <div class="cookie-popup-footer">
+                <button type="button" class="btn btn-outline-primary me-2" onclick="manageCookiePreferences()">Gérer les préférences</button>
+                <button type="button" class="btn btn-outline-secondary me-2" onclick="rejectNonEssentialCookies()">Refuser non-essentiels</button>
+                <button type="button" class="btn btn-primary" onclick="acceptAllCookies()">Accepter tout</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script/modals.js"></script>
     <script src="../script/script.js"></script>
+
 </body>
 
 </html>

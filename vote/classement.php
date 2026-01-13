@@ -217,7 +217,7 @@ foreach ($categories as $type) {
 // Fetch general comments
 $generalComments = [];
 $stmt = $pdo->prepare("
-    SELECT c.CommentaireID, c.Commentaire, c.DateCommentaire, c.UserID, c.is_offensive, c.report_reason, u.UserPseudo
+    SELECT c.CommentaireID, c.Commentaire, c.DateCommentaire, c.UserID, c.is_offensive, c.report_reason, u.UserPseudo, u.Role
     FROM commentaire c
     JOIN utilisateur u ON c.UserID = u.UserID
     WHERE c.TypeContenu = 'general'
@@ -351,7 +351,7 @@ if (isset($_SESSION['user_id']) && !$isAdmin) {
                         <?php foreach ($generalComments as $comment): ?>
                             <?php if (!$comment['is_offensive'] || $comment['UserID'] == ($_SESSION['user_id'] ?? null) || $isAdmin): ?>
                                 <div class="comment <?php echo ($isAdmin && $comment['is_offensive']) ? 'comment-offensive' : ''; ?>">
-                                    <strong><?php echo htmlspecialchars($comment['UserPseudo']); ?>:</strong>
+                                    <strong><?php echo htmlspecialchars($comment['UserPseudo']); ?><?php if ($comment['Role'] === 'certifie'): ?><i class="bi bi-patch-check-fill text-info ms-1" title="Membre certifié"></i><?php endif; ?><?php if ($comment['Role'] === 'admin'): ?> <span class="badge bg-danger ms-1">Admin</span><?php endif; ?>:</strong>
                                     <?php if ($comment['is_offensive'] && $comment['UserID'] == ($_SESSION['user_id'] ?? null)): ?>
                                         <p><em>Ce commentaire est en cours de révision par l'équipe de modération.</em></p>
                                     <?php else: ?>
@@ -364,34 +364,26 @@ if (isset($_SESSION['user_id']) && !$isAdmin) {
                                         </div>
                                     <?php endif; ?>
                                     <div class="comment-actions">
-<<<<<<< HEAD
-                                        <?php if ($comment['UserID'] == $_SESSION['user_id']): ?>
+                                        <?php if (isset($_SESSION['user_id']) && $comment['UserID'] == $_SESSION['user_id']): ?>
                                             <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
+                                            <form method="post" style="display: inline;">
+                                                <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
+                                                <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
+                                            </form>
                                         <?php endif; ?>
-                                        <form method="post" style="display: inline;">
-                                            <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
-                                            <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
-                                        </form>
-=======
                                         <?php if (isset($_SESSION['user_id']) && !$comment['is_offensive'] && $comment['UserID'] != $_SESSION['user_id']): ?>
                                             <button class="btn btn-sm btn-outline-warning" onclick="reportComment(<?php echo $comment['CommentaireID']; ?>)">Signaler</button>
-                                        <?php endif; ?>
-                                        <?php if (isset($_SESSION['user_id']) && $comment['UserID'] == $_SESSION['user_id'] && !$comment['is_offensive']): ?>
-                                            <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
                                         <?php endif; ?>
                                         <?php if ($isAdmin && $comment['is_offensive']): ?>
                                             <form method="post" style="display: inline;">
                                                 <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
                                                 <button type="submit" name="restore_comment" class="btn btn-sm btn-outline-success" onclick="return confirm('Êtes-vous sûr de vouloir remettre ce commentaire ?')">Annuler le signalement</button>
                                             </form>
-                                        <?php endif; ?>
-                                        <?php if (isset($_SESSION['user_id']) && (($comment['UserID'] == $_SESSION['user_id'] && !$comment['is_offensive']) || ($isAdmin && $comment['is_offensive']))): ?>
                                             <form method="post" style="display: inline;">
                                                 <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
                                                 <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
                                             </form>
                                         <?php endif; ?>
->>>>>>> ea7468d51672ebe23887398eb76c64a2ce2fa079
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -561,6 +553,36 @@ if (isset($_SESSION['user_id']) && !$isAdmin) {
 
     <?php require '../index/footer.php'; ?>
 
+    <!-- Cookie Pop-up -->
+    <div id="cookie-popup" class="cookie-popup">
+        <div class="cookie-popup-content">
+            <div class="cookie-popup-header">
+                <h5>🍪 Gestion des Cookies</h5>
+                <button type="button" class="btn-close" aria-label="Fermer" onclick="closeCookiePopup()"></button>
+            </div>
+            <div class="cookie-popup-body">
+                <h6>TYPES DE COOKIES UTILISÉS</h6>
+                <p>Nous utilisons différents types de cookies pour améliorer votre expérience sur MyPulse :</p>
+                <ul>
+                    <li><strong>Cookies essentiels :</strong> Indispensables au fonctionnement, ils gèrent l'authentification, les votes uniques par catégorie et les sessions utilisateur. Aucun consentement n'est requis.</li>
+                    <li><strong>Cookies analytiques :</strong> Anonymes, ils mesurent l'audience (pages vues, classements consultés) pour optimiser la plateforme. Consentement préalable via notre bandeau.</li>
+                    <li><strong>Cookies fonctionnels :</strong> Personnalisent l'interface (thèmes sombre/clair, notifications) et intègrent les partages sociaux pour les résultats de concours. Aucun cookie publicitaire tiers n'est utilisé ; durée maximale de 6 mois, renouvelable avec consentement.</li>
+                </ul>
+
+                <h6>GESTION ET CONSENTEMENT</h6>
+                <p>Lors de votre première visite, un bandeau collecte votre consentement exprès pour les cookies non essentiels. Modifiez vos préférences via l'icône en bas d'écran ou les paramètres de votre navigateur. Refuser les cookies analytiques n'empêche pas l'accès aux votes ou classements.</p>
+
+                <h6>VOS DROITS</h6>
+                <p>Conformément au RGPD, contactez mypulse.company@gmail.com pour accéder, rectifier ou supprimer les données cookies.</p>
+            </div>
+            <div class="cookie-popup-footer">
+                <button type="button" class="btn btn-outline-primary me-2" onclick="manageCookiePreferences()">Gérer les préférences</button>
+                <button type="button" class="btn btn-outline-secondary me-2" onclick="rejectNonEssentialCookies()">Refuser non-essentiels</button>
+                <button type="button" class="btn btn-primary" onclick="acceptAllCookies()">Accepter tout</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Report Comment Modal -->
     <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -590,78 +612,6 @@ if (isset($_SESSION['user_id']) && !$isAdmin) {
     <script src="../script/script.js"></script>
     <script src="../script/modals.js"></script>
     <script src="script/toggle.js"></script>
-
-    <script>
-        function toggleValideCards() {
-            const section = document.getElementById('valide-cards-section');
-            const button = event.target;
-
-            if (section.style.display === 'none') {
-                section.style.display = 'block';
-                button.textContent = 'Masquer les cartes valides';
-                button.classList.remove('btn-primary');
-                button.classList.add('btn-warning');
-            } else {
-                section.style.display = 'none';
-                button.textContent = 'Afficher les cartes valides';
-                button.classList.remove('btn-warning');
-                button.classList.add('btn-primary');
-            }
-        }
-
-        function toggleArchivedCards() {
-            const section = document.getElementById('archived-cards-section');
-            const button = event.target;
-
-            if (section.style.display === 'none') {
-                section.style.display = 'block';
-                button.textContent = 'Masquer les archives';
-                button.classList.remove('btn-secondary');
-                button.classList.add('btn-info');
-            } else {
-                section.style.display = 'none';
-                button.textContent = 'Afficher les archives';
-                button.classList.remove('btn-info');
-                button.classList.add('btn-secondary');
-            }
-        }
-
-        function reportComment(commentId) {
-            document.getElementById('reportCommentId').value = commentId;
-            const modal = new bootstrap.Modal(document.getElementById('reportModal'));
-            modal.show();
-        }
-
-        function editComment(commentId, currentComment) {
-            const newComment = prompt('Modifier le commentaire:', currentComment);
-            if (newComment !== null && newComment.trim() !== '') {
-                const form = document.createElement('form');
-                form.method = 'post';
-                form.style.display = 'none';
-
-                const commentIdInput = document.createElement('input');
-                commentIdInput.type = 'hidden';
-                commentIdInput.name = 'comment_id';
-                commentIdInput.value = commentId;
-
-                const commentInput = document.createElement('input');
-                commentInput.type = 'hidden';
-                commentInput.name = 'comment';
-                commentInput.value = newComment.trim();
-
-                const editInput = document.createElement('input');
-                editInput.type = 'hidden';
-                editInput.name = 'edit_comment';
-                editInput.value = '1';
-
-                form.appendChild(commentIdInput);
-                form.appendChild(commentInput);
-                form.appendChild(editInput);
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-    </script>
 
 </body>
 </html>

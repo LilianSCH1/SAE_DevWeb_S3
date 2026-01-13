@@ -3,14 +3,17 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
+<<<<<<< HEAD
 -- Généré le : mar. 13 jan. 2026 à 15:53
+=======
+-- Généré le : mar. 13 jan. 2026 à 16:00
+>>>>>>> 2e7c7c11da03170de79bd1cca45fd4d578feb101
 -- Version du serveur : 8.4.7
 -- Version de PHP : 8.5.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -115,6 +118,18 @@ CREATE TABLE IF NOT EXISTS `commentaire` (
   KEY `UserID` (`UserID`),
   KEY `idx_contenu` (`TypeContenu`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+<<<<<<< HEAD
+=======
+
+--
+-- Déchargement des données de la table `commentaire`
+--
+
+INSERT INTO `commentaire` (`CommentaireID`, `TypeContenu`, `UserID`, `Commentaire`, `DateCommentaire`, `is_offensive`, `report_reason`) VALUES
+(16, 'general', 5, 'dvxvc', '2026-01-13 12:05:34', 0, NULL);
+
+-- --------------------------------------------------------
+>>>>>>> 2e7c7c11da03170de79bd1cca45fd4d578feb101
 
 --
 -- Structure de la table `groupe`
