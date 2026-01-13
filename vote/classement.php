@@ -364,6 +364,15 @@ if (isset($_SESSION['user_id']) && !$isAdmin) {
                                         </div>
                                     <?php endif; ?>
                                     <div class="comment-actions">
+<<<<<<< HEAD
+                                        <?php if ($comment['UserID'] == $_SESSION['user_id']): ?>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
+                                        <?php endif; ?>
+                                        <form method="post" style="display: inline;">
+                                            <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
+                                            <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
+                                        </form>
+=======
                                         <?php if (isset($_SESSION['user_id']) && !$comment['is_offensive'] && $comment['UserID'] != $_SESSION['user_id']): ?>
                                             <button class="btn btn-sm btn-outline-warning" onclick="reportComment(<?php echo $comment['CommentaireID']; ?>)">Signaler</button>
                                         <?php endif; ?>
@@ -382,6 +391,7 @@ if (isset($_SESSION['user_id']) && !$isAdmin) {
                                                 <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
                                             </form>
                                         <?php endif; ?>
+>>>>>>> ea7468d51672ebe23887398eb76c64a2ce2fa079
                                     </div>
                                 </div>
                             <?php endif; ?>

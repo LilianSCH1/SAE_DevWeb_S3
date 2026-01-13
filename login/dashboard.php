@@ -10,12 +10,12 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 $currentUser = User::findById((int)$_SESSION['user_id']);
-if (!$currentUser || $currentUser->role !== 'admin') {
-    header('Location: ../index/index.php');
+if (!$currentUser) {
+    header('Location: ../login/connexion.php');
     exit;
 }
 
-require '../database/dbconnect.php';
+require_once '../database/dbconnect.php';
 $pdo = dbconnect();
 
 // Traitement des actions de validation/refus/suppression
@@ -24,17 +24,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $type   = $_POST['type'] ?? '';
     $id     = (int)($_POST['id'] ?? 0);
 
+    // Gestion des recrutements
+    if ($action === 'accepter_recrutement' && $id > 0) {
+        // Accepter la demande de recrutement
+        $stmt = $pdo->prepare("UPDATE recrutement SET Status = 'accepte', DateDecision = NOW(), AdminID = ? WHERE RecrutementID = ?");
+        $stmt->execute([$currentUser->id, $id]);
+
+        // Changer le rôle de l'utilisateur en 'certifie'
+        $stmt = $pdo->prepare("SELECT UserID FROM recrutement WHERE RecrutementID = ?");
+        $stmt->execute([$id]);
+        $userId = $stmt->fetchColumn();
+        if ($userId) {
+            $stmt = $pdo->prepare("UPDATE utilisateur SET Role = 'certifie' WHERE UserID = ?");
+            $stmt->execute([$userId]);
+        }
+    } elseif ($action === 'refuser_recrutement' && $id > 0) {
+        // Refuser la demande de recrutement (supprimer)
+        $stmt = $pdo->prepare("DELETE FROM recrutement WHERE RecrutementID = ?");
+        $stmt->execute([$id]);
+    }
+
     if (($action === 'valider' || $action === 'refuser') && $id > 0) {
+        $newStatus = $action === 'valider' ? 'valide' : 'refusee';
+
         if ($type === 'artiste') {
-            $newStatus = $action === 'valider' ? 'valide' : 'refusee';
             $stmt = $pdo->prepare("UPDATE artiste SET StatusArtiste = ? WHERE ArtisteID = ?");
             $stmt->execute([$newStatus, $id]);
         } elseif ($type === 'musique') {
-            $newStatus = $action === 'valider' ? 'valide' : 'refusee';
             $stmt = $pdo->prepare("UPDATE musique SET StatusMusique = ? WHERE MusiqueID = ?");
             $stmt->execute([$newStatus, $id]);
         } elseif ($type === 'groupe') {
-            $newStatus = $action === 'valider' ? 'valide' : 'refusee';
             $stmt = $pdo->prepare("UPDATE groupe SET StatusGroupe = ? WHERE GroupeID = ?");
             $stmt->execute([$newStatus, $id]);
         }
@@ -82,10 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     } elseif ($action === 'clear_all') {
         $status = $_POST['status'] ?? 'archive_suppr';
-        // Suppression de tous les contenus archivés
-        $pdo->exec("DELETE FROM artiste WHERE StatusArtiste = '$status'");
-        $pdo->exec("DELETE FROM musique WHERE StatusMusique = '$status'");
-        $pdo->exec("DELETE FROM groupe WHERE StatusGroupe = '$status'");
+
+        // Suppression sécurisée de tous les contenus pour un statut donné
+        $stmt = $pdo->prepare("DELETE FROM artiste WHERE StatusArtiste = ?");
+        $stmt->execute([$status]);
+
+        $stmt = $pdo->prepare("DELETE FROM musique WHERE StatusMusique = ?");
+        $stmt->execute([$status]);
+
+        $stmt = $pdo->prepare("DELETE FROM groupe WHERE StatusGroupe = ?");
+        $stmt->execute([$status]);
     } elseif ($action === 'reset_archive') {
         // Remettre tous les contenus archivés en valide
         $pdo->exec("UPDATE artiste SET StatusArtiste = 'valide' WHERE StatusArtiste = 'archive_top'");
@@ -111,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Fonction pour récupérer les contenus par statut
-function getContentsByStatus($pdo, $status)
+function getContentsByStatus(PDO $pdo, string $status): array
 {
     $contents = [];
 
@@ -151,10 +176,21 @@ function getContentsByStatus($pdo, $status)
 }
 
 // Récupération des contenus par statut
-$en_attente = getContentsByStatus($pdo, 'en_attente');
-$archive_classement = getContentsByStatus($pdo, 'archive_top');
+$en_attente          = getContentsByStatus($pdo, 'en_attente');
+$archive_classement  = getContentsByStatus($pdo, 'archive_top');
 $archive_suppression = getContentsByStatus($pdo, 'archive_suppr');
-$refuses = getContentsByStatus($pdo, 'refusee');
+$refuses             = getContentsByStatus($pdo, 'refusee');
+
+// Récupération des demandes de recrutement
+$recrutements = $pdo->prepare("
+    SELECT r.*, u.UserPseudo as pseudo, u.UserMail as email
+    FROM recrutement r
+    JOIN utilisateur u ON r.UserID = u.UserID
+    WHERE r.Status = 'en_attente'
+    ORDER BY r.DateSoumission DESC
+");
+$recrutements->execute();
+$recrutements = $recrutements->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -162,7 +198,7 @@ $refuses = getContentsByStatus($pdo, 'refusee');
 
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard Admin - MyPulse</title>
+    <title>Dashboard - MyPulse</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../style/style.css">
@@ -175,7 +211,7 @@ $refuses = getContentsByStatus($pdo, 'refusee');
 </head>
 
 <body>
-    <?php require '../index/header.php'; ?>
+    <?php require_once '../index/header.php'; ?>
 
     <section class="py-5" style="margin-top:80px; min-height:80vh;">
         <div class="container">
@@ -188,6 +224,10 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                 <li class="nav-item">
                     <button class="nav-link active" id="tab-en-attente" data-bs-toggle="pill"
                         data-bs-target="#pane-en-attente" type="button" role="tab">En attente</button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab-recrutement" data-bs-toggle="pill"
+                        data-bs-target="#pane-recrutement" type="button" role="tab">Recrutement</button>
                 </li>
                 <li class="nav-item">
                     <button class="nav-link" id="tab-refuses" data-bs-toggle="pill"
@@ -206,7 +246,7 @@ $refuses = getContentsByStatus($pdo, 'refusee');
             <div class="tab-content">
                 <!-- EN ATTENTE -->
                 <div class="tab-pane fade show active" id="pane-en-attente" role="tabpanel" aria-labelledby="tab-en-attente">
-                    <?php if (!empty($en_attente)): ?>
+                    <?php if (!empty($en_attente)) { ?>
                         <div class="d-flex justify-content-end mb-3">
                             <form method="post" style="display:inline;">
                                 <input type="hidden" name="action" value="clear_all">
@@ -214,15 +254,15 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                 <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer tous les contenus en attente ?')">Clear All</button>
                             </form>
                         </div>
-                    <?php endif; ?>
+                    <?php } ?>
 
                     <div class="card-list">
-                        <?php if (empty($en_attente)): ?>
+                        <?php if (empty($en_attente)) { ?>
                             <div class="empty-state py-5">
                                 <p class="text-muted text-nowrap">Aucun contenu en attente de validation</p>
                             </div>
-                        <?php else: ?>
-                            <?php foreach ($en_attente as $content): ?>
+                        <?php } else { ?>
+                            <?php foreach ($en_attente as $content) { ?>
                                 <div class="content-card">
 
                                     <!-- HEADER -->
@@ -232,11 +272,11 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                                 <?php echo htmlspecialchars($content['nom']); ?>
                                                 <small class="text-muted">(<?php echo htmlspecialchars($content['type']); ?>)</small>
                                             </h3>
-                                            <?php if (!empty($content['sous_nom'])): ?>
+                                            <?php if (!empty($content['sous_nom'])) { ?>
                                                 <p class="content-card-artist">
                                                     <?php echo htmlspecialchars($content['sous_nom']); ?>
                                                 </p>
-                                            <?php endif; ?>
+                                            <?php } ?>
                                         </div>
 
                                         <!-- Bouton + / - description -->
@@ -257,22 +297,29 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                     <div class="content-card-body">
                                         <div class="content-card-separator"></div>
 
-                                        <?php if (!empty($content['annee'])): ?>
+                                        <?php if (!empty($content['annee'])) { ?>
                                             <p class="content-card-subtitle">
-                                                <?php echo $content['type'] === 'musique' ? 'Année de publication' : ($content['type'] === 'artiste' ? 'Année de naissance' : 'Année de formation'); ?> : <?php echo htmlspecialchars($content['annee']); ?>
+                                                <?php
+                                                echo $content['type'] === 'musique'
+                                                    ? 'Année de publication'
+                                                    : ($content['type'] === 'artiste'
+                                                        ? 'Année de naissance'
+                                                        : 'Année de formation');
+                                                ?>
+                                                : <?php echo htmlspecialchars($content['annee']); ?>
                                             </p>
-                                        <?php endif; ?>
+                                        <?php } ?>
 
                                         <p class="content-card-description">
                                             <?php echo htmlspecialchars($content['biographie'] ?? 'Aucune description fournie.'); ?>
                                         </p>
 
-                                        <?php if (!empty($content['audio'])): ?>
+                                        <?php if (!empty($content['audio'])) { ?>
                                             <audio controls class="content-card-audio">
                                                 <source src="../create/<?php echo htmlspecialchars($content['audio']); ?>" type="audio/mpeg">
                                                 Votre navigateur ne supporte pas l'élément audio.
                                             </audio>
-                                        <?php endif; ?>
+                                        <?php } ?>
                                     </div>
 
                                     <!-- ACTIONS -->
@@ -296,17 +343,151 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                             <input type="hidden" name="type" value="<?php echo $content['type']; ?>">
                                             <input type="hidden" name="id" value="<?php echo $content['id']; ?>">
                                             <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir archiver ce contenu pour suppression ?')">Archiver</button>
+                                        </form>
                                     </div>
 
                                 </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            <?php } ?>
+                        <?php } ?>
+                    </div>
+                </div>
+
+                <!-- RECRUTEMENT -->
+                <div class="tab-pane fade" id="pane-recrutement" role="tabpanel" aria-labelledby="tab-recrutement">
+                    <div class="card-list">
+                        <?php if (empty($recrutements)) { ?>
+                            <div class="empty-state py-5">
+                                <p class="text-muted text-nowrap">Aucune demande de recrutement en attente</p>
+                            </div>
+                        <?php } else { ?>
+                            <?php foreach ($recrutements as $recrutement) { ?>
+                                <div class="content-card">
+                                    <!-- HEADER -->
+                                    <div class="content-card-header">
+                                        <div class="content-card-info">
+                                            <h3 class="content-card-title">
+                                                Demande de <?php echo htmlspecialchars($recrutement['pseudo']); ?>
+                                                <small class="text-muted">(Recrutement)</small>
+                                            </h3>
+                                            <p class="content-card-artist">
+                                                <?php echo htmlspecialchars($recrutement['email']); ?>
+                                            </p>
+                                        </div>
+                                        <span class="content-card-date">
+                                            Soumise le <?php echo htmlspecialchars($recrutement['DateSoumission']); ?>
+                                        </span>
+                                    </div>
+
+                                    <!-- BODY -->
+                                    <div class="content-card-body">
+                                        <div class="content-card-separator"></div>
+                                        <p class="content-card-subtitle">
+                                            Nom : <?php echo htmlspecialchars($recrutement['Nom']); ?> <?php echo htmlspecialchars($recrutement['Prenom']); ?>
+                                        </p>
+                                        <p class="content-card-subtitle">
+                                            Âge : <?php echo htmlspecialchars($recrutement['Age']); ?> ans
+                                        </p>
+                                        <p class="content-card-subtitle">
+                                            Comptes sociaux :
+                                            <?php
+                                            $links = [];
+
+                                            // Check separate columns first
+                                            if (!empty($recrutement['Instagram'])) {
+                                                $links[] = '<a href="https://instagram.com/' . htmlspecialchars($recrutement['Instagram']) . '" target="_blank">Instagram</a>';
+                                            }
+                                            if (!empty($recrutement['Twitter'])) {
+                                                $links[] = '<a href="https://twitter.com/' . htmlspecialchars($recrutement['Twitter']) . '" target="_blank">Twitter</a>';
+                                            }
+                                            if (!empty($recrutement['Facebook'])) {
+                                                $links[] = '<a href="https://facebook.com/' . htmlspecialchars($recrutement['Facebook']) . '" target="_blank">Facebook</a>';
+                                            }
+                                            if (!empty($recrutement['Youtube'])) {
+                                                $links[] = '<a href="https://youtube.com/' . htmlspecialchars($recrutement['Youtube']) . '" target="_blank">YouTube</a>';
+                                            }
+                                            if (!empty($recrutement['Spotify'])) {
+                                                $links[] = '<a href="https://open.spotify.com/artist/' . htmlspecialchars($recrutement['Spotify']) . '" target="_blank">Spotify</a>';
+                                            }
+                                            if (!empty($recrutement['Deezer'])) {
+                                                $links[] = '<a href="https://www.deezer.com/artist/' . htmlspecialchars($recrutement['Deezer']) . '" target="_blank">Deezer</a>';
+                                            }
+
+                                            // If no links from separate columns, try JSON fallback
+                                            if (empty($links) && !empty($recrutement['MyPulseAccount'])) {
+                                                $socialData = json_decode($recrutement['MyPulseAccount'], true);
+                                                if (is_array($socialData)) {
+                                                    foreach ($socialData as $platform => $link) {
+                                                        if (!empty($link)) {
+                                                            if ($platform === 'instagram') {
+                                                                $url = 'https://instagram.com/' . $link;
+                                                            } elseif ($platform === 'twitter') {
+                                                                $url = 'https://twitter.com/' . $link;
+                                                            } elseif ($platform === 'facebook') {
+                                                                $url = 'https://facebook.com/' . $link;
+                                                            } elseif ($platform === 'youtube') {
+                                                                $url = 'https://youtube.com/' . $link;
+                                                            } elseif ($platform === 'spotify') {
+                                                                $url = 'https://open.spotify.com/artist/' . $link;
+                                                            } elseif ($platform === 'deezer') {
+                                                                $url = 'https://www.deezer.com/artist/' . $link;
+                                                            } else {
+                                                                $url = $link;
+                                                            }
+                                                            $links[] = '<a href="' . htmlspecialchars($url) . '" target="_blank">' . htmlspecialchars($platform) . '</a>';
+                                                        }
+                                                    }
+                                                }
+                                            }
+
+                                            if (!empty($links)) {
+                                                echo implode(', ', $links);
+                                            } else {
+                                                echo 'Aucun compte social fourni';
+                                            }
+                                            ?>
+                                        </p>
+                                        <p class="content-card-description">
+                                            Histoire : <?php echo htmlspecialchars($recrutement['Story'] ?? 'Aucune histoire fournie.'); ?>
+                                        </p>
+                                        <?php if (!empty($recrutement['PhotoIdentite'])) { ?>
+                                            <p class="content-card-subtitle">
+                                                Photo d'identité : <a href="../create/<?php echo htmlspecialchars($recrutement['PhotoIdentite']); ?>" target="_blank">Voir</a>
+                                            </p>
+                                        <?php } ?>
+                                        <?php if (!empty($recrutement['Screenshot'])) { ?>
+                                            <p class="content-card-subtitle">
+                                                Screenshot : <a href="../create/<?php echo htmlspecialchars($recrutement['Screenshot']); ?>" target="_blank">Voir</a>
+                                            </p>
+                                        <?php } ?>
+                                        <?php if (!empty($recrutement['Motivation'])) { ?>
+                                            <p class="content-card-subtitle">
+                                                Motivation : <?php echo htmlspecialchars($recrutement['Motivation']); ?>
+                                            </p>
+                                        <?php } ?>
+                                    </div>
+
+                                    <!-- ACTIONS -->
+                                    <div class="content-card-actions">
+                                        <form method="post" style="display:inline;">
+                                            <input type="hidden" name="action" value="accepter_recrutement">
+                                            <input type="hidden" name="id" value="<?php echo $recrutement['RecrutementID']; ?>">
+                                            <button type="submit" class="btn btn-success">Accepter</button>
+                                        </form>
+                                        <form method="post" style="display:inline;">
+                                            <input type="hidden" name="action" value="refuser_recrutement">
+                                            <input type="hidden" name="id" value="<?php echo $recrutement['RecrutementID']; ?>">
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir refuser cette demande de recrutement ?')">Refuser</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                        <?php } ?>
                     </div>
                 </div>
 
                 <!-- REFUSES -->
                 <div class="tab-pane fade" id="pane-refuses" role="tabpanel" aria-labelledby="tab-refuses">
-                    <?php if (!empty($refuses)): ?>
+                    <?php if (!empty($refuses)) { ?>
                         <div class="d-flex justify-content-end mb-3">
                             <form method="post" style="display:inline;">
                                 <input type="hidden" name="action" value="clear_all">
@@ -314,15 +495,15 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                 <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer tous les contenus refusés ?')">Clear All</button>
                             </form>
                         </div>
-                    <?php endif; ?>
+                    <?php } ?>
 
                     <div class="card-list">
-                        <?php if (empty($refuses)): ?>
+                        <?php if (empty($refuses)) { ?>
                             <div class="empty-state py-5">
                                 <p class="text-muted text-nowrap">Aucun contenu refusé</p>
                             </div>
-                        <?php else: ?>
-                            <?php foreach ($refuses as $content): ?>
+                        <?php } else { ?>
+                            <?php foreach ($refuses as $content) { ?>
                                 <div class="content-card">
 
                                     <!-- HEADER -->
@@ -332,11 +513,11 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                                 <?php echo htmlspecialchars($content['nom']); ?>
                                                 <small class="text-muted">(<?php echo htmlspecialchars($content['type']); ?>)</small>
                                             </h3>
-                                            <?php if (!empty($content['sous_nom'])): ?>
+                                            <?php if (!empty($content['sous_nom'])) { ?>
                                                 <p class="content-card-artist">
                                                     <?php echo htmlspecialchars($content['sous_nom']); ?>
                                                 </p>
-                                            <?php endif; ?>
+                                            <?php } ?>
                                         </div>
 
                                         <!-- Bouton + / - description -->
@@ -357,22 +538,29 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                     <div class="content-card-body">
                                         <div class="content-card-separator"></div>
 
-                                        <?php if (!empty($content['annee'])): ?>
+                                        <?php if (!empty($content['annee'])) { ?>
                                             <p class="content-card-subtitle">
-                                                <?php echo $content['type'] === 'musique' ? 'Année de publication' : ($content['type'] === 'artiste' ? 'Année de naissance' : 'Année de formation'); ?> : <?php echo htmlspecialchars($content['annee']); ?>
+                                                <?php
+                                                echo $content['type'] === 'musique'
+                                                    ? 'Année de publication'
+                                                    : ($content['type'] === 'artiste'
+                                                        ? 'Année de naissance'
+                                                        : 'Année de formation');
+                                                ?>
+                                                : <?php echo htmlspecialchars($content['annee']); ?>
                                             </p>
-                                        <?php endif; ?>
+                                        <?php } ?>
 
                                         <p class="content-card-description">
                                             <?php echo htmlspecialchars($content['biographie'] ?? 'Aucune description fournie.'); ?>
                                         </p>
 
-                                        <?php if (!empty($content['audio'])): ?>
+                                        <?php if (!empty($content['audio'])) { ?>
                                             <audio controls class="content-card-audio">
                                                 <source src="../create/<?php echo htmlspecialchars($content['audio']); ?>" type="audio/mpeg">
                                                 Votre navigateur ne supporte pas l'élément audio.
                                             </audio>
-                                        <?php endif; ?>
+                                        <?php } ?>
                                     </div>
 
                                     <!-- ACTIONS -->
@@ -393,14 +581,14 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                     </div>
 
                                 </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            <?php } ?>
+                        <?php } ?>
                     </div>
                 </div>
 
                 <!-- ARCHIVE CLASSEMENT -->
                 <div class="tab-pane fade" id="pane-archive-classement" role="tabpanel" aria-labelledby="tab-archive-classement">
-                    <?php if (!empty($archive_classement)): ?>
+                    <?php if (!empty($archive_classement)) { ?>
                         <div class="d-flex justify-content-start mb-3">
                             <form method="post" style="display:inline;">
                                 <input type="hidden" name="action" value="reset_archive">
@@ -412,15 +600,15 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                 <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer tous les contenus archivés pour classement ?')">Clear All</button>
                             </form>
                         </div>
-                    <?php endif; ?>
+                    <?php } ?>
 
                     <div class="card-list">
-                        <?php if (empty($archive_classement)): ?>
+                        <?php if (empty($archive_classement)) { ?>
                             <div class="empty-state py-5">
                                 <p class="text-muted text-nowrap">Aucun contenu archivé pour classement</p>
                             </div>
-                        <?php else: ?>
-                            <?php foreach ($archive_classement as $content): ?>
+                        <?php } else { ?>
+                            <?php foreach ($archive_classement as $content) { ?>
                                 <div class="content-card">
 
                                     <!-- HEADER -->
@@ -430,11 +618,11 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                                 <?php echo htmlspecialchars($content['nom']); ?>
                                                 <small class="text-muted">(<?php echo htmlspecialchars($content['type']); ?>)</small>
                                             </h3>
-                                            <?php if (!empty($content['sous_nom'])): ?>
+                                            <?php if (!empty($content['sous_nom'])) { ?>
                                                 <p class="content-card-artist">
                                                     <?php echo htmlspecialchars($content['sous_nom']); ?>
                                                 </p>
-                                            <?php endif; ?>
+                                            <?php } ?>
                                         </div>
 
                                         <!-- Bouton + / - description -->
@@ -455,22 +643,29 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                     <div class="content-card-body">
                                         <div class="content-card-separator"></div>
 
-                                        <?php if (!empty($content['annee'])): ?>
+                                        <?php if (!empty($content['annee'])) { ?>
                                             <p class="content-card-subtitle">
-                                                <?php echo $content['type'] === 'musique' ? 'Année de publication' : ($content['type'] === 'artiste' ? 'Année de naissance' : 'Année de formation'); ?> : <?php echo htmlspecialchars($content['annee']); ?>
+                                                <?php
+                                                echo $content['type'] === 'musique'
+                                                    ? 'Année de publication'
+                                                    : ($content['type'] === 'artiste'
+                                                        ? 'Année de naissance'
+                                                        : 'Année de formation');
+                                                ?>
+                                                : <?php echo htmlspecialchars($content['annee']); ?>
                                             </p>
-                                        <?php endif; ?>
+                                        <?php } ?>
 
                                         <p class="content-card-description">
                                             <?php echo htmlspecialchars($content['biographie'] ?? 'Aucune description fournie.'); ?>
                                         </p>
 
-                                        <?php if (!empty($content['audio'])): ?>
+                                        <?php if (!empty($content['audio'])) { ?>
                                             <audio controls class="content-card-audio">
                                                 <source src="../create/<?php echo htmlspecialchars($content['audio']); ?>" type="audio/mpeg">
                                                 Votre navigateur ne supporte pas l'élément audio.
                                             </audio>
-                                        <?php endif; ?>
+                                        <?php } ?>
                                     </div>
 
                                     <!-- ACTIONS -->
@@ -491,29 +686,30 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                     </div>
 
                                 </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            <?php } ?>
+                        <?php } ?>
                     </div>
                 </div>
 
                 <!-- ARCHIVE SUPPRESSION -->
                 <div class="tab-pane fade" id="pane-archive-suppression" role="tabpanel" aria-labelledby="tab-archive-suppression">
-                    <?php if (!empty($archive_suppression)): ?>
+                    <?php if (!empty($archive_suppression)) { ?>
                         <div class="d-flex justify-content-end mb-3">
                             <form method="post" style="display:inline;">
                                 <input type="hidden" name="action" value="clear_all">
-                                <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer tous les contenus archivés pour suppression ?')">Clear All</button>
+                                <input type="hidden" name="status" value="archive_suppr">
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement tous les contenus archivés pour suppression ?')">Clear All</button>
                             </form>
                         </div>
-                    <?php endif; ?>
+                    <?php } ?>
 
                     <div class="card-list">
-                        <?php if (empty($archive_suppression)): ?>
+                        <?php if (empty($archive_suppression)) { ?>
                             <div class="empty-state py-5">
                                 <p class="text-muted text-nowrap">Aucun contenu archivé pour suppression</p>
                             </div>
-                        <?php else: ?>
-                            <?php foreach ($archive_suppression as $content): ?>
+                        <?php } else { ?>
+                            <?php foreach ($archive_suppression as $content) { ?>
                                 <div class="content-card">
 
                                     <!-- HEADER -->
@@ -523,11 +719,11 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                                 <?php echo htmlspecialchars($content['nom']); ?>
                                                 <small class="text-muted">(<?php echo htmlspecialchars($content['type']); ?>)</small>
                                             </h3>
-                                            <?php if (!empty($content['sous_nom'])): ?>
+                                            <?php if (!empty($content['sous_nom'])) { ?>
                                                 <p class="content-card-artist">
                                                     <?php echo htmlspecialchars($content['sous_nom']); ?>
                                                 </p>
-                                            <?php endif; ?>
+                                            <?php } ?>
                                         </div>
 
                                         <!-- Bouton + / - description -->
@@ -548,44 +744,44 @@ $refuses = getContentsByStatus($pdo, 'refusee');
                                     <div class="content-card-body">
                                         <div class="content-card-separator"></div>
 
-                                        <?php if (!empty($content['annee'])): ?>
+                                        <?php if (!empty($content['annee'])) { ?>
                                             <p class="content-card-subtitle">
-                                                <?php echo $content['type'] === 'musique' ? 'Année de publication' : ($content['type'] === 'artiste' ? 'Année de naissance' : 'Année de formation'); ?> : <?php echo htmlspecialchars($content['annee']); ?>
+                                                <?php
+                                                echo $content['type'] === 'musique'
+                                                    ? 'Année de publication'
+                                                    : ($content['type'] === 'artiste'
+                                                        ? 'Année de naissance'
+                                                        : 'Année de formation');
+                                                ?>
+                                                : <?php echo htmlspecialchars($content['annee']); ?>
                                             </p>
-                                        <?php endif; ?>
+                                        <?php } ?>
 
                                         <p class="content-card-description">
                                             <?php echo htmlspecialchars($content['biographie'] ?? 'Aucune description fournie.'); ?>
                                         </p>
 
-                                        <?php if (!empty($content['audio'])): ?>
+                                        <?php if (!empty($content['audio'])) { ?>
                                             <audio controls class="content-card-audio">
                                                 <source src="../create/<?php echo htmlspecialchars($content['audio']); ?>" type="audio/mpeg">
                                                 Votre navigateur ne supporte pas l'élément audio.
                                             </audio>
-                                        <?php endif; ?>
+                                        <?php } ?>
                                     </div>
 
                                     <!-- ACTIONS -->
                                     <div class="content-card-actions">
                                         <form method="post" style="display:inline;">
-                                            <input type="hidden" name="action" value="retablir">
-                                            <input type="hidden" name="type" value="<?php echo $content['type']; ?>">
-                                            <input type="hidden" name="id" value="<?php echo $content['id']; ?>">
-                                            <button type="submit" class="btn btn-warning">Rétablir</button>
-                                        </form>
-
-                                        <form method="post" style="display:inline;">
                                             <input type="hidden" name="action" value="supprimer">
                                             <input type="hidden" name="type" value="<?php echo $content['type']; ?>">
                                             <input type="hidden" name="id" value="<?php echo $content['id']; ?>">
-                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce contenu ?')">Supprimer</button>
+                                            <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce contenu ?')">Supprimer définitivement</button>
                                         </form>
                                     </div>
 
                                 </div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                            <?php } ?>
+                        <?php } ?>
                     </div>
                 </div>
 
@@ -593,11 +789,19 @@ $refuses = getContentsByStatus($pdo, 'refusee');
         </div>
     </section>
 
-    <?php require '../index/footer.php'; ?>
+    <?php require_once '../index/footer.php'; ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../script/modals.js"></script>
-    <script src="../script/script.js"></script>
+    <script>
+        // Toggle simple sur les descriptions
+        document.querySelectorAll('.toggle-desc-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.content-card');
+                if (!card) return;
+                card.classList.toggle('show-description');
+                btn.textContent = card.classList.contains('show-description') ? '-' : '+';
+            });
+        });
+    </script>
 </body>
-
 </html>

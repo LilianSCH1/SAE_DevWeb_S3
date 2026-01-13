@@ -33,6 +33,9 @@ $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user
                 <?php endif; ?>
             <?php endif; ?>
             <li class="nav-item"><a class="nav-link" href="../vote/classement.php">Classement</a></li>
+            <?php if (isset($_SESSION['user_id']) && $currentUser && $currentUser->role === 'basique'): ?>
+                <li class="nav-item"><a class="nav-link" href="../index/recrutement.php">Recrutement</a></li>
+            <?php endif; ?>
             <li class="nav-item"><a class="nav-link" href="../index/contact.php">Contact</a></li>
 
             <?php if (isset($_SESSION['user_id'])): ?>
