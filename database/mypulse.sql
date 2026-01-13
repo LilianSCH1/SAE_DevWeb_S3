@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : jeu. 08 jan. 2026 à 19:21
+-- Généré le : mar. 13 jan. 2026 à 16:00
 -- Version du serveur : 8.4.7
 -- Version de PHP : 8.5.0
 
@@ -114,7 +114,14 @@ CREATE TABLE IF NOT EXISTS `commentaire` (
   PRIMARY KEY (`CommentaireID`),
   KEY `UserID` (`UserID`),
   KEY `idx_contenu` (`TypeContenu`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Déchargement des données de la table `commentaire`
+--
+
+INSERT INTO `commentaire` (`CommentaireID`, `TypeContenu`, `UserID`, `Commentaire`, `DateCommentaire`, `is_offensive`, `report_reason`) VALUES
+(16, 'general', 5, 'dvxvc', '2026-01-13 12:05:34', 0, NULL);
 
 -- --------------------------------------------------------
 
