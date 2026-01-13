@@ -105,13 +105,15 @@ INSERT INTO `categorie` (`CategorieID`, `NomCategorie`, `Description`) VALUES
 DROP TABLE IF EXISTS `commentaire`;
 CREATE TABLE IF NOT EXISTS `commentaire` (
   `CommentaireID` int NOT NULL AUTO_INCREMENT,
-  `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
+  `TypeContenu` enum('musique','chanteur','groupe','general') NOT NULL,
   `UserID` int NOT NULL,
   `Commentaire` text NOT NULL,
   `DateCommentaire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_offensive` tinyint(1) NOT NULL DEFAULT '0',
+  `report_reason` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`CommentaireID`),
   KEY `UserID` (`UserID`),
-  KEY `idx_contenu` (`TypeContenu`,`ContenuID`)
+  KEY `idx_contenu` (`TypeContenu`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------

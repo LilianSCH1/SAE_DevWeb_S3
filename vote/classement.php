@@ -57,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_comment'])) {
         $id = (int)$_POST['id'];
         $comment = trim($_POST['comment']);
         if (!empty($comment)) {
-            $stmt = $pdo->prepare("INSERT INTO commentaire (TypeContenu, ContenuID, UserID, Commentaire) VALUES (?, ?, ?, ?)");
-            $stmt->execute([$type, $id, $_SESSION['user_id'], $comment]);
+            $stmt = $pdo->prepare("INSERT INTO commentaire (TypeContenu, UserID, Commentaire) VALUES (?, ?, ?)");
+            $stmt->execute([$type, $_SESSION['user_id'], $comment]);
         }
     }
     header("Location: " . $_SERVER['REQUEST_URI']);
@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_general_comment']
         if ($stmt->fetchColumn() == 0) {
             $comment = trim($_POST['comment']);
             if (!empty($comment)) {
-                $stmt = $pdo->prepare("INSERT INTO commentaire (TypeContenu, ContenuID, UserID, Commentaire) VALUES ('general', 0, ?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO commentaire (TypeContenu, UserID, Commentaire) VALUES ('general', ?, ?)");
                 $stmt->execute([$_SESSION['user_id'], $comment]);
             }
         }
@@ -103,26 +103,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_comment'])) {
     exit;
 }
 
+// Handle reporting comment as offensive
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['report_comment'])) {
+    if (isset($_SESSION['user_id'])) {
+        $commentId = (int)$_POST['comment_id'];
+        $reportReason = trim($_POST['report_reason'] ?? '');
+        $stmt = $pdo->prepare("UPDATE commentaire SET is_offensive = 1, report_reason = ? WHERE CommentaireID = ?");
+        $stmt->execute([$reportReason, $commentId]);
+    }
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
 // Handle deleting comment
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_comment'])) {
     if (isset($_SESSION['user_id'])) {
         $commentId = (int)$_POST['comment_id'];
-        // Check if user owns the comment or is admin
-        $stmt = $pdo->prepare("SELECT UserID FROM commentaire WHERE CommentaireID = ?");
+        // Check if user owns the comment or is admin and comment is offensive
+        $stmt = $pdo->prepare("SELECT UserID, is_offensive FROM commentaire WHERE CommentaireID = ?");
         $stmt->execute([$commentId]);
-        $commentOwner = $stmt->fetch(PDO::FETCH_ASSOC);
+        $commentData = $stmt->fetch(PDO::FETCH_ASSOC);
         $canDelete = false;
-        if ($commentOwner) {
-            if ($commentOwner['UserID'] == $_SESSION['user_id']) {
+        if ($commentData) {
+            if ($commentData['UserID'] == $_SESSION['user_id']) {
                 $canDelete = true; // Owner
-            } elseif ($isAdmin) {
-                $canDelete = true; // Admin
+            } elseif ($isAdmin && $commentData['is_offensive']) {
+                $canDelete = true; // Admin and offensive
             }
         }
         if ($canDelete) {
             $stmt = $pdo->prepare("DELETE FROM commentaire WHERE CommentaireID = ?");
             $stmt->execute([$commentId]);
         }
+    }
+    header("Location: " . $_SERVER['REQUEST_URI']);
+    exit;
+}
+
+// Handle restoring comment
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['restore_comment'])) {
+    if ($isAdmin) {
+        $commentId = (int)$_POST['comment_id'];
+        $stmt = $pdo->prepare("UPDATE commentaire SET is_offensive = 0, report_reason = NULL WHERE CommentaireID = ?");
+        $stmt->execute([$commentId]);
     }
     header("Location: " . $_SERVER['REQUEST_URI']);
     exit;
@@ -182,10 +205,10 @@ foreach ($categories as $type) {
                 SELECT c.Commentaire, c.DateCommentaire, u.UserPseudo
                 FROM commentaire c
                 JOIN utilisateur u ON c.UserID = u.UserID
-                WHERE c.TypeContenu = ? AND c.ContenuID = ?
+                WHERE c.TypeContenu = ?
                 ORDER BY c.DateCommentaire DESC
             ");
-            $stmt->execute([$type, $item['id']]);
+            $stmt->execute([$type]);
             $comments[$type][$item['id']] = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     }
@@ -194,7 +217,7 @@ foreach ($categories as $type) {
 // Fetch general comments
 $generalComments = [];
 $stmt = $pdo->prepare("
-    SELECT c.CommentaireID, c.Commentaire, c.DateCommentaire, c.UserID, u.UserPseudo
+    SELECT c.CommentaireID, c.Commentaire, c.DateCommentaire, c.UserID, c.is_offensive, c.report_reason, u.UserPseudo
     FROM commentaire c
     JOIN utilisateur u ON c.UserID = u.UserID
     WHERE c.TypeContenu = 'general'
@@ -203,9 +226,9 @@ $stmt = $pdo->prepare("
 $stmt->execute();
 $generalComments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Check if user has already commented this year
+// Check if user has already commented this year (only for non-admins)
 $userHasCommentedThisYear = false;
-if (isset($_SESSION['user_id'])) {
+if (isset($_SESSION['user_id']) && !$isAdmin) {
     $startOfYear = date('Y-m-d', strtotime('1st january this year'));
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaire WHERE UserID = ? AND TypeContenu = 'general' AND DateCommentaire >= ?");
     $stmt->execute([$_SESSION['user_id'], $startOfYear]);
@@ -326,20 +349,42 @@ if (isset($_SESSION['user_id'])) {
                 <div class="comments-list mb-4">
                     <?php if (!empty($generalComments)): ?>
                         <?php foreach ($generalComments as $comment): ?>
-                            <div class="comment">
-                                <strong><?php echo htmlspecialchars($comment['UserPseudo']); ?>:</strong>
-                                <p><?php echo htmlspecialchars($comment['Commentaire']); ?></p>
-                                <small><?php echo date('d/m/Y H:i', strtotime($comment['DateCommentaire'])); ?></small>
-                                <?php if (isset($_SESSION['user_id']) && ($comment['UserID'] == $_SESSION['user_id'] || $isAdmin)): ?>
+                            <?php if (!$comment['is_offensive'] || $comment['UserID'] == ($_SESSION['user_id'] ?? null) || $isAdmin): ?>
+                                <div class="comment <?php echo ($isAdmin && $comment['is_offensive']) ? 'comment-offensive' : ''; ?>">
+                                    <strong><?php echo htmlspecialchars($comment['UserPseudo']); ?>:</strong>
+                                    <?php if ($comment['is_offensive'] && $comment['UserID'] == ($_SESSION['user_id'] ?? null)): ?>
+                                        <p><em>Ce commentaire est en cours de révision par l'équipe de modération.</em></p>
+                                    <?php else: ?>
+                                        <p><?php echo htmlspecialchars($comment['Commentaire']); ?></p>
+                                    <?php endif; ?>
+                                    <small><?php echo date('d/m/Y H:i', strtotime($comment['DateCommentaire'])); ?><?php echo ($isAdmin && $comment['is_offensive']) ? ' <span class="badge bg-danger">Signalé</span>' : ''; ?></small>
+                                    <?php if ($isAdmin && $comment['is_offensive'] && !empty($comment['report_reason'])): ?>
+                                        <div class="mt-2">
+                                            <small class="text-muted"><strong>Raison du signalement:</strong> <?php echo htmlspecialchars($comment['report_reason']); ?></small>
+                                        </div>
+                                    <?php endif; ?>
                                     <div class="comment-actions">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
-                                        <form method="post" style="display: inline;">
-                                            <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
-                                            <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
-                                        </form>
+                                        <?php if (isset($_SESSION['user_id']) && !$comment['is_offensive'] && $comment['UserID'] != $_SESSION['user_id']): ?>
+                                            <button class="btn btn-sm btn-outline-warning" onclick="reportComment(<?php echo $comment['CommentaireID']; ?>)">Signaler</button>
+                                        <?php endif; ?>
+                                        <?php if (isset($_SESSION['user_id']) && $comment['UserID'] == $_SESSION['user_id'] && !$comment['is_offensive']): ?>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
+                                        <?php endif; ?>
+                                        <?php if ($isAdmin && $comment['is_offensive']): ?>
+                                            <form method="post" style="display: inline;">
+                                                <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
+                                                <button type="submit" name="restore_comment" class="btn btn-sm btn-outline-success" onclick="return confirm('Êtes-vous sûr de vouloir remettre ce commentaire ?')">Annuler le signalement</button>
+                                            </form>
+                                        <?php endif; ?>
+                                        <?php if (isset($_SESSION['user_id']) && (($comment['UserID'] == $_SESSION['user_id'] && !$comment['is_offensive']) || ($isAdmin && $comment['is_offensive']))): ?>
+                                            <form method="post" style="display: inline;">
+                                                <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
+                                                <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
-                                <?php endif; ?>
-                            </div>
+                                </div>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <p class="text-muted text-center">Aucun commentaire pour le moment. Soyez le premier à commenter !</p>
@@ -506,6 +551,31 @@ if (isset($_SESSION['user_id'])) {
 
     <?php require '../index/footer.php'; ?>
 
+    <!-- Report Comment Modal -->
+    <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reportModalLabel">Signaler un commentaire</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="post">
+                    <div class="modal-body">
+                        <input type="hidden" name="comment_id" id="reportCommentId">
+                        <div class="mb-3">
+                            <label for="reportReason" class="form-label">Raison du signalement</label>
+                            <textarea class="form-control" id="reportReason" name="report_reason" rows="3" placeholder="Veuillez expliquer pourquoi vous signalez ce commentaire..." required></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <button type="submit" name="report_comment" class="btn btn-warning">Signaler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../script/script.js"></script>
     <script src="../script/modals.js"></script>
@@ -544,6 +614,12 @@ if (isset($_SESSION['user_id'])) {
                 button.classList.remove('btn-info');
                 button.classList.add('btn-secondary');
             }
+        }
+
+        function reportComment(commentId) {
+            document.getElementById('reportCommentId').value = commentId;
+            const modal = new bootstrap.Modal(document.getElementById('reportModal'));
+            modal.show();
         }
 
         function editComment(commentId, currentComment) {
