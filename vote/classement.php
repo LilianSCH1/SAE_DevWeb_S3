@@ -332,7 +332,9 @@ if (isset($_SESSION['user_id'])) {
                                 <small><?php echo date('d/m/Y H:i', strtotime($comment['DateCommentaire'])); ?></small>
                                 <?php if (isset($_SESSION['user_id']) && ($comment['UserID'] == $_SESSION['user_id'] || $isAdmin)): ?>
                                     <div class="comment-actions">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
+                                        <?php if ($comment['UserID'] == $_SESSION['user_id']): ?>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="editComment(<?php echo $comment['CommentaireID']; ?>, '<?php echo addslashes($comment['Commentaire']); ?>')">Modifier</button>
+                                        <?php endif; ?>
                                         <form method="post" style="display: inline;">
                                             <input type="hidden" name="comment_id" value="<?php echo $comment['CommentaireID']; ?>">
                                             <button type="submit" name="delete_comment" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">Supprimer</button>
