@@ -106,7 +106,6 @@ DROP TABLE IF EXISTS `commentaire`;
 CREATE TABLE IF NOT EXISTS `commentaire` (
   `CommentaireID` int NOT NULL AUTO_INCREMENT,
   `TypeContenu` enum('musique','chanteur','groupe') NOT NULL,
-  `ContenuID` int NOT NULL,
   `UserID` int NOT NULL,
   `Commentaire` text NOT NULL,
   `DateCommentaire` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
