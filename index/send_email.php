@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $emailObj = new Mail();
     $emailObj->setFrom("noreply@mypulse.com", "MyPulse Contact");
     $emailObj->setSubject("Contact Form: " . $subject);
-    $emailObj->addTo("hoja.valentin@gmail.com", "MyPulse Company");
+    $emailObj->addTo("mypulse.company@gmail.com", "MyPulse Company");
     $emailObj->addContent("text/plain", "Name: $name\nEmail: $email\nSubject: $subject\n\nMessage:\n$message");
 
     try {
