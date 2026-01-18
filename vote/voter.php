@@ -3,11 +3,11 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require '../database/dbconnect.php';
+require_once __DIR__ . '/../class/Database.php';
 require_once __DIR__ . '/../class/User.php';
 
 $voteToken = $_COOKIE['vote_token'] ?? null;
-$pdo = dbconnect();
+$pdo = new Database();
 
 // --- AJOUT : traitement archivage musique ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_musique'])) {
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_musique'])) {
 
     if ($musiqueId > 0) {
         try {
-            $stmt = $pdo->prepare("UPDATE musique SET StatusMusique = 'archive_suppr' WHERE MusiqueID = :id LIMIT 1");
+            $stmt = $pdo->getConnection()->prepare("UPDATE musique SET StatusMusique = 'archive_suppr' WHERE MusiqueID = :id LIMIT 1");
             $stmt->execute([':id' => $musiqueId]);
         } catch (Exception $e) {
             // Optionnel : journaliser l'erreur
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_artiste'])) {
 
     if ($artisteId > 0) {
         try {
-            $stmt = $pdo->prepare("UPDATE artiste SET StatusArtiste = 'archive_suppr' WHERE ArtisteID = :id LIMIT 1");
+            $stmt = $pdo->getConnection()->prepare("UPDATE artiste SET StatusArtiste = 'archive_suppr' WHERE ArtisteID = :id LIMIT 1");
             $stmt->execute([':id' => $artisteId]);
         } catch (Exception $e) {
             // Optionnel : log
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_groupe'])) {
 
     if ($groupeId > 0) {
         try {
-            $stmt = $pdo->prepare("UPDATE groupe SET StatusGroupe = 'archive_suppr' WHERE GroupeID = :id LIMIT 1");
+            $stmt = $pdo->getConnection()->prepare("UPDATE groupe SET StatusGroupe = 'archive_suppr' WHERE GroupeID = :id LIMIT 1");
             $stmt->execute([':id' => $groupeId]);
         } catch (Exception $e) {
             // Optionnel : log
@@ -98,7 +98,7 @@ if (!empty($searchQuery)) {
 }
 
 // Affichage des données de cartes de musiques
-$musiques = $pdo->prepare("
+$musiques = $pdo->getConnection()->prepare("
     SELECT MusiqueID,
            Titre,
            Artiste,
@@ -123,7 +123,7 @@ if (!empty($searchQuery)) {
 }
 
 // Affichage des données de cartes d'artistes
-$artistes = $pdo->prepare("
+$artistes = $pdo->getConnection()->prepare("
     SELECT ArtisteID,
            NomArtiste,
            BiographieCourte,
@@ -148,7 +148,7 @@ if (!empty($searchQuery)) {
 }
 
 // Affichage des données de cartes de groupes
-$groupes = $pdo->prepare("
+$groupes = $pdo->getConnection()->prepare("
     SELECT GroupeID,
            NomGroupe,
            BiographieCourte,

@@ -2,8 +2,8 @@
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
-    require '../database/dbconnect.php';
-    $pdo = dbconnect();
+    require '../class/Database.php';
+    $pdo = Database::getConnection();
 
     if (!isset($_SESSION['user_id'])) {
         header('Location: ../login/connexion.php');

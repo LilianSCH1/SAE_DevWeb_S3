@@ -47,8 +47,7 @@ $voteToken = session_id();
                 <?php if ($currentUser && $currentUser->role === 'admin'): ?>
                     <form method="post" class="delete-card-btn" aria-label="Supprimer musique">
                         <input type="hidden" name="delete_musique" value="1">
-                        <input type="hidden" name="chemin_fichier" value="<?php echo htmlspecialchars($musique['CheminFichierMP3'] ?? ''); ?>">
-                        <input type="hidden" name="image_couverture" value="<?php echo htmlspecialchars($musique['ImageCouverture'] ?? ''); ?>">
+                        <input type="hidden" name="musique_id" value="<?php echo (int)($musique['MusiqueID'] ?? 0); ?>">
                         <button type="submit" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">
                             <i class="bi bi-trash"></i>
                         </button>

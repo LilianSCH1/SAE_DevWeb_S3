@@ -13,16 +13,12 @@
 <?php
 require_once '../class/Database.php';
 require_once '../class/User.php';
-require_once '../database/promote_to_top.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 $pdo = Database::getConnection();
-
-// Check and run promotion if needed (every Monday at 16:00 UTC)
-promoteToTopIfNeeded();
 
 // Check if user is admin
 $isAdmin = false;

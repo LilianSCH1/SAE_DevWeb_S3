@@ -14,9 +14,8 @@ if (!$currentUser) {
     header('Location: ../login/connexion.php');
     exit;
 }
-
-require_once '../database/dbconnect.php';
-$pdo = dbconnect();
+require_once '../class/Database.php';
+$pdo = Database::getConnection();
 
 // Traitement des actions de validation/refus/suppression
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
