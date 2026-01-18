@@ -118,8 +118,7 @@ CREATE TABLE IF NOT EXISTS `commentaire` (
   KEY `UserID` (`UserID`),
   KEY `idx_contenu` (`TypeContenu`)
 ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-<<<<<<< HEAD
-=======
+
 
 --
 -- Déchargement des données de la table `commentaire`
@@ -129,7 +128,7 @@ INSERT INTO `commentaire` (`CommentaireID`, `TypeContenu`, `UserID`, `Commentair
 (16, 'general', 5, 'dvxvc', '2026-01-13 12:05:34', 0, NULL);
 
 -- --------------------------------------------------------
->>>>>>> 2e7c7c11da03170de79bd1cca45fd4d578feb101
+
 
 --
 -- Structure de la table `groupe`
