@@ -3,11 +3,11 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
-<<<<<<< HEAD
+
 -- Généré le : mar. 13 jan. 2026 à 15:53
-=======
+
 -- Généré le : mar. 13 jan. 2026 à 16:00
->>>>>>> 2e7c7c11da03170de79bd1cca45fd4d578feb101
+
 -- Version du serveur : 8.4.7
 -- Version de PHP : 8.5.0
 
