@@ -62,10 +62,6 @@ function promoteToTopIfNeeded() {
 
 // If called directly, run the function
 if (basename(__FILE__) == basename($_SERVER['PHP_SELF'])) {
-    if (promoteToTopIfNeeded()) {
-        echo "Status rotation completed successfully: 'classement' -> 'archive_top', 'valide' -> 'classement'.\n";
-    } else {
-        echo "Promotion not needed or already done today.\n";
-    }
+    promoteToTopIfNeeded();
 }
 ?>
