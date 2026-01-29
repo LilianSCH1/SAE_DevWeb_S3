@@ -1,10 +1,10 @@
 <?php
 class Database
 {
-    private const SERVER = 'localhost';
+    private const SERVER = 'db';
     private const BASE   = 'mypulse';
-    private const USER   = 'root';
-    private const PASS   = '';
+    private const USER   = 'mypulse_user';
+    private const PASS   = 'mypulse_pass';
 
     public static function getConnection(): PDO
     {

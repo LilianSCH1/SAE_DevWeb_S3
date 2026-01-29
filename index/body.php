@@ -105,7 +105,7 @@
                 require_once '../class/Database.php';
                 try {
                     $pdo = Database::getConnection();
-                    $stmt = $pdo->prepare("SELECT ImageCouverture, Titre FROM musique WHERE StatusMusique IN ('valide', 'classement', 'archive_top') ORDER BY DateProposition DESC");
+                    $stmt = $pdo->prepare("SELECT ImageCouverture, Titre FROM musique WHERE StatusMusique IN ('valide', 'classement', 'archive_top', 'en_attente') ORDER BY DateProposition DESC");
                     $stmt->execute();
                     $allMusiques = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

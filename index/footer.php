@@ -1,8 +1,4 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
 require_once __DIR__ . '/../class/User.php';
 $currentUser = isset($_SESSION['user_id']) ? User::findById((int)$_SESSION['user_id']) : null;
 $userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
@@ -16,7 +12,7 @@ $userRole = $currentUser ? strtolower(trim($currentUser->role)) : null;
             <div class="col-lg-4 mb-4 mb-lg-0">
                 <h5 class="footer-title">
                     <!-- Logo blanc pour le footer -->
-                    <img src="../icons/logos/MyPulse_White-removebg-preview.png" alt="MyPulse" height="30" style="margin-right: 10px;">
+                    <img src="/icons/logos/MyPulse_White-removebg-preview.png" alt="MyPulse" height="30" style="margin-right: 10px;">
                     MyPulse 🎵
                 </h5>
                 <p class="footer-description">La plateforme communautaire pour voter pour vos contenus musicaux préférés.</p>

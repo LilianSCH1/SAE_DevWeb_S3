@@ -1,3 +1,29 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Handle success/error messages from email sending
+if (isset($_GET['status'])) {
+    if ($_GET['status'] == 'success') {
+        $alertMessage = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>Message envoyé avec succès ! Nous vous répondrons bientôt.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>';
+    } elseif ($_GET['status'] == 'error') {
+        $errorMessage = isset($_GET['message']) ? urldecode($_GET['message']) : 'Une erreur est survenue lors de l\'envoi du message.';
+        $alertMessage = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>Erreur : ' . htmlspecialchars($errorMessage) . '
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>';
+    } elseif ($_GET['status'] == 'invalid') {
+        $alertMessage = '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>Méthode non autorisée.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+              </div>';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -12,28 +38,7 @@
 <body>
     <?php require '../index/header.php'; ?>
 
-    <?php
-    // Handle success/error messages from email sending
-    if (isset($_GET['status'])) {
-        if ($_GET['status'] == 'success') {
-            echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="bi bi-check-circle-fill me-2"></i>Message envoyé avec succès ! Nous vous répondrons bientôt.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                  </div>';
-        } elseif ($_GET['status'] == 'error') {
-            $errorMessage = isset($_GET['message']) ? urldecode($_GET['message']) : 'Une erreur est survenue lors de l\'envoi du message.';
-            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>Erreur : ' . htmlspecialchars($errorMessage) . '
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                  </div>';
-        } elseif ($_GET['status'] == 'invalid') {
-            echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>Méthode non autorisée.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                  </div>';
-        }
-    }
-    ?>
+    <?php if (isset($alertMessage)) echo $alertMessage; ?>
 
     <!-- Section de contact -->
     <section class="py-5" style="margin-top: 80px;">
