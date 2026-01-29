@@ -1,0 +1,51 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mypulse_web
+    ports:
+      - 8080:80
+    volumes:
+      - .:/var/www/html  # Bind local (dev)
+    depends_on:
+      - db
+    networks:
+      - appnet
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: mypulse_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootmypulse
+      MYSQL_DATABASE: mypulse
+      MYSQL_USER: mypulse_user
+      MYSQL_PASSWORD: mypulse_pass
+    ports:
+      - 3307:3306
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./mypulse.sql:/docker-entrypoint-initdb.d/1-mypulse.sql
+    networks:
+      - appnet
+
+  pma:
+    image: phpmyadmin:latest
+    container_name: mypulse_pma
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - 8081:80
+    depends_on:
+      - db
+    networks:
+      - appnet
+
+volumes:
+  dbdata:  # Définition volumes
+
+networks:
+  appnet:
+    driver: bridge
